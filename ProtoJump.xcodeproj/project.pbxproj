@@ -7,11 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		784B66AA25EB0EC200001842 /* Shader.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 784B66A325EB0EC100001842 /* Shader.fsh */; };
-		784B66AB25EB0EC200001842 /* Renderer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 784B66A425EB0EC100001842 /* Renderer.mm */; };
-		784B66AC25EB0EC200001842 /* CBox2D.mm in Sources */ = {isa = PBXBuildFile; fileRef = 784B66A525EB0EC100001842 /* CBox2D.mm */; };
-		784B66AD25EB0EC200001842 /* Shader.vsh in Resources */ = {isa = PBXBuildFile; fileRef = 784B66A625EB0EC100001842 /* Shader.vsh */; };
-		784B66AE25EB0EC200001842 /* GLESRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 784B66A925EB0EC200001842 /* GLESRenderer.cpp */; };
 		784B671925EB0FA700001842 /* b2Body.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 784B66B525EB0FA600001842 /* b2Body.cpp */; };
 		784B671A25EB0FA700001842 /* b2World.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 784B66B625EB0FA600001842 /* b2World.cpp */; };
 		784B671B25EB0FA700001842 /* b2Fixture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 784B66B725EB0FA600001842 /* b2Fixture.cpp */; };
@@ -58,6 +53,11 @@
 		784B674425EB0FA700001842 /* b2BroadPhase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 784B671425EB0FA600001842 /* b2BroadPhase.cpp */; };
 		784B674525EB0FA700001842 /* b2CollideEdge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 784B671725EB0FA600001842 /* b2CollideEdge.cpp */; };
 		784B674625EB0FA700001842 /* b2Collision.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 784B671825EB0FA600001842 /* b2Collision.cpp */; };
+		784B675325EB158600001842 /* GLESRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 784B674D25EB158600001842 /* GLESRenderer.cpp */; };
+		784B675425EB158600001842 /* Renderer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 784B674E25EB158600001842 /* Renderer.mm */; };
+		784B675525EB158600001842 /* CBox2D.mm in Sources */ = {isa = PBXBuildFile; fileRef = 784B674F25EB158600001842 /* CBox2D.mm */; };
+		784B675625EB158600001842 /* Shader.vsh in Resources */ = {isa = PBXBuildFile; fileRef = 784B675125EB158600001842 /* Shader.vsh */; };
+		784B675725EB158600001842 /* Shader.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 784B675225EB158600001842 /* Shader.fsh */; };
 		974B070425DEF8AE00C8679A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 974B070325DEF8AE00C8679A /* AppDelegate.swift */; };
 		974B070625DEF8AE00C8679A /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 974B070525DEF8AE00C8679A /* SceneDelegate.swift */; };
 		974B070825DEF8AE00C8679A /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 974B070725DEF8AE00C8679A /* ViewController.swift */; };
@@ -68,14 +68,6 @@
 
 /* Begin PBXFileReference section */
 		784B66A125EB0EC100001842 /* ProtoJump-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ProtoJump-Bridging-Header.h"; sourceTree = "<group>"; };
-		784B66A225EB0EC100001842 /* CBox2D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CBox2D.h; path = "../../Box2DSwift 3/Box2DSwift/CBox2D.h"; sourceTree = "<group>"; };
-		784B66A325EB0EC100001842 /* Shader.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = Shader.fsh; path = "../../Box2DSwift 3/Box2DSwift/Shader.fsh"; sourceTree = "<group>"; };
-		784B66A425EB0EC100001842 /* Renderer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Renderer.mm; path = "../../Box2DSwift 3/Box2DSwift/Renderer.mm"; sourceTree = "<group>"; };
-		784B66A525EB0EC100001842 /* CBox2D.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CBox2D.mm; path = "../../Box2DSwift 3/Box2DSwift/CBox2D.mm"; sourceTree = "<group>"; };
-		784B66A625EB0EC100001842 /* Shader.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = Shader.vsh; path = "../../Box2DSwift 3/Box2DSwift/Shader.vsh"; sourceTree = "<group>"; };
-		784B66A725EB0EC100001842 /* Renderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Renderer.h; path = "../../Box2DSwift 3/Box2DSwift/Renderer.h"; sourceTree = "<group>"; };
-		784B66A825EB0EC100001842 /* GLESRenderer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = GLESRenderer.hpp; path = "../../Box2DSwift 3/Box2DSwift/GLESRenderer.hpp"; sourceTree = "<group>"; };
-		784B66A925EB0EC200001842 /* GLESRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GLESRenderer.cpp; path = "../../Box2DSwift 3/Box2DSwift/GLESRenderer.cpp"; sourceTree = "<group>"; };
 		784B66B525EB0FA600001842 /* b2Body.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = b2Body.cpp; sourceTree = "<group>"; };
 		784B66B625EB0FA600001842 /* b2World.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = b2World.cpp; sourceTree = "<group>"; };
 		784B66B725EB0FA600001842 /* b2Fixture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = b2Fixture.cpp; sourceTree = "<group>"; };
@@ -170,6 +162,14 @@
 		784B671625EB0FA600001842 /* b2Distance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = b2Distance.h; sourceTree = "<group>"; };
 		784B671725EB0FA600001842 /* b2CollideEdge.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = b2CollideEdge.cpp; sourceTree = "<group>"; };
 		784B671825EB0FA600001842 /* b2Collision.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = b2Collision.cpp; sourceTree = "<group>"; };
+		784B674B25EB158600001842 /* CBox2D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CBox2D.h; sourceTree = "<group>"; };
+		784B674C25EB158600001842 /* GLESRenderer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = GLESRenderer.hpp; sourceTree = "<group>"; };
+		784B674D25EB158600001842 /* GLESRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GLESRenderer.cpp; sourceTree = "<group>"; };
+		784B674E25EB158600001842 /* Renderer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Renderer.mm; sourceTree = "<group>"; };
+		784B674F25EB158600001842 /* CBox2D.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CBox2D.mm; sourceTree = "<group>"; };
+		784B675025EB158600001842 /* Renderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Renderer.h; sourceTree = "<group>"; };
+		784B675125EB158600001842 /* Shader.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = Shader.vsh; sourceTree = "<group>"; };
+		784B675225EB158600001842 /* Shader.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = Shader.fsh; sourceTree = "<group>"; };
 		974B070025DEF8AE00C8679A /* ProtoJump.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ProtoJump.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		974B070325DEF8AE00C8679A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		974B070525DEF8AE00C8679A /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -368,14 +368,14 @@
 			isa = PBXGroup;
 			children = (
 				784B66B325EB0FA600001842 /* Box2D */,
-				784B66A225EB0EC100001842 /* CBox2D.h */,
-				784B66A525EB0EC100001842 /* CBox2D.mm */,
-				784B66A925EB0EC200001842 /* GLESRenderer.cpp */,
-				784B66A825EB0EC100001842 /* GLESRenderer.hpp */,
-				784B66A725EB0EC100001842 /* Renderer.h */,
-				784B66A425EB0EC100001842 /* Renderer.mm */,
-				784B66A325EB0EC100001842 /* Shader.fsh */,
-				784B66A625EB0EC100001842 /* Shader.vsh */,
+				784B674B25EB158600001842 /* CBox2D.h */,
+				784B674F25EB158600001842 /* CBox2D.mm */,
+				784B674D25EB158600001842 /* GLESRenderer.cpp */,
+				784B674C25EB158600001842 /* GLESRenderer.hpp */,
+				784B675025EB158600001842 /* Renderer.h */,
+				784B674E25EB158600001842 /* Renderer.mm */,
+				784B675225EB158600001842 /* Shader.fsh */,
+				784B675125EB158600001842 /* Shader.vsh */,
 				974B070325DEF8AE00C8679A /* AppDelegate.swift */,
 				974B070525DEF8AE00C8679A /* SceneDelegate.swift */,
 				974B070725DEF8AE00C8679A /* ViewController.swift */,
@@ -446,11 +446,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				784B66AA25EB0EC200001842 /* Shader.fsh in Resources */,
+				784B675625EB158600001842 /* Shader.vsh in Resources */,
 				974B071025DEF8AF00C8679A /* LaunchScreen.storyboard in Resources */,
 				974B070D25DEF8AF00C8679A /* Assets.xcassets in Resources */,
 				974B070B25DEF8AE00C8679A /* Main.storyboard in Resources */,
-				784B66AD25EB0EC200001842 /* Shader.vsh in Resources */,
+				784B675725EB158600001842 /* Shader.fsh in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -484,9 +484,9 @@
 				784B673E25EB0FA700001842 /* b2DynamicTree.cpp in Sources */,
 				784B673225EB0FA700001842 /* b2Island.cpp in Sources */,
 				784B673825EB0FA700001842 /* b2Timer.cpp in Sources */,
+				784B675525EB158600001842 /* CBox2D.mm in Sources */,
 				784B672225EB0FA700001842 /* b2CircleContact.cpp in Sources */,
 				784B673525EB0FA700001842 /* b2Draw.cpp in Sources */,
-				784B66AC25EB0EC200001842 /* CBox2D.mm in Sources */,
 				784B672825EB0FA700001842 /* b2FrictionJoint.cpp in Sources */,
 				784B673725EB0FA700001842 /* b2Settings.cpp in Sources */,
 				784B673D25EB0FA700001842 /* b2CollidePolygon.cpp in Sources */,
@@ -496,9 +496,10 @@
 				784B673125EB0FA700001842 /* b2RopeJoint.cpp in Sources */,
 				784B673A25EB0FA700001842 /* b2Math.cpp in Sources */,
 				784B673025EB0FA700001842 /* b2PulleyJoint.cpp in Sources */,
+				784B675425EB158600001842 /* Renderer.mm in Sources */,
 				784B672725EB0FA700001842 /* b2MouseJoint.cpp in Sources */,
+				784B675325EB158600001842 /* GLESRenderer.cpp in Sources */,
 				784B674625EB0FA700001842 /* b2Collision.cpp in Sources */,
-				784B66AE25EB0EC200001842 /* GLESRenderer.cpp in Sources */,
 				784B673C25EB0FA700001842 /* b2CollideCircle.cpp in Sources */,
 				784B671925EB0FA700001842 /* b2Body.cpp in Sources */,
 				784B674125EB0FA700001842 /* b2CircleShape.cpp in Sources */,
@@ -508,7 +509,6 @@
 				784B672025EB0FA700001842 /* b2PolygonContact.cpp in Sources */,
 				784B673925EB0FA700001842 /* b2StackAllocator.cpp in Sources */,
 				784B672C25EB0FA700001842 /* b2RevoluteJoint.cpp in Sources */,
-				784B66AB25EB0EC200001842 /* Renderer.mm in Sources */,
 				974B070625DEF8AE00C8679A /* SceneDelegate.swift in Sources */,
 				784B671F25EB0FA700001842 /* b2PolygonAndCircleContact.cpp in Sources */,
 				784B672425EB0FA700001842 /* b2Contact.cpp in Sources */,
