@@ -8,7 +8,7 @@
 #include <map>
 
 // Some Box2D engine paremeters
-const float MAX_TIMESTEP = 1.0f/60.0f;
+const float MAX_TIMESTEP = REFRESH_RATE;
 const int NUM_VEL_ITERATIONS = 10;
 const int NUM_POS_ITERATIONS = 3;
 
@@ -62,12 +62,15 @@ public:
 
 @implementation CBox2D
 
+@synthesize xDir, yDir;
+//@synthesize _targetVector;
+
 - (instancetype)init
 {
     self = [super init];
     if (self) {
         // Initialize Box2D
-        gravity = new b2Vec2(0.0f, -10.0f);
+        gravity = new b2Vec2(0.0f, GRAVITY);
         world = new b2World(*gravity);
         
         // For HelloWorld
@@ -110,7 +113,7 @@ public:
                 circle.m_radius = BALL_RADIUS;
                 b2FixtureDef circleFixtureDef;
                 circleFixtureDef.shape = &circle;
-                circleFixtureDef.density = 1.0f;
+                circleFixtureDef.density = 0.1f;
                 circleFixtureDef.friction = 0.3f;
                 circleFixtureDef.restitution = 1.0f;
                 theBall->CreateFixture(&circleFixtureDef);
@@ -140,6 +143,7 @@ public:
     if (ballLaunched)
     {
         theBall->ApplyLinearImpulse(b2Vec2(0, BALL_VELOCITY), theBall->GetPosition(), true);
+        theBall->SetLinearVelocity(b2Vec2(xDir * JUMP_MAGNITUDE, yDir * JUMP_MAGNITUDE));
         theBall->SetActive(true);
 #ifdef LOG_TO_CONSOLE
         NSLog(@"Applying impulse %f to ball\n", BALL_VELOCITY);
@@ -155,15 +159,15 @@ public:
     
     // If the last collision test was positive,
     //  stop the ball and destroy the brick
-    if (ballHitBrick)
-    {
-        theBall->SetLinearVelocity(b2Vec2(0, 0));
-        theBall->SetAngularVelocity(0);
-        theBall->SetActive(false);
-        world->DestroyBody(theBrick);
-        theBrick = NULL;
-        ballHitBrick = false;
-    }
+//    if (ballHitBrick)
+//    {
+//        theBall->SetLinearVelocity(b2Vec2(0, 0));
+//        theBall->SetAngularVelocity(0);
+//        theBall->SetActive(false);
+//        world->DestroyBody(theBrick);
+//        theBrick = NULL;
+//        ballHitBrick = false;
+//    }
 
     if (world)
     {
@@ -186,7 +190,70 @@ public:
     ballHitBrick = true;
 }
 
--(void)LaunchBall
+-(void) SetTargetVector:(float)posX :(float)posY
+{
+    // Curate ball Pos value to be scaled to screen space.
+    b2Vec2 currentBallPos = theBall->GetPosition();
+    currentBallPos.x = (currentBallPos.x / SCREEN_BOUNDS_X);
+    
+    currentBallPos.y = -((currentBallPos.y / SCREEN_BOUNDS_Y) - 1);
+    
+    // Direction will be the vector between the two curated points.
+    xDir = posX - currentBallPos.x;
+    yDir =  currentBallPos.y - posY;
+    
+}
+
+// Halt current velocity, set initial target position
+-(void)InitiateNewJump:(float)posX :(float)posY
+{
+    theBall->SetLinearVelocity(b2Vec2(0, 150));
+    
+//    [SetTargetVector:posX :posY];
+    
+    // Curate ball Pos value to be scaled to screen space.
+    b2Vec2 currentBallPos = theBall->GetPosition();
+    currentBallPos.x = (currentBallPos.x / SCREEN_BOUNDS_X);
+    
+    currentBallPos.y = -((currentBallPos.y / SCREEN_BOUNDS_Y) - 1);
+    
+    // Direction will be the vector between the two curated points.
+    xDir = posX - currentBallPos.x;
+    yDir =  currentBallPos.y - posY;
+    
+    // Normalize the values
+    float vectorMagnitude = sqrt((pow(xDir, 2) + pow(yDir, 2)));
+    xDir = xDir / vectorMagnitude;
+    yDir = yDir / vectorMagnitude;
+    
+    printf("New tap, velocity targer %4.2f, %4.2f...\n", xDir, yDir);
+}
+
+// Update current position vector
+-(void)UpdateJumpTarget:(float)posX :(float)posY
+{
+    
+    // Curate ball Pos value to be scaled to screen space.
+    b2Vec2 currentBallPos = theBall->GetPosition();
+    currentBallPos.x = (currentBallPos.x / SCREEN_BOUNDS_X);
+    
+    currentBallPos.y = -((currentBallPos.y / SCREEN_BOUNDS_Y) - 1);
+    
+    // Direction will be the vector between the two curated points.
+    
+    xDir = posX - currentBallPos.x;
+    yDir = currentBallPos.y - posY;
+    
+    // Normalize the values
+    float vectorMagnitude = sqrt((pow(xDir, 2) + pow(yDir, 2)));
+    xDir = xDir / vectorMagnitude;
+    yDir = yDir / vectorMagnitude;
+    
+    printf("Updating Velocity Target to %4.2f, %4.2f..\n", xDir, yDir);
+}
+
+//
+-(void)LaunchJump
 {
     // Set some flag here for processing later...
     ballLaunched = true;
@@ -255,7 +322,7 @@ public:
         b2Vec2 position = body->GetPosition();
         float32 angle = body->GetAngle();
         
-        printf("%4.2f %4.2f %4.2f\n", position.x, position.y, angle);
+//        printf("%4.2f %4.2f %4.2f\n", position.x, position.y, angle);
     }
 }
 
