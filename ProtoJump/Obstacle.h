@@ -18,7 +18,7 @@
 #define OBSTACLE_MIN_WIDTH     50.0f
 #define OBSTACLE_MAX_HEIGHT    400.0f
 #define OBSTACLE_MIN_HEIGHT    100.0f
-#define OBSTACLE_DISTANCE      400
+#define OBSTACLE_DISTANCE      900
 
 
 //struct Obstacle;
@@ -29,6 +29,7 @@
 @property (nonatomic, readwrite) int posY;
 @property (nonatomic, readwrite) float width, height;
 
+-(void)randomize;
 -(void)dealloc;
 
 @end
