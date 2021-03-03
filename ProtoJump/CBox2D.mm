@@ -47,7 +47,13 @@ public:
     // Box2D-specific objects
     b2Vec2 *gravity;
     b2World *world;
-    b2Body *theBrick, *theBall, *theGround, *theRoof;
+
+    //b2BodyDef *groundBodyDef;
+    //b2Body *groundBody;
+    //b2PolygonShape *groundBox;
+
+    b2Body *theBrick, *theBall, *theGround, *theRoof, *theObstacle;
+
     CContactListener *contactListener;
     CGFloat width, height;
     float totalElapsedTime;
@@ -55,6 +61,7 @@ public:
     // You will also need some extra variables here for the logic
     bool ballHitBrick;
     bool ballLaunched;
+    bool obstacleHitCleaner;
 }
 @end
 
@@ -113,6 +120,7 @@ public:
             ballBodyDef.type = b2_dynamicBody;
             ballBodyDef.position.Set(BALL_POS_X, BALL_POS_Y);
             theBall = world->CreateBody(&ballBodyDef);
+            
             if (theBall)
             {
                 theBall->SetUserData((__bridge void *)self);
@@ -127,6 +135,24 @@ public:
                 circleFixtureDef.restitution = 0.0f;
                 theBall->CreateFixture(&circleFixtureDef);
             }
+        }
+        
+        b2BodyDef obstacleBodyDef;
+        obstacleBodyDef.type = b2_staticBody;
+        obstacleBodyDef.position.Set(OBSTACLE_POS_X, OBSTACLE_MAX_POS_Y);
+        theObstacle = world->CreateBody(&obstacleBodyDef);
+        if (theObstacle)
+        {
+            theObstacle->SetUserData((__bridge void *)self);
+            theObstacle->SetAwake(false);
+            b2PolygonShape staticBox;
+            staticBox.SetAsBox(OBSTACLE_MAX_WIDTH/2, OBSTACLE_MAX_HEIGHT/2);
+            b2FixtureDef fixtureDef;
+            fixtureDef.shape = &staticBox;
+            fixtureDef.density = 1.0f;
+            fixtureDef.friction = 0.3f;
+            fixtureDef.restitution = 0.0f;
+            theObstacle->CreateFixture(&fixtureDef);
         }
         
         totalElapsedTime = 0;
@@ -175,6 +201,10 @@ public:
 //        theBrick = NULL;
 //        ballHitBrick = false;
 //    }
+    
+    if(theObstacle)
+        theObstacle->SetAwake(true);
+
     //Needs more implementation
     if (theGround){
         theGround->SetTransform(b2Vec2(400 + step/SCREEN_BOUNDS_X,0), theGround->GetAngle());
@@ -284,6 +314,8 @@ public:
         (*objPosList)["ball"] = theBall->GetPosition();
     if (theBrick)
         (*objPosList)["brick"] = theBrick->GetPosition();
+    if (theObstacle)
+        (*objPosList)["obstacle"] = theObstacle->GetPosition();
     if (theGround)
         (*objPosList)["ground"] = theGround->GetPosition();
     if (theRoof)

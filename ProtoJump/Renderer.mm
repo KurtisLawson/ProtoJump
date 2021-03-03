@@ -39,8 +39,9 @@ enum
     GLuint programObject;
     std::chrono::time_point<std::chrono::steady_clock> lastTime;    // used to calculated elapsed time
 
-    GLuint brickVertexArray, ballVertexArray, groundVertexArray, roofVertexArray;   // vertex arrays for brick and ball
-    int numBrickVerts, numBallVerts, numGroundVerts, numRoofVerts, steps;
+    GLuint brickVertexArray, ballVertexArray, groundVertexArray, roofVertexArray, obstacleVertexArray;   // vertex arrays for brick and ball
+    int numBrickVerts, numBallVerts, numObstacleVerts, numGroundVerts, numRoofVerts, steps;
+
     GLKMatrix4 modelViewProjectionMatrix;   // model-view-projection matrix
 }
 
@@ -96,6 +97,7 @@ enum
     auto objPosList = static_cast<std::map<const char *, b2Vec2> *>([box2d GetObjectPositions]);
     b2Vec2 *theBall = (((*objPosList).find("ball") == (*objPosList).end()) ? nullptr : &(*objPosList)["ball"]);
     b2Vec2 *theBrick = (((*objPosList).find("brick") == (*objPosList).end()) ? nullptr : &(*objPosList)["brick"]);
+    b2Vec2 *theObstacle = (((*objPosList).find("obstacle") == (*objPosList).end()) ? nullptr : &(*objPosList)["obstacle"]);
     b2Vec2 *theGround = (((*objPosList).find("ground") == (*objPosList).end()) ? nullptr : &(*objPosList)["ground"]);
     b2Vec2 *theRoof = (((*objPosList).find("roof") == (*objPosList).end()) ? nullptr : &(*objPosList)["roof"]);
 
@@ -192,6 +194,63 @@ enum
         {
             vertCol[k] = 0.0f;
             vertCol[k+1] = 1.0f;
+            vertCol[k+2] = 0.0f;
+        }
+        glBindBuffer(GL_ARRAY_BUFFER, vertexBuffers[1]);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(vertCol), vertCol, GL_STATIC_DRAW);    // Send vertex data to VBO
+        glEnableVertexAttribArray(ATTRIB_COL);
+        glVertexAttribPointer(ATTRIB_COL, 3, GL_FLOAT, GL_FALSE, 3*sizeof(GLfloat), BUFFER_OFFSET(0));
+
+        glBindVertexArray(0);
+    }
+    
+    if (theObstacle)
+    {
+        // Set up VAO/VBO for obstacle
+        glGenVertexArrays(1, &obstacleVertexArray);
+        glBindVertexArray(obstacleVertexArray);
+        GLuint vertexBuffers[2];
+        glGenBuffers(2, vertexBuffers);
+        
+        // VBO for vertex positions
+        glBindBuffer(GL_ARRAY_BUFFER, vertexBuffers[0]);
+        GLfloat vertPos[18];    // 2 triangles x 3 vertices/triangle x 3 coords (x,y,z) per vertex
+        int k = 0;
+        numObstacleVerts = 0;
+        vertPos[k++] = theObstacle->x - OBSTACLE_MAX_WIDTH/2;
+        vertPos[k++] = theObstacle->y + OBSTACLE_MAX_HEIGHT/2;
+        vertPos[k++] = 10;  // z-value is always set to same value since 2D
+        numObstacleVerts++;
+        vertPos[k++] = theObstacle->x + OBSTACLE_MAX_WIDTH/2;
+        vertPos[k++] = theObstacle->y + OBSTACLE_MAX_HEIGHT/2;
+        vertPos[k++] = 10;
+        numObstacleVerts++;
+        vertPos[k++] = theObstacle->x + OBSTACLE_MAX_WIDTH/2;
+        vertPos[k++] = theObstacle->y - OBSTACLE_MAX_HEIGHT/2;
+        vertPos[k++] = 10;
+        numObstacleVerts++;
+        vertPos[k++] = theObstacle->x - OBSTACLE_MAX_WIDTH/2;
+        vertPos[k++] = theObstacle->y + OBSTACLE_MAX_HEIGHT/2;
+        vertPos[k++] = 10;
+        numObstacleVerts++;
+        vertPos[k++] = theObstacle->x + OBSTACLE_MAX_WIDTH/2;
+        vertPos[k++] = theObstacle->y - OBSTACLE_MAX_HEIGHT/2;
+        vertPos[k++] = 10;
+        numObstacleVerts++;
+        vertPos[k++] = theObstacle->x - OBSTACLE_MAX_WIDTH/2;
+        vertPos[k++] = theObstacle->y - OBSTACLE_MAX_HEIGHT/2;
+        vertPos[k++] = 10;
+        numObstacleVerts++;
+        glBufferData(GL_ARRAY_BUFFER, sizeof(vertPos), vertPos, GL_STATIC_DRAW);    // Send vertex data to VBO
+        glEnableVertexAttribArray(ATTRIB_POS);
+        glVertexAttribPointer(ATTRIB_POS, 3, GL_FLOAT, GL_FALSE, 3*sizeof(GLfloat), BUFFER_OFFSET(0));
+        
+        // VBO for vertex colours
+        GLfloat vertCol[numObstacleVerts*3];
+        for (k=0; k<numObstacleVerts*3; k+=3)
+        {
+            vertCol[k] = 1.0f;
+            vertCol[k+1] = 0.0f;
             vertCol[k+2] = 0.0f;
         }
         glBindBuffer(GL_ARRAY_BUFFER, vertexBuffers[1]);
@@ -337,6 +396,7 @@ enum
     auto objPosList = static_cast<std::map<const char *, b2Vec2> *>([box2d GetObjectPositions]);
     b2Vec2 *theBall = (((*objPosList).find("ball") == (*objPosList).end()) ? nullptr : &(*objPosList)["ball"]);
     b2Vec2 *theBrick = (((*objPosList).find("brick") == (*objPosList).end()) ? nullptr : &(*objPosList)["brick"]);
+    b2Vec2 *theObstacle = (((*objPosList).find("obstacle") == (*objPosList).end()) ? nullptr : &(*objPosList)["obstacle"]);
     b2Vec2 *theGround = (((*objPosList).find("ground") == (*objPosList).end()) ? nullptr : &(*objPosList)["ground"]);
     b2Vec2 *theRoof = (((*objPosList).find("roof") == (*objPosList).end()) ? nullptr : &(*objPosList)["roof"]);
 #ifdef LOG_TO_CONSOLE
@@ -356,6 +416,9 @@ enum
     if (theBall && numBallVerts > 0)
         glDrawArrays(GL_TRIANGLE_FAN, 0, numBallVerts);
     
+    glBindVertexArray(obstacleVertexArray);
+    if(theObstacle && numObstacleVerts > 0)
+        glDrawArrays(GL_TRIANGLES, 0, numObstacleVerts);
     glBindVertexArray(groundVertexArray);
     if (theGround && numGroundVerts > 0)
         glDrawArrays(GL_TRIANGLES, 0, numGroundVerts);

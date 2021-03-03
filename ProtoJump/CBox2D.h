@@ -32,6 +32,14 @@
 #define BALL_VELOCITY          100000.0f
 #define BALL_SPHERE_SEGS       128
 
+#define OBSTACLE_POS_X         900
+#define OBSTACLE_MAX_POS_Y     400
+#define OBSTACLE_MIN_POS_Y     200
+#define OBSTACLE_MAX_WIDTH     100.0f
+#define OBSTACLE_MIN_WIDTH     50.0f
+#define OBSTACLE_MAX_HEIGHT    400.0f
+#define OBSTACLE_MIN_HEIGHT    100.0f
+
 @interface CBox2D : NSObject
 
 @property float xDir;
@@ -40,6 +48,8 @@
 // @property b2Vec2 _targetVector;
 
 -(void) SetTargetVector:(float)posX:(float)posY;
+
+//-(void) GenerateObstacle;
 
 -(void) Update:(float)elapsedTime;  // update the Box2D engine
 -(void) RegisterHit;                // Register when the ball hits the brick
