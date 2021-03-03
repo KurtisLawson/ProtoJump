@@ -7,14 +7,18 @@ import GLKit
 extension ViewController: GLKViewControllerDelegate {
     func glkViewControllerUpdate(_ controller: GLKViewController) {
         glesRenderer.update()
+        
+        let c: String = String (format: "Score : %0.2f", glesRenderer.totalElapsedTime)
+        ScoreLabel.text = c;
     }
 }
 
 class ViewController: GLKViewController {
     
-    
     private var context: EAGLContext?
     private var glesRenderer: Renderer!
+    
+    @IBOutlet weak var ScoreLabel: UILabel!
     
     private func setupGL() {
         context = EAGLContext(api: .openGLES3)
@@ -35,6 +39,7 @@ class ViewController: GLKViewController {
 //        singleTap.numberOfTapsRequired = 1
 //        view.addGestureRecognizer(singleTap)
     }
+    
         
     @IBAction func TapAndHold(_ sender: UILongPressGestureRecognizer) {
         

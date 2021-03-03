@@ -37,6 +37,10 @@
 #define BALL_RADIUS            50.0f
 #define BALL_VELOCITY          100000.0f
 #define BALL_SPHERE_SEGS       128
+#define GROUND_ROOF_PADDING    10.0f
+#define GROUND_ROOF_POS_X      400
+#define GROUND_ROOF_WIDTH      800.0f
+#define GROUND_ROOF_HEIGHT     10.0f
 
 #define OBSTACLE_POS_X         900
 #define OBSTACLE_MAX_POS_Y     400
