@@ -41,8 +41,6 @@
 
 -(void) SetTargetVector:(float)posX:(float)posY;
 
--(void) HelloWorld; // Basic Hello World! example from Box2D
-
 -(void) Update:(float)elapsedTime;  // update the Box2D engine
 -(void) RegisterHit;                // Register when the ball hits the brick
 -(void *)GetObjectPositions;        // Get the positions of the ball and brick
