@@ -225,7 +225,27 @@ public:
     if((int)theGround->GetPosition().x - SCREEN_BOUNDS_X/2 >= theObstacle->GetPosition().x) {
         printf("Obsacle in middle of screen\n");
         [obstacle randomize];
-        theObstacle->SetTransform(b2Vec2(theObstacle->GetPosition().x + OBSTACLE_DISTANCE, obstacle.posY), theObstacle->GetAngle());
+        
+        b2BodyDef obstacleBodyDef;
+        obstacleBodyDef.type = b2_staticBody;
+        obstacleBodyDef.position.Set(theGround->GetPosition().x + SCREEN_BOUNDS_X/2, obstacle.posY);
+        theObstacle = world->CreateBody(&obstacleBodyDef);
+        if (theObstacle)
+        {
+            theObstacle->SetUserData((__bridge void *)self);
+            theObstacle->SetAwake(false);
+            b2PolygonShape staticBox;
+            staticBox.SetAsBox(obstacle.width/2, obstacle.height/2);
+            b2FixtureDef fixtureDef;
+            fixtureDef.shape = &staticBox;
+            fixtureDef.density = 1.0f;
+            fixtureDef.friction = 0.3f;
+            fixtureDef.restitution = 0.0f;
+            theObstacle->CreateFixture(&fixtureDef);
+        }
+        
+        
+        //theObstacle->SetTransform(b2Vec2(theObstacle->GetPosition().x + OBSTACLE_DISTANCE, obstacle.posY), theObstacle->GetAngle());
     }
     
     if (world)
