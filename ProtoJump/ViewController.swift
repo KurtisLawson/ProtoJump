@@ -42,26 +42,29 @@ class ViewController: GLKViewController {
     
         
     @IBAction func TapAndHold(_ sender: UILongPressGestureRecognizer) {
-        
-//        float xPos;
-        let tapLocation = sender.location(in: sender.view)
-        
-        let screenSize: CGRect = UIScreen.main.bounds;
-        let xPos : Float = Float(tapLocation.x / screenSize.width);
-        let yPos : Float = Float(tapLocation.y / screenSize.height);
-        
-        if sender.state == .began {
-//            NSLog("User has tapped the button at \(xPos), \(yPos) - OnStateEnter")
-            glesRenderer.box2d.initiateNewJump(xPos, yPos)
+        // Disable input if the GameDirector 
+        if (!glesRenderer.box2d.dead) {
+    //        float xPos;
+            let tapLocation = sender.location(in: sender.view)
             
-        } else if sender.state == .changed {
+            let screenSize: CGRect = UIScreen.main.bounds;
+            let xPos : Float = Float(tapLocation.x / screenSize.width);
+            let yPos : Float = Float(tapLocation.y / screenSize.height);
             
-//            NSLog("User has updated their tap at \(xPos), \(yPos) - OnStateChanged")
-            glesRenderer.box2d.updateJumpTarget(xPos, yPos)
-            
-        } else if sender.state == .ended {
-//            NSLog("User has released the button - OnStateExit")
-            glesRenderer.box2d.launchJump()
+            if sender.state == .began {
+    //            NSLog("User has tapped the button at \(xPos), \(yPos) - OnStateEnter")
+                glesRenderer.box2d.initiateNewJump(xPos, yPos)
+                
+            } else if sender.state == .changed {
+                
+    //            NSLog("User has updated their tap at \(xPos), \(yPos) - OnStateChanged")
+                glesRenderer.box2d.updateJumpTarget(xPos, yPos)
+                
+            } else if sender.state == .ended {
+    //            NSLog("User has released the button - OnStateExit")
+                glesRenderer.box2d.launchJump()
+            }
+                
         }
 
     }
