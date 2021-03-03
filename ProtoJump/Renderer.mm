@@ -219,28 +219,28 @@ enum
         GLfloat vertPos[18];    // 2 triangles x 3 vertices/triangle x 3 coords (x,y,z) per vertex
         int k = 0;
         numObstacleVerts = 0;
-        vertPos[k++] = theObstacle->x - OBSTACLE_MAX_WIDTH/2;
-        vertPos[k++] = theObstacle->y + OBSTACLE_MAX_HEIGHT/2;
+        vertPos[k++] = theObstacle->x - box2d.obstacle.width/2;
+        vertPos[k++] = theObstacle->y + box2d.obstacle.height/2;
         vertPos[k++] = 10;  // z-value is always set to same value since 2D
         numObstacleVerts++;
-        vertPos[k++] = theObstacle->x + OBSTACLE_MAX_WIDTH/2;
-        vertPos[k++] = theObstacle->y + OBSTACLE_MAX_HEIGHT/2;
+        vertPos[k++] = theObstacle->x + box2d.obstacle.width/2;
+        vertPos[k++] = theObstacle->y + box2d.obstacle.height/2;
         vertPos[k++] = 10;
         numObstacleVerts++;
-        vertPos[k++] = theObstacle->x + OBSTACLE_MAX_WIDTH/2;
-        vertPos[k++] = theObstacle->y - OBSTACLE_MAX_HEIGHT/2;
+        vertPos[k++] = theObstacle->x + box2d.obstacle.width/2;
+        vertPos[k++] = theObstacle->y - box2d.obstacle.height/2;
         vertPos[k++] = 10;
         numObstacleVerts++;
-        vertPos[k++] = theObstacle->x - OBSTACLE_MAX_WIDTH/2;
-        vertPos[k++] = theObstacle->y + OBSTACLE_MAX_HEIGHT/2;
+        vertPos[k++] = theObstacle->x - box2d.obstacle.width/2;
+        vertPos[k++] = theObstacle->y + box2d.obstacle.height/2;
         vertPos[k++] = 10;
         numObstacleVerts++;
-        vertPos[k++] = theObstacle->x + OBSTACLE_MAX_WIDTH/2;
-        vertPos[k++] = theObstacle->y - OBSTACLE_MAX_HEIGHT/2;
+        vertPos[k++] = theObstacle->x + box2d.obstacle.width/2;
+        vertPos[k++] = theObstacle->y - box2d.obstacle.height/2;
         vertPos[k++] = 10;
         numObstacleVerts++;
-        vertPos[k++] = theObstacle->x - OBSTACLE_MAX_WIDTH/2;
-        vertPos[k++] = theObstacle->y - OBSTACLE_MAX_HEIGHT/2;
+        vertPos[k++] = theObstacle->x - box2d.obstacle.width/2;
+        vertPos[k++] = theObstacle->y - box2d.obstacle.height/2;
         vertPos[k++] = 10;
         numObstacleVerts++;
         glBufferData(GL_ARRAY_BUFFER, sizeof(vertPos), vertPos, GL_STATIC_DRAW);    // Send vertex data to VBO

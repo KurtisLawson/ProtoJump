@@ -49,6 +49,7 @@
 @property float xDir;
 @property float yDir;
 @property bool dead;
+@property (nonatomic) Obstacle * obstacle;
 
 // @property b2Vec2 _targetVector;
 

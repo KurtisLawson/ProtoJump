@@ -7,6 +7,7 @@
 
 #ifndef Obstacle_h
 #define Obstacle_h
+#import <Foundation/Foundation.h>
 #include <time.h>
 #include <stdlib.h>
 
@@ -18,18 +19,16 @@
 #define OBSTACLE_MAX_HEIGHT    400.0f
 #define OBSTACLE_MIN_HEIGHT    100.0f
 
-struct Obstacle
-{
-    float red, green, blue, width, height;
-    int posY;
-    Obstacle()
-    {
-        srand(time(0));
-        red = green = blue = 1;
-        width = (rand() / (OBSTACLE_MAX_WIDTH + 1) + OBSTACLE_MIN_WIDTH);
-        height = (rand() / (OBSTACLE_MAX_HEIGHT + 1) + OBSTACLE_MIN_HEIGHT);
-        posY = rand() / (OBSTACLE_MAX_POS_Y + 1) + OBSTACLE_MIN_POS_Y;
-    }
-};
 
+//struct Obstacle;
+
+@interface Obstacle : NSObject {}
+
+@property (nonatomic, readwrite) float red, green, blue;
+@property (nonatomic, readwrite) int posY;
+@property (nonatomic, readwrite) float width, height;
+
+-(void)dealloc;
+
+@end
 #endif /* Obstacle_h */

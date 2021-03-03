@@ -47,6 +47,7 @@ public:
     // Box2D-specific objects
     b2Vec2 *gravity;
     b2World *world;
+    //Obstacle *obstacle;
 
     //b2BodyDef *groundBodyDef;
     //b2Body *groundBody;
@@ -69,6 +70,7 @@ public:
 
 @synthesize xDir, yDir;
 @synthesize dead;
+@synthesize obstacle;
 //@synthesize _targetVector;
 
 - (instancetype)init
@@ -138,16 +140,17 @@ public:
             }
         }
         
+        obstacle = [[Obstacle alloc]init];
         b2BodyDef obstacleBodyDef;
         obstacleBodyDef.type = b2_staticBody;
-        obstacleBodyDef.position.Set(OBSTACLE_POS_X, OBSTACLE_MAX_POS_Y);
+        obstacleBodyDef.position.Set(OBSTACLE_POS_X, obstacle.posY);
         theObstacle = world->CreateBody(&obstacleBodyDef);
         if (theObstacle)
         {
             theObstacle->SetUserData((__bridge void *)self);
             theObstacle->SetAwake(false);
             b2PolygonShape staticBox;
-            staticBox.SetAsBox(OBSTACLE_MAX_WIDTH/2, OBSTACLE_MAX_HEIGHT/2);
+            staticBox.SetAsBox(obstacle.width/2, obstacle.height/2);
             b2FixtureDef fixtureDef;
             fixtureDef.shape = &staticBox;
             fixtureDef.density = 1.0f;
