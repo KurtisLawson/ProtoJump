@@ -32,7 +32,7 @@
 #define BALL_VELOCITY          100000.0f
 #define BALL_SPHERE_SEGS       128
 
-#define OBSTACLE_POS_X         100
+#define OBSTACLE_POS_X         900
 #define OBSTACLE_MAX_POS_Y     400
 #define OBSTACLE_MIN_POS_Y     200
 #define OBSTACLE_MAX_WIDTH     100.0f
@@ -50,6 +50,8 @@
 -(void) SetTargetVector:(float)posX:(float)posY;
 
 -(void) HelloWorld; // Basic Hello World! example from Box2D
+
+//-(void) GenerateObstacle;
 
 -(void) Update:(float)elapsedTime;  // update the Box2D engine
 -(void) RegisterHit;                // Register when the ball hits the brick
