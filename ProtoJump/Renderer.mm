@@ -274,28 +274,28 @@ enum
         GLfloat vertPos[18];    // 2 triangles x 3 vertices/triangle x 3 coords (x,y,z) per vertex
         int k = 0;
         numGroundVerts = 0;
-        vertPos[k++] = theGround->x - BRICK_WIDTH/2;
-        vertPos[k++] = theGround->y + BRICK_HEIGHT/2;
+        vertPos[k++] = theGround->x - GROUND_ROOF_WIDTH/2;
+        vertPos[k++] = theGround->y + GROUND_ROOF_HEIGHT/2;
         vertPos[k++] = 10;  // z-value is always set to same value since 2D
         numGroundVerts++;
-        vertPos[k++] = theGround->x + BRICK_WIDTH/2;
-        vertPos[k++] = theGround->y + BRICK_HEIGHT/2;
+        vertPos[k++] = theGround->x + GROUND_ROOF_WIDTH/2;
+        vertPos[k++] = theGround->y + GROUND_ROOF_HEIGHT/2;
         vertPos[k++] = 10;
         numGroundVerts++;
-        vertPos[k++] = theGround->x + BRICK_WIDTH/2;
-        vertPos[k++] = theGround->y - BRICK_HEIGHT/2;
+        vertPos[k++] = theGround->x + GROUND_ROOF_WIDTH/2;
+        vertPos[k++] = theGround->y - GROUND_ROOF_HEIGHT/2;
         vertPos[k++] = 10;
         numGroundVerts++;
-        vertPos[k++] = theGround->x - BRICK_WIDTH/2;
-        vertPos[k++] = theGround->y + BRICK_HEIGHT/2;
+        vertPos[k++] = theGround->x - GROUND_ROOF_WIDTH/2;
+        vertPos[k++] = theGround->y + GROUND_ROOF_HEIGHT/2;
         vertPos[k++] = 10;
         numGroundVerts++;
-        vertPos[k++] = theGround->x + BRICK_WIDTH/2;
-        vertPos[k++] = theGround->y - BRICK_HEIGHT/2;
+        vertPos[k++] = theGround->x + GROUND_ROOF_WIDTH/2;
+        vertPos[k++] = theGround->y - GROUND_ROOF_HEIGHT/2;
         vertPos[k++] = 10;
         numGroundVerts++;
-        vertPos[k++] = theGround->x - BRICK_WIDTH/2;
-        vertPos[k++] = theGround->y - BRICK_HEIGHT/2;
+        vertPos[k++] = theGround->x - GROUND_ROOF_WIDTH/2;
+        vertPos[k++] = theGround->y - GROUND_ROOF_HEIGHT/2;
         vertPos[k++] = 10;
         numGroundVerts++;
         glBufferData(GL_ARRAY_BUFFER, sizeof(vertPos), vertPos, GL_STATIC_DRAW);    // Send vertex data to VBO
@@ -331,28 +331,28 @@ enum
         GLfloat vertPos[18];    // 2 triangles x 3 vertices/triangle x 3 coords (x,y,z) per vertex
         int k = 0;
         numRoofVerts = 0;
-        vertPos[k++] = theRoof->x - BRICK_WIDTH/2;
-        vertPos[k++] = theRoof->y + BRICK_HEIGHT/2;
+        vertPos[k++] = theRoof->x - GROUND_ROOF_WIDTH/2;
+        vertPos[k++] = theRoof->y + GROUND_ROOF_HEIGHT/2;
         vertPos[k++] = 10;  // z-value is always set to same value since 2D
         numRoofVerts++;
-        vertPos[k++] = theRoof->x + BRICK_WIDTH/2;
-        vertPos[k++] = theRoof->y + BRICK_HEIGHT/2;
+        vertPos[k++] = theRoof->x + GROUND_ROOF_WIDTH/2;
+        vertPos[k++] = theRoof->y + GROUND_ROOF_HEIGHT/2;
         vertPos[k++] = 10;
         numRoofVerts++;
-        vertPos[k++] = theRoof->x + BRICK_WIDTH/2;
-        vertPos[k++] = theRoof->y - BRICK_HEIGHT/2;
+        vertPos[k++] = theRoof->x + GROUND_ROOF_WIDTH/2;
+        vertPos[k++] = theRoof->y - GROUND_ROOF_HEIGHT/2;
         vertPos[k++] = 10;
         numRoofVerts++;
-        vertPos[k++] = theRoof->x - BRICK_WIDTH/2;
-        vertPos[k++] = theRoof->y + BRICK_HEIGHT/2;
+        vertPos[k++] = theRoof->x - GROUND_ROOF_WIDTH/2;
+        vertPos[k++] = theRoof->y + GROUND_ROOF_HEIGHT/2;
         vertPos[k++] = 10;
         numRoofVerts++;
-        vertPos[k++] = theRoof->x + BRICK_WIDTH/2;
-        vertPos[k++] = theRoof->y - BRICK_HEIGHT/2;
+        vertPos[k++] = theRoof->x + GROUND_ROOF_WIDTH/2;
+        vertPos[k++] = theRoof->y - GROUND_ROOF_HEIGHT/2;
         vertPos[k++] = 10;
         numRoofVerts++;
-        vertPos[k++] = theRoof->x - BRICK_WIDTH/2;
-        vertPos[k++] = theRoof->y - BRICK_HEIGHT/2;
+        vertPos[k++] = theRoof->x - GROUND_ROOF_WIDTH/2;
+        vertPos[k++] = theRoof->y - GROUND_ROOF_HEIGHT/2;
         vertPos[k++] = 10;
         numRoofVerts++;
         glBufferData(GL_ARRAY_BUFFER, sizeof(vertPos), vertPos, GL_STATIC_DRAW);    // Send vertex data to VBO

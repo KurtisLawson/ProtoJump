@@ -80,18 +80,18 @@ public:
         
         b2BodyDef gdBodyDef;
         gdBodyDef.type = b2_staticBody;
-        gdBodyDef.position.Set(400.0f, 10.f);//width, height of the ground
+        gdBodyDef.position.Set(GROUND_ROOF_POS_X, GROUND_ROOF_PADDING);//width, height of the ground
         theGround = world->CreateBody(&gdBodyDef);
         b2PolygonShape gdBox;
-        gdBox.SetAsBox(5000.0f, 10.0f);
+        gdBox.SetAsBox(GROUND_ROOF_WIDTH, GROUND_ROOF_HEIGHT);
         theGround->CreateFixture(&gdBox, 0.0f);
         
         b2BodyDef rfBodyDef;
         rfBodyDef.type = b2_staticBody;
-        rfBodyDef.position.Set(400.0f, SCREEN_BOUNDS_Y);//width, height of the ground
+        rfBodyDef.position.Set(GROUND_ROOF_POS_X, SCREEN_BOUNDS_Y - GROUND_ROOF_PADDING);
         theRoof = world->CreateBody(&rfBodyDef);
         b2PolygonShape rfBox;
-        rfBox.SetAsBox(5000.0f, 10.0f);// physical box
+        rfBox.SetAsBox(GROUND_ROOF_WIDTH, GROUND_ROOF_HEIGHT);// physical box
         theRoof->CreateFixture(&rfBox, 0.0f);
 
         // For brick & ball sample
@@ -207,12 +207,12 @@ public:
 
     //Needs more implementation
     if (theGround){
-        theGround->SetTransform(b2Vec2(400 + step/SCREEN_BOUNDS_X,0), theGround->GetAngle());
+        theGround->SetTransform(b2Vec2(400 + step/SCREEN_BOUNDS_X - step,0), theGround->GetAngle());
         theGround->SetAwake(true);
     }
     
     if (theRoof){
-        theRoof->SetTransform(b2Vec2(400 + step/SCREEN_BOUNDS_X,SCREEN_BOUNDS_Y), theGround->GetAngle());
+        theRoof->SetTransform(b2Vec2(400 + step/SCREEN_BOUNDS_X - step,SCREEN_BOUNDS_Y), theGround->GetAngle());
         theRoof->SetAwake(true);
     }
     
