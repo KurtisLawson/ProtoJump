@@ -222,8 +222,11 @@ public:
         theLeftWall->SetTransform(b2Vec2(0 + step/SCREEN_BOUNDS_X - step,SCREEN_BOUNDS_Y/2), theLeftWall->GetAngle());
     }
     
-    if((int)theGround->GetPosition().x % (OBSTACLE_DISTANCE) == 0)
-        printf("Obsacle in middle of screen");
+    if((int)theGround->GetPosition().x - SCREEN_BOUNDS_X/2 >= theObstacle->GetPosition().x) {
+        printf("Obsacle in middle of screen\n");
+        [obstacle randomize];
+        theObstacle->SetTransform(b2Vec2(theObstacle->GetPosition().x + OBSTACLE_DISTANCE, obstacle.posY), theObstacle->GetAngle());
+    }
     
     if (world)
     {
@@ -238,7 +241,7 @@ public:
             world->Step(elapsedTime, NUM_VEL_ITERATIONS, NUM_POS_ITERATIONS);
         }
     }
-    step--;
+    step -= GAME_SPEED;
 }
 
 -(void)RegisterHit

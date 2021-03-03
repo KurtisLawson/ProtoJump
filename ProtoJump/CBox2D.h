@@ -44,6 +44,8 @@
 #define GROUND_ROOF_WIDTH      800.0f
 #define GROUND_ROOF_HEIGHT     10.0f
 
+#define GAME_SPEED             5
+
 @interface CBox2D : NSObject
 
 @property float xDir;
