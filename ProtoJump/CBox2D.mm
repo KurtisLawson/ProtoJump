@@ -47,13 +47,11 @@ public:
     // Box2D-specific objects
     b2Vec2 *gravity;
     b2World *world;
-    b2BodyDef *groundBodyDef;
-    b2Body *groundBody;
-    b2PolygonShape *groundBox;
-    b2Body *theBrick, *theBall;
+    b2Body *theBrick, *theBall, *theGround, *theRoof;
     CContactListener *contactListener;
+    CGFloat width, height;
     float totalElapsedTime;
-
+    int step;
     // You will also need some extra variables here for the logic
     bool ballHitBrick;
     bool ballLaunched;
@@ -73,10 +71,21 @@ public:
         gravity = new b2Vec2(0.0f, GRAVITY);
         world = new b2World(*gravity);
         
-        // For HelloWorld
-        groundBodyDef = NULL;
-        groundBody = NULL;
-        groundBox = NULL;
+        b2BodyDef gdBodyDef;
+        gdBodyDef.type = b2_staticBody;
+        gdBodyDef.position.Set(400.0f, 10.f);//width, height of the ground
+        theGround = world->CreateBody(&gdBodyDef);
+        b2PolygonShape gdBox;
+        gdBox.SetAsBox(5000.0f, 10.0f);
+        theGround->CreateFixture(&gdBox, 0.0f);
+        
+        b2BodyDef rfBodyDef;
+        rfBodyDef.type = b2_staticBody;
+        rfBodyDef.position.Set(400.0f, SCREEN_BOUNDS_Y);//width, height of the ground
+        theRoof = world->CreateBody(&rfBodyDef);
+        b2PolygonShape rfBox;
+        rfBox.SetAsBox(5000.0f, 10.0f);// physical box
+        theRoof->CreateFixture(&rfBox, 0.0f);
 
         // For brick & ball sample
         contactListener = new CContactListener();
@@ -97,7 +106,7 @@ public:
             fixtureDef.shape = &dynamicBox;
             fixtureDef.density = 1.0f;
             fixtureDef.friction = 0.3f;
-            fixtureDef.restitution = 1.0f;
+            fixtureDef.restitution = 0.0f;
             theBrick->CreateFixture(&fixtureDef);
             
             b2BodyDef ballBodyDef;
@@ -115,7 +124,7 @@ public:
                 circleFixtureDef.shape = &circle;
                 circleFixtureDef.density = 0.1f;
                 circleFixtureDef.friction = 0.3f;
-                circleFixtureDef.restitution = 1.0f;
+                circleFixtureDef.restitution = 0.0f;
                 theBall->CreateFixture(&circleFixtureDef);
             }
         }
@@ -131,8 +140,6 @@ public:
 {
     if (gravity) delete gravity;
     if (world) delete world;
-    if (groundBodyDef) delete groundBodyDef;
-    if (groundBox) delete groundBox;
     if (contactListener) delete contactListener;
 }
 
@@ -168,7 +175,17 @@ public:
 //        theBrick = NULL;
 //        ballHitBrick = false;
 //    }
-
+    //Needs more implementation
+    if (theGround){
+        theGround->SetTransform(b2Vec2(400 + step/SCREEN_BOUNDS_X,0), theGround->GetAngle());
+        theGround->SetAwake(true);
+    }
+    
+    if (theRoof){
+        theRoof->SetTransform(b2Vec2(400 + step/SCREEN_BOUNDS_X,SCREEN_BOUNDS_Y), theGround->GetAngle());
+        theRoof->SetAwake(true);
+    }
+    
     if (world)
     {
         while (elapsedTime >= MAX_TIMESTEP)
@@ -182,6 +199,7 @@ public:
             world->Step(elapsedTime, NUM_VEL_ITERATIONS, NUM_POS_ITERATIONS);
         }
     }
+    step--;
 }
 
 -(void)RegisterHit
@@ -194,7 +212,7 @@ public:
 {
     // Curate ball Pos value to be scaled to screen space.
     b2Vec2 currentBallPos = theBall->GetPosition();
-    currentBallPos.x = (currentBallPos.x / SCREEN_BOUNDS_X);
+    currentBallPos.x = ((currentBallPos.x + step)/ SCREEN_BOUNDS_X);
     
     currentBallPos.y = -((currentBallPos.y / SCREEN_BOUNDS_Y) - 1);
     
@@ -213,7 +231,7 @@ public:
     
     // Curate ball Pos value to be scaled to screen space.
     b2Vec2 currentBallPos = theBall->GetPosition();
-    currentBallPos.x = (currentBallPos.x / SCREEN_BOUNDS_X);
+    currentBallPos.x = ((currentBallPos.x + step) / SCREEN_BOUNDS_X);
     
     currentBallPos.y = -((currentBallPos.y / SCREEN_BOUNDS_Y) - 1);
     
@@ -235,7 +253,7 @@ public:
     
     // Curate ball Pos value to be scaled to screen space.
     b2Vec2 currentBallPos = theBall->GetPosition();
-    currentBallPos.x = (currentBallPos.x / SCREEN_BOUNDS_X);
+    currentBallPos.x = ((currentBallPos.x + step)/ SCREEN_BOUNDS_X);
     
     currentBallPos.y = -((currentBallPos.y / SCREEN_BOUNDS_Y) - 1);
     
@@ -266,64 +284,11 @@ public:
         (*objPosList)["ball"] = theBall->GetPosition();
     if (theBrick)
         (*objPosList)["brick"] = theBrick->GetPosition();
+    if (theGround)
+        (*objPosList)["ground"] = theGround->GetPosition();
+    if (theRoof)
+        (*objPosList)["roof"] = theRoof->GetPosition();
     return reinterpret_cast<void *>(objPosList);
-}
-
-
-
--(void)HelloWorld
-{
-    groundBodyDef = new b2BodyDef;
-    groundBodyDef->position.Set(0.0f, -10.0f);
-    groundBody = world->CreateBody(groundBodyDef);
-    groundBox = new b2PolygonShape;
-    groundBox->SetAsBox(50.0f, 10.0f);
-    
-    groundBody->CreateFixture(groundBox, 0.0f);
-    
-    // Define the dynamic body. We set its position and call the body factory.
-    b2BodyDef bodyDef;
-    bodyDef.type = b2_dynamicBody;
-    bodyDef.position.Set(0.0f, 4.0f);
-    b2Body* body = world->CreateBody(&bodyDef);
-    
-    // Define another box shape for our dynamic body.
-    b2PolygonShape dynamicBox;
-    dynamicBox.SetAsBox(1.0f, 1.0f);
-    
-    // Define the dynamic body fixture.
-    b2FixtureDef fixtureDef;
-    fixtureDef.shape = &dynamicBox;
-    
-    // Set the box density to be non-zero, so it will be dynamic.
-    fixtureDef.density = 1.0f;
-    
-    // Override the default friction.
-    fixtureDef.friction = 0.3f;
-    
-    // Add the shape to the body.
-    body->CreateFixture(&fixtureDef);
-    
-    // Prepare for simulation. Typically we use a time step of 1/60 of a
-    // second (60Hz) and 10 iterations. This provides a high quality simulation
-    // in most game scenarios.
-    float32 timeStep = 1.0f / 60.0f;
-    int32 velocityIterations = 6;
-    int32 positionIterations = 2;
-    
-    // This is our little game loop.
-    for (int32 i = 0; i < 60; ++i)
-    {
-        // Instruct the world to perform a single step of simulation.
-        // It is generally best to keep the time step and iterations fixed.
-        world->Step(timeStep, velocityIterations, positionIterations);
-        
-        // Now print the position and angle of the body.
-        b2Vec2 position = body->GetPosition();
-        float32 angle = body->GetAngle();
-        
-//        printf("%4.2f %4.2f %4.2f\n", position.x, position.y, angle);
-    }
 }
 
 @end
