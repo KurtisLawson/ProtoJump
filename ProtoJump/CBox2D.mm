@@ -68,6 +68,7 @@ public:
 @implementation CBox2D
 
 @synthesize xDir, yDir;
+@synthesize dead;
 //@synthesize _targetVector;
 
 - (instancetype)init
@@ -192,15 +193,13 @@ public:
     
     // If the last collision test was positive,
     //  stop the ball and destroy the brick
-//    if (ballHitBrick)
-//    {
-//        theBall->SetLinearVelocity(b2Vec2(0, 0));
-//        theBall->SetAngularVelocity(0);
-//        theBall->SetActive(false);
-//        world->DestroyBody(theBrick);
-//        theBrick = NULL;
-//        ballHitBrick = false;
-//    }
+    if (ballHitLeftWall)
+    {
+        world->DestroyBody(theBall);
+        theBall = NULL;
+        ballHitLeftWall = false;
+        dead = true;
+    }
     
     if(theObstacle)
         theObstacle->SetAwake(true);
@@ -217,7 +216,7 @@ public:
     }
     
     if(theLeftWall){
-        theLeftWall->SetTransform(b2Vec2(400 + step/SCREEN_BOUNDS_X,Left_Wall_HEIGHT), theLeftWall->GetAngle());
+        theLeftWall->SetTransform(b2Vec2(0 + step/SCREEN_BOUNDS_X - step,SCREEN_BOUNDS_Y/2), theLeftWall->GetAngle());
     }
     
     if (world)

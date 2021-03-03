@@ -81,7 +81,6 @@ enum
     glClearColor ( 0.0f, 0.0f, 0.0f, 0.0f );
     glEnable(GL_DEPTH_TEST);
     lastTime = std::chrono::steady_clock::now();
-
     // Initialize Box2D
     box2d = [[CBox2D alloc] init];
 }
@@ -93,9 +92,9 @@ enum
     auto elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - lastTime).count();
     lastTime = currentTime;
     [box2d Update:elapsedTime/1000.0f];
-    
-    totalElapsedTime += elapsedTime/1000.0f;
-
+    if(!box2d.dead){
+        totalElapsedTime += elapsedTime/1000.0f;
+    }
     // Get the ball and brick objects from Box2D
     auto objPosList = static_cast<std::map<const char *, b2Vec2> *>([box2d GetObjectPositions]);
     b2Vec2 *theBall = (((*objPosList).find("ball") == (*objPosList).end()) ? nullptr : &(*objPosList)["ball"]);

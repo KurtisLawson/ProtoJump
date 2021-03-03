@@ -8,8 +8,8 @@ extension ViewController: GLKViewControllerDelegate {
     func glkViewControllerUpdate(_ controller: GLKViewController) {
         glesRenderer.update()
         
-        let c: String = String (format: "Score : %0.2f", glesRenderer.totalElapsedTime)
-        ScoreLabel.text = c;
+            let c: String = String (format: "Score : %0.2f", glesRenderer.totalElapsedTime)
+            ScoreLabel.text = c;
     }
 }
 

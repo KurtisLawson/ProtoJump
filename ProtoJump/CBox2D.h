@@ -54,6 +54,7 @@
 
 @property float xDir;
 @property float yDir;
+@property bool dead;
 
 // @property b2Vec2 _targetVector;
 
