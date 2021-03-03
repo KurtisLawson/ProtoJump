@@ -52,14 +52,14 @@ public:
     //b2Body *groundBody;
     //b2PolygonShape *groundBox;
 
-    b2Body *theBrick, *theBall, *theGround, *theRoof, *theObstacle;
+    b2Body *theLeftWall, *theBall, *theGround, *theRoof, *theObstacle;
 
     CContactListener *contactListener;
     CGFloat width, height;
     float totalElapsedTime;
     int step;
     // You will also need some extra variables here for the logic
-    bool ballHitBrick;
+    bool ballHitLeftWall;
     bool ballLaunched;
     bool obstacleHitCleaner;
 }
@@ -99,22 +99,22 @@ public:
         world->SetContactListener(contactListener);
         
         // Set up the brick and ball objects for Box2D
-        b2BodyDef brickBodyDef;
-        brickBodyDef.type = b2_dynamicBody;
-        brickBodyDef.position.Set(BRICK_POS_X, BRICK_POS_Y);
-        theBrick = world->CreateBody(&brickBodyDef);
-        if (theBrick)
+        b2BodyDef leftwallBodyDef;
+        leftwallBodyDef.type = b2_kinematicBody;
+        leftwallBodyDef.position.Set(Left_Wall_POS_X, Left_Wall_POS_Y);
+        theLeftWall = world->CreateBody(&leftwallBodyDef);
+        if (theLeftWall)
         {
-            theBrick->SetUserData((__bridge void *)self);
-            theBrick->SetAwake(false);
+            theLeftWall->SetUserData((__bridge void *)self);
+            theLeftWall->SetAwake(false);
             b2PolygonShape dynamicBox;
-            dynamicBox.SetAsBox(BRICK_WIDTH/2, BRICK_HEIGHT/2);
+            dynamicBox.SetAsBox(Left_Wall_WIDTH/2, Left_Wall_HEIGHT/2);
             b2FixtureDef fixtureDef;
             fixtureDef.shape = &dynamicBox;
             fixtureDef.density = 1.0f;
             fixtureDef.friction = 0.3f;
             fixtureDef.restitution = 0.0f;
-            theBrick->CreateFixture(&fixtureDef);
+            theLeftWall->CreateFixture(&fixtureDef);
             
             b2BodyDef ballBodyDef;
             ballBodyDef.type = b2_dynamicBody;
@@ -156,7 +156,7 @@ public:
         }
         
         totalElapsedTime = 0;
-        ballHitBrick = false;
+        ballHitLeftWall = false;
         ballLaunched = false;
     }
     return self;
@@ -187,8 +187,8 @@ public:
     // Check if it is time yet to drop the brick, and if so
     //  call SetAwake()
     totalElapsedTime += elapsedTime;
-    if ((totalElapsedTime > BRICK_WAIT) && theBrick)
-        theBrick->SetAwake(true);
+    if ((totalElapsedTime > BRICK_WAIT) && theLeftWall)
+        theLeftWall->SetAwake(true);
     
     // If the last collision test was positive,
     //  stop the ball and destroy the brick
@@ -216,6 +216,10 @@ public:
         theRoof->SetAwake(true);
     }
     
+    if(theLeftWall){
+        theLeftWall->SetTransform(b2Vec2(400 + step/SCREEN_BOUNDS_X,Left_Wall_HEIGHT), theLeftWall->GetAngle());
+    }
+    
     if (world)
     {
         while (elapsedTime >= MAX_TIMESTEP)
@@ -235,7 +239,7 @@ public:
 -(void)RegisterHit
 {
     // Set some flag here for processing later...
-    ballHitBrick = true;
+    ballHitLeftWall = true;
 }
 
 -(void) SetTargetVector:(float)posX :(float)posY
@@ -312,8 +316,8 @@ public:
     auto *objPosList = new std::map<const char *,b2Vec2>;
     if (theBall)
         (*objPosList)["ball"] = theBall->GetPosition();
-    if (theBrick)
-        (*objPosList)["brick"] = theBrick->GetPosition();
+    if (theLeftWall)
+        (*objPosList)["leftwall"] = theLeftWall->GetPosition();
     if (theObstacle)
         (*objPosList)["obstacle"] = theObstacle->GetPosition();
     if (theGround)

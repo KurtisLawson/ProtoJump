@@ -40,7 +40,7 @@ enum
     std::chrono::time_point<std::chrono::steady_clock> lastTime;    // used to calculated elapsed time
 
     GLuint brickVertexArray, ballVertexArray, groundVertexArray, roofVertexArray, obstacleVertexArray;   // vertex arrays for brick and ball
-    int numBrickVerts, numBallVerts, numObstacleVerts, numGroundVerts, numRoofVerts, steps;
+    int numLeftWallVerts, numBallVerts, numObstacleVerts, numGroundVerts, numRoofVerts, steps;
 
     GLKMatrix4 modelViewProjectionMatrix;   // model-view-projection matrix
 }
@@ -96,12 +96,12 @@ enum
     // Get the ball and brick objects from Box2D
     auto objPosList = static_cast<std::map<const char *, b2Vec2> *>([box2d GetObjectPositions]);
     b2Vec2 *theBall = (((*objPosList).find("ball") == (*objPosList).end()) ? nullptr : &(*objPosList)["ball"]);
-    b2Vec2 *theBrick = (((*objPosList).find("brick") == (*objPosList).end()) ? nullptr : &(*objPosList)["brick"]);
+    b2Vec2 *theLeftWall = (((*objPosList).find("leftwall") == (*objPosList).end()) ? nullptr : &(*objPosList)["leftwall"]);
     b2Vec2 *theObstacle = (((*objPosList).find("obstacle") == (*objPosList).end()) ? nullptr : &(*objPosList)["obstacle"]);
     b2Vec2 *theGround = (((*objPosList).find("ground") == (*objPosList).end()) ? nullptr : &(*objPosList)["ground"]);
     b2Vec2 *theRoof = (((*objPosList).find("roof") == (*objPosList).end()) ? nullptr : &(*objPosList)["roof"]);
 
-    if (theBrick)
+    if (theLeftWall)
     {
         // Set up VAO/VBO for brick
         glGenVertexArrays(1, &brickVertexArray);
@@ -113,38 +113,38 @@ enum
         glBindBuffer(GL_ARRAY_BUFFER, vertexBuffers[0]);
         GLfloat vertPos[18];    // 2 triangles x 3 vertices/triangle x 3 coords (x,y,z) per vertex
         int k = 0;
-        numBrickVerts = 0;
-        vertPos[k++] = theBrick->x - BRICK_WIDTH/2;
-        vertPos[k++] = theBrick->y + BRICK_HEIGHT/2;
+        numLeftWallVerts = 0;
+        vertPos[k++] = theLeftWall->x - Left_Wall_WIDTH/2;
+        vertPos[k++] = theLeftWall->y + Left_Wall_HEIGHT/2;
         vertPos[k++] = 10;  // z-value is always set to same value since 2D
-        numBrickVerts++;
-        vertPos[k++] = theBrick->x + BRICK_WIDTH/2;
-        vertPos[k++] = theBrick->y + BRICK_HEIGHT/2;
+        numLeftWallVerts++;
+        vertPos[k++] = theLeftWall->x + Left_Wall_WIDTH/2;
+        vertPos[k++] = theLeftWall->y + Left_Wall_HEIGHT/2;
         vertPos[k++] = 10;
-        numBrickVerts++;
-        vertPos[k++] = theBrick->x + BRICK_WIDTH/2;
-        vertPos[k++] = theBrick->y - BRICK_HEIGHT/2;
+        numLeftWallVerts++;
+        vertPos[k++] = theLeftWall->x + Left_Wall_WIDTH/2;
+        vertPos[k++] = theLeftWall->y - Left_Wall_HEIGHT/2;
         vertPos[k++] = 10;
-        numBrickVerts++;
-        vertPos[k++] = theBrick->x - BRICK_WIDTH/2;
-        vertPos[k++] = theBrick->y + BRICK_HEIGHT/2;
+        numLeftWallVerts++;
+        vertPos[k++] = theLeftWall->x - Left_Wall_WIDTH/2;
+        vertPos[k++] = theLeftWall->y + Left_Wall_HEIGHT/2;
         vertPos[k++] = 10;
-        numBrickVerts++;
-        vertPos[k++] = theBrick->x + BRICK_WIDTH/2;
-        vertPos[k++] = theBrick->y - BRICK_HEIGHT/2;
+        numLeftWallVerts++;
+        vertPos[k++] = theLeftWall->x + Left_Wall_WIDTH/2;
+        vertPos[k++] = theLeftWall->y - Left_Wall_HEIGHT/2;
         vertPos[k++] = 10;
-        numBrickVerts++;
-        vertPos[k++] = theBrick->x - BRICK_WIDTH/2;
-        vertPos[k++] = theBrick->y - BRICK_HEIGHT/2;
+        numLeftWallVerts++;
+        vertPos[k++] = theLeftWall->x - Left_Wall_WIDTH/2;
+        vertPos[k++] = theLeftWall->y - Left_Wall_HEIGHT/2;
         vertPos[k++] = 10;
-        numBrickVerts++;
+        numLeftWallVerts++;
         glBufferData(GL_ARRAY_BUFFER, sizeof(vertPos), vertPos, GL_STATIC_DRAW);    // Send vertex data to VBO
         glEnableVertexAttribArray(ATTRIB_POS);
         glVertexAttribPointer(ATTRIB_POS, 3, GL_FLOAT, GL_FALSE, 3*sizeof(GLfloat), BUFFER_OFFSET(0));
         
         // VBO for vertex colours
-        GLfloat vertCol[numBrickVerts*3];
-        for (k=0; k<numBrickVerts*3; k+=3)
+        GLfloat vertCol[numLeftWallVerts*3];
+        for (k=0; k<numLeftWallVerts*3; k+=3)
         {
             vertCol[k] = 1.0f;
             vertCol[k+1] = 0.0f;
@@ -395,22 +395,22 @@ enum
     // Retrieve brick and ball positions from Box2D
     auto objPosList = static_cast<std::map<const char *, b2Vec2> *>([box2d GetObjectPositions]);
     b2Vec2 *theBall = (((*objPosList).find("ball") == (*objPosList).end()) ? nullptr : &(*objPosList)["ball"]);
-    b2Vec2 *theBrick = (((*objPosList).find("brick") == (*objPosList).end()) ? nullptr : &(*objPosList)["brick"]);
+    b2Vec2 *theLeftWall = (((*objPosList).find("leftwall") == (*objPosList).end()) ? nullptr : &(*objPosList)["leftwall"]);
     b2Vec2 *theObstacle = (((*objPosList).find("obstacle") == (*objPosList).end()) ? nullptr : &(*objPosList)["obstacle"]);
     b2Vec2 *theGround = (((*objPosList).find("ground") == (*objPosList).end()) ? nullptr : &(*objPosList)["ground"]);
     b2Vec2 *theRoof = (((*objPosList).find("roof") == (*objPosList).end()) ? nullptr : &(*objPosList)["roof"]);
 #ifdef LOG_TO_CONSOLE
     if (theBall)
         printf("Ball: (%5.3f,%5.3f)\t", theBall->x, theBall->y);
-    if (theBrick)
-        printf("Brick: (%5.3f,%5.3f)", theBrick->x, theBrick->y);
+    if (theLeftWall)
+        printf("Brick: (%5.3f,%5.3f)", theLeftWall->x, theLeftWall->y);
     printf("\n");
 #endif
 
     // Bind each vertex array and call glDrawArrays for each of the ball and brick
     glBindVertexArray(brickVertexArray);
-    if (theBrick && numBrickVerts > 0)
-        glDrawArrays(GL_TRIANGLES, 0, numBrickVerts);
+    if (theLeftWall && numLeftWallVerts > 0)
+        glDrawArrays(GL_TRIANGLES, 0, numLeftWallVerts);
 
     glBindVertexArray(ballVertexArray);
     if (theBall && numBallVerts > 0)
