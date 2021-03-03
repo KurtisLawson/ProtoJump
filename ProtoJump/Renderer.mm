@@ -251,9 +251,9 @@ enum
         GLfloat vertCol[numObstacleVerts*3];
         for (k=0; k<numObstacleVerts*3; k+=3)
         {
-            vertCol[k] = 1.0f;
-            vertCol[k+1] = 0.0f;
-            vertCol[k+2] = 0.0f;
+            vertCol[k] = box2d.obstacle.red;
+            vertCol[k+1] = box2d.obstacle.green;
+            vertCol[k+2] = box2d.obstacle.blue;
         }
         glBindBuffer(GL_ARRAY_BUFFER, vertexBuffers[1]);
         glBufferData(GL_ARRAY_BUFFER, sizeof(vertCol), vertCol, GL_STATIC_DRAW);    // Send vertex data to VBO
@@ -381,7 +381,7 @@ enum
     GLKMatrix4 modelViewMatrix = GLKMatrix4Identity;
     modelViewMatrix = GLKMatrix4Translate(modelViewMatrix, steps, 0, 0);
     modelViewProjectionMatrix = GLKMatrix4Multiply(projectionMatrix, modelViewMatrix);
-    steps--;
+    steps -= GAME_SPEED;
 }
 
 - (void)draw:(CGRect)drawRect;
