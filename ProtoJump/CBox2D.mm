@@ -222,6 +222,9 @@ public:
         theLeftWall->SetTransform(b2Vec2(0 + step/SCREEN_BOUNDS_X - step,SCREEN_BOUNDS_Y/2), theLeftWall->GetAngle());
     }
     
+    if((int)theGround->GetPosition().x % (OBSTACLE_DISTANCE) == 0)
+        printf("Obsacle in middle of screen");
+    
     if (world)
     {
         while (elapsedTime >= MAX_TIMESTEP)
