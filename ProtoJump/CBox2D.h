@@ -8,6 +8,8 @@
 #import <UIKit/UIKit.h>
 #import <GLKit/GLKit.h>
 
+#import "Obstacle.h"
+
 
 // Set up brick and ball physics parameters here:
 //   position, width+height (or radius), velocity,
@@ -35,14 +37,6 @@
 #define GROUND_ROOF_POS_X      400
 #define GROUND_ROOF_WIDTH      800.0f
 #define GROUND_ROOF_HEIGHT     10.0f
-
-#define OBSTACLE_POS_X         900
-#define OBSTACLE_MAX_POS_Y     400
-#define OBSTACLE_MIN_POS_Y     200
-#define OBSTACLE_MAX_WIDTH     100.0f
-#define OBSTACLE_MIN_WIDTH     50.0f
-#define OBSTACLE_MAX_HEIGHT    400.0f
-#define OBSTACLE_MIN_HEIGHT    100.0f
 
 @interface CBox2D : NSObject
 
