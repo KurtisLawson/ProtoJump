@@ -6,6 +6,7 @@
 #define Renderer_h
 #import <GLKit/GLKit.h>
 #import "CBox2D.h"
+#import "Obstacle.h"
 
 @interface Renderer : NSObject
 
