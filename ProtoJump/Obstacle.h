@@ -8,5 +8,9 @@
 #ifndef Obstacle_h
 #define Obstacle_h
 
+struct Obstacle
+{
+    
+};
 
 #endif /* Obstacle_h */
