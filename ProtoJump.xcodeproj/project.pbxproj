@@ -64,6 +64,7 @@
 		974B070B25DEF8AE00C8679A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 974B070925DEF8AE00C8679A /* Main.storyboard */; };
 		974B070D25DEF8AF00C8679A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 974B070C25DEF8AF00C8679A /* Assets.xcassets */; };
 		974B071025DEF8AF00C8679A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 974B070E25DEF8AF00C8679A /* LaunchScreen.storyboard */; };
+		FAA2C3D725EF4F1500209DBD /* Obstacle.mm in Sources */ = {isa = PBXBuildFile; fileRef = FAA2C3D625EF4F1500209DBD /* Obstacle.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -178,6 +179,8 @@
 		974B070C25DEF8AF00C8679A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		974B070F25DEF8AF00C8679A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		974B071125DEF8AF00C8679A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		FAA2C3D625EF4F1500209DBD /* Obstacle.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = Obstacle.mm; sourceTree = "<group>"; };
+		FAA2C3DB25EF506800209DBD /* Obstacle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Obstacle.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -384,6 +387,8 @@
 				974B070E25DEF8AF00C8679A /* LaunchScreen.storyboard */,
 				974B071125DEF8AF00C8679A /* Info.plist */,
 				784B66A125EB0EC100001842 /* ProtoJump-Bridging-Header.h */,
+				FAA2C3D625EF4F1500209DBD /* Obstacle.mm */,
+				FAA2C3DB25EF506800209DBD /* Obstacle.h */,
 			);
 			path = ProtoJump;
 			sourceTree = "<group>";
@@ -471,6 +476,7 @@
 				784B672325EB0FA700001842 /* b2EdgeAndCircleContact.cpp in Sources */,
 				784B672F25EB0FA700001842 /* b2PrismaticJoint.cpp in Sources */,
 				784B673B25EB0FA700001842 /* b2Distance.cpp in Sources */,
+				FAA2C3D725EF4F1500209DBD /* Obstacle.mm in Sources */,
 				784B672625EB0FA700001842 /* b2WeldJoint.cpp in Sources */,
 				974B070425DEF8AE00C8679A /* AppDelegate.swift in Sources */,
 				784B674025EB0FA700001842 /* b2EdgeShape.cpp in Sources */,
