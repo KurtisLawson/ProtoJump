@@ -10,6 +10,7 @@
 @interface Renderer : NSObject
 
 @property (strong, nonatomic) CBox2D *box2d;
+@property float totalElapsedTime;
 
 - (void)setup:(GLKView *)view;
 - (void)loadModels;

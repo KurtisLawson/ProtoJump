@@ -50,6 +50,7 @@ enum
 @implementation Renderer
 
 @synthesize box2d;
+@synthesize totalElapsedTime;
 
 - (void)dealloc
 {
@@ -92,6 +93,8 @@ enum
     auto elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - lastTime).count();
     lastTime = currentTime;
     [box2d Update:elapsedTime/1000.0f];
+    
+    totalElapsedTime += elapsedTime/1000.0f;
 
     // Get the ball and brick objects from Box2D
     auto objPosList = static_cast<std::map<const char *, b2Vec2> *>([box2d GetObjectPositions]);
