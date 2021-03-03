@@ -205,7 +205,7 @@ public:
     if(theObstacle)
         theObstacle->SetAwake(true);
 
-    //Needs more implementation
+    //Makes the ground and roof in sync of viewport
     if (theGround){
         theGround->SetTransform(b2Vec2(400 + step/SCREEN_BOUNDS_X - step,0), theGround->GetAngle());
         theGround->SetAwake(true);
