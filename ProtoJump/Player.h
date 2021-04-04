@@ -23,6 +23,7 @@
 @property (nonatomic, readwrite)bool dead;
 
 -(void)updatePos:(float)positionX:(float)positionY;
+-(void) checkCollision:(float)positionX:(float)positionY:(float)width:(float)height;
 -(void)dealloc;
 @end
 #endif /* Player_h */

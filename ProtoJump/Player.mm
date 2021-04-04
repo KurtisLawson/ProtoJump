@@ -36,30 +36,28 @@ typedef enum {
     
 }
 
--(void) checkCollision{
-//    if(theBall->GetPosition().x >= theObstacle->GetPosition().x - obstacle.width/2 &&
-//                theBall->GetPosition().x <= theObstacle->GetPosition().x + obstacle.width/2){
-//
-//                if(theBall->GetPosition().y > theObstacle->GetPosition().y + obstacle.height/2){
-//                    printf("Top \n");
-//                }
-//                else if(theBall->GetPosition().y < theObstacle->GetPosition().y - obstacle.height/2){
-//                    //change the enum for which side its colliding with to the enum
-//                    //also there will be an enum that states wether the player is grounded or not being set here
-//                    printf("Bottom \n");
-//                }
-//            }
-//            else {
-//
-//                if(theBall->GetPosition().x < theObstacle->GetPosition().x + obstacle.width/2){
-//                    printf("Left \n");
-//                } else if(theBall->GetPosition().x > theObstacle->GetPosition().x - obstacle.width/2){
-//                    printf("Right \n");
-//                }
-//
-//            }
-}
+-(void) checkCollision:(float)positionX:(float)positionY:(float)width:(float)height{
+    
+    if(posX >= positionX - width/2 &&
+        posX <= positionX + width/2){
 
+        if(posY > positionY + height/2){
+            printf("Top \n");
+        }
+        else if(posY < positionY - height/2){
+                    //change the enum for which side its colliding with to the enum
+                    //also there will be an enum that states wether the player is grounded or not being set here
+            printf("Bottom \n");
+        }
+    }
+    else {
+        if(posX < positionX + width/2){
+            printf("Left \n");
+        } else if(posX > positionX - width/2){
+                    printf("Right \n");
+        }
+    }
+}
 
 @end
 
