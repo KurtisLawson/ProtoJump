@@ -53,7 +53,7 @@ public:
     //b2Body *groundBody;
     //b2PolygonShape *groundBox;
 
-    b2Body *theLeftWall, *theBall, *theGround, *theRoof, *theObstacle;
+    b2Body *theLeftWall, *theGround, *thePlayer, *theRoof, *theObstacle;
 
     CContactListener *contactListener;
     CGFloat width, height;
@@ -70,6 +70,7 @@ public:
 
 @synthesize xDir, yDir;
 @synthesize dead;
+@synthesize player;
 @synthesize obstacle;
 //@synthesize _targetVector;
 
@@ -118,28 +119,30 @@ public:
             fixtureDef.friction = 0.3f;
             fixtureDef.restitution = 0.0f;
             theLeftWall->CreateFixture(&fixtureDef);
-            
-            b2BodyDef ballBodyDef;
-            ballBodyDef.type = b2_dynamicBody;
-            ballBodyDef.position.Set(BALL_POS_X, BALL_POS_Y);
-            theBall = world->CreateBody(&ballBodyDef);
-            
-            if (theBall)
-            {
-                theBall->SetUserData((__bridge void *)self);
-                theBall->SetAwake(false);
-                b2CircleShape circle;
-                circle.m_p.Set(0, 0);
-                circle.m_radius = BALL_RADIUS;
-                b2FixtureDef circleFixtureDef;
-                circleFixtureDef.shape = &circle;
-                circleFixtureDef.density = 0.1f;
-                circleFixtureDef.friction = 0.3f;
-                circleFixtureDef.restitution = 0.0f;
-                theBall->CreateFixture(&circleFixtureDef);
-            }
         }
         
+        //player definition
+        player = [[Player alloc]init];
+        b2BodyDef playerBodyDef;
+        playerBodyDef.type = b2_dynamicBody;
+        playerBodyDef.position.Set(BALL_POS_X, BALL_POS_Y);
+        thePlayer = world->CreateBody(&playerBodyDef);
+        if (thePlayer)
+        {
+            thePlayer->SetUserData((__bridge void *)self);
+            thePlayer->SetAwake(false);
+            b2CircleShape circle;
+            circle.m_p.Set(0, 0);
+            circle.m_radius = BALL_RADIUS;
+            b2FixtureDef circleFixtureDef;
+            circleFixtureDef.shape = &circle;
+            circleFixtureDef.density = 0.1f;
+            circleFixtureDef.friction = 0.3f;
+            circleFixtureDef.restitution = 0.0f;
+            thePlayer->CreateFixture(&circleFixtureDef);
+        }
+
+        //obstacle definition
         obstacle = [[Obstacle alloc]init];
         b2BodyDef obstacleBodyDef;
         obstacleBodyDef.type = b2_staticBody;
@@ -179,9 +182,9 @@ public:
     //  and if so, use ApplyLinearImpulse() and SetActive(true)
     if (ballLaunched)
     {
-        theBall->ApplyLinearImpulse(b2Vec2(0, BALL_VELOCITY), theBall->GetPosition(), true);
-        theBall->SetLinearVelocity(b2Vec2(xDir * JUMP_MAGNITUDE, yDir * JUMP_MAGNITUDE));
-        theBall->SetActive(true);
+        thePlayer->ApplyLinearImpulse(b2Vec2(0, BALL_VELOCITY), thePlayer->GetPosition(), true);
+        thePlayer->SetLinearVelocity(b2Vec2(xDir * JUMP_MAGNITUDE, yDir * JUMP_MAGNITUDE));
+        thePlayer->SetActive(true);
 #ifdef LOG_TO_CONSOLE
         NSLog(@"Applying impulse %f to ball\n", BALL_VELOCITY);
 #endif
@@ -198,8 +201,8 @@ public:
     //  stop the ball and destroy the brick
     if (ballHitLeftWall)
     {
-        world->DestroyBody(theBall);
-        theBall = NULL;
+        world->DestroyBody(thePlayer);
+        thePlayer = NULL;
         ballHitLeftWall = false;
         dead = true;
     }
@@ -273,7 +276,7 @@ public:
 -(void) SetTargetVector:(float)posX :(float)posY
 {
     // Curate ball Pos value to be scaled to screen space.
-    b2Vec2 currentBallPos = theBall->GetPosition();
+    b2Vec2 currentBallPos = thePlayer->GetPosition();
     currentBallPos.x = ((currentBallPos.x + step)/ SCREEN_BOUNDS_X);
     
     currentBallPos.y = -((currentBallPos.y / SCREEN_BOUNDS_Y) - 1);
@@ -287,12 +290,12 @@ public:
 // Halt current velocity, set initial target position
 -(void)InitiateNewJump:(float)posX :(float)posY
 {
-    theBall->SetLinearVelocity(b2Vec2(0, 150));
+    thePlayer->SetLinearVelocity(b2Vec2(0, 150));
     
 //    [SetTargetVector:posX :posY];
     
     // Curate ball Pos value to be scaled to screen space.
-    b2Vec2 currentBallPos = theBall->GetPosition();
+    b2Vec2 currentBallPos = thePlayer->GetPosition();
     currentBallPos.x = ((currentBallPos.x + step) / SCREEN_BOUNDS_X);
     
     currentBallPos.y = -((currentBallPos.y / SCREEN_BOUNDS_Y) - 1);
@@ -314,7 +317,7 @@ public:
 {
     
     // Curate ball Pos value to be scaled to screen space.
-    b2Vec2 currentBallPos = theBall->GetPosition();
+    b2Vec2 currentBallPos = thePlayer->GetPosition();
     currentBallPos.x = ((currentBallPos.x + step)/ SCREEN_BOUNDS_X);
     
     currentBallPos.y = -((currentBallPos.y / SCREEN_BOUNDS_Y) - 1);
@@ -342,8 +345,8 @@ public:
 -(void *)GetObjectPositions
 {
     auto *objPosList = new std::map<const char *,b2Vec2>;
-    if (theBall)
-        (*objPosList)["ball"] = theBall->GetPosition();
+    if (thePlayer)
+        (*objPosList)["ball"] = thePlayer->GetPosition();
     if (theLeftWall)
         (*objPosList)["leftwall"] = theLeftWall->GetPosition();
     if (theObstacle)

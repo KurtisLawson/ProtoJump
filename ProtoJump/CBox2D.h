@@ -8,6 +8,7 @@
 #import <UIKit/UIKit.h>
 #import <GLKit/GLKit.h>
 
+#import "Player.h"
 #import "Obstacle.h"
 
 
@@ -52,6 +53,7 @@
 @property float yDir;
 @property bool dead;
 @property (nonatomic) Obstacle * obstacle;
+@property (nonatomic) Player * player;
 
 // @property b2Vec2 _targetVector;
 
