@@ -201,10 +201,32 @@ public:
     //  stop the ball and destroy the brick
     if (ballHitLeftWall)
     {
-        world->DestroyBody(thePlayer);
-        thePlayer = NULL;
+//        world->DestroyBody(thePlayer);
+//        thePlayer = NULL;
         ballHitLeftWall = false;
-        dead = true;
+//        dead = true;
+        if(thePlayer->GetPosition().x >= theObstacle->GetPosition().x - obstacle.width/2 &&
+            thePlayer->GetPosition().x <= theObstacle->GetPosition().x + obstacle.width/2){
+                    
+                    if(thePlayer->GetPosition().y > theObstacle->GetPosition().y + obstacle.height/2){
+                        printf("Top \n");
+                    }
+                    else if(thePlayer->GetPosition().y < theObstacle->GetPosition().y - obstacle.height/2){
+                        //change the enum for which side its colliding with to the enum
+                        //also there will be an enum that states wether the player is grounded or not being set here
+                        printf("Bottom \n");
+                    }
+                }
+                else {
+                    
+                    if(thePlayer->GetPosition().x < theObstacle->GetPosition().x + obstacle.width/2){
+                        printf("Left \n");
+                    } else if(thePlayer->GetPosition().x > theObstacle->GetPosition().x - obstacle.width/2){
+                        printf("Right \n");
+                    }
+                    
+                }
+        
     }
     
     if(theObstacle)
