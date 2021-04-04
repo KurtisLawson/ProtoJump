@@ -228,6 +228,8 @@ public:
         ballLaunched = false;
     }
     
+    [player updatePos:thePlayer->GetPosition().x :thePlayer->GetPosition().y];
+    
     // Check if it is time yet to drop the brick, and if so
     //  call SetAwake()
     totalElapsedTime += elapsedTime;
@@ -242,28 +244,28 @@ public:
 //        thePlayer = NULL;
         ballHitLeftWall = false;
 //        dead = true;
-        if(thePlayer->GetPosition().x >= theObstacle->GetPosition().x - obstacle.width/2 &&
-            thePlayer->GetPosition().x <= theObstacle->GetPosition().x + obstacle.width/2){
-                    
-                    if(thePlayer->GetPosition().y > theObstacle->GetPosition().y + obstacle.height/2){
-                        printf("Top \n");
-                    }
-                    else if(thePlayer->GetPosition().y < theObstacle->GetPosition().y - obstacle.height/2){
-                        //change the enum for which side its colliding with to the enum
-                        //also there will be an enum that states wether the player is grounded or not being set here
-                        printf("Bottom \n");
-                    }
-                }
-                else {
-                    
-                    if(thePlayer->GetPosition().x < theObstacle->GetPosition().x + obstacle.width/2){
-                        printf("Left \n");
-                    } else if(thePlayer->GetPosition().x > theObstacle->GetPosition().x - obstacle.width/2){
-                        printf("Right \n");
-                    }
-                    
-                }
-        
+//        if(thePlayer->GetPosition().x >= theObstacle->GetPosition().x - obstacle.width/2 &&
+//            thePlayer->GetPosition().x <= theObstacle->GetPosition().x + obstacle.width/2){
+//
+//                    if(thePlayer->GetPosition().y > theObstacle->GetPosition().y + obstacle.height/2){
+//                        printf("Top \n");
+//                    }
+//                    else if(thePlayer->GetPosition().y < theObstacle->GetPosition().y - obstacle.height/2){
+//                        //change the enum for which side its colliding with to the enum
+//                        //also there will be an enum that states wether the player is grounded or not being set here
+//                        printf("Bottom \n");
+//                    }
+//                }
+//                else {
+//
+//                    if(thePlayer->GetPosition().x < theObstacle->GetPosition().x + obstacle.width/2){
+//                        printf("Left \n");
+//                    } else if(thePlayer->GetPosition().x > theObstacle->GetPosition().x - obstacle.width/2){
+//                        printf("Right \n");
+//                    }
+//
+//                }
+        [player checkCollision:theObstacle->GetPosition().x :theObstacle->GetPosition().y :obstacle.width :obstacle.height];
     }
     
     if(theObstacle)
