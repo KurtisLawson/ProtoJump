@@ -12,6 +12,15 @@ const float MAX_TIMESTEP = REFRESH_RATE;
 const int NUM_VEL_ITERATIONS = 10;
 const int NUM_POS_ITERATIONS = 3;
 
+class UserData{
+public:
+    CBox2D* box2D;
+    NSString* objectName;
+    UserData(CBox2D* box, NSString* name){
+        box2D = box;
+        objectName = name;
+    }
+};
 
 #pragma mark - Box2D contact listener class
 
@@ -31,14 +40,22 @@ public:
         {
             // Use contact->GetFixtureA()->GetBody() to get the body
             b2Body* bodyA = contact->GetFixtureA()->GetBody();
-            CBox2D *parentObj = (__bridge CBox2D *)(bodyA->GetUserData());
-            // Call RegisterHit (assume CBox2D object is in user data)
-            [parentObj RegisterHit];    // assumes RegisterHit is a callback function to register collision
+            
+            //first check if the bodys userdata is not null
+            if(bodyA->GetUserData() != NULL){
+                
+                //body data currently contains
+                UserData* bodyData = (UserData*)(bodyA->GetUserData());
+                CBox2D *parentObj = bodyData->box2D;
+                // Call RegisterHit (assume CBox2D object is in user data)
+                if([bodyData->objectName isEqualToString:@"Obstacle"]){
+                    [parentObj RegisterHit];    // assumes RegisterHit is a callback function to register collision
+                }
+            }
         }
     }
     void PostSolve(b2Contact* contact, const b2ContactImpulse* impulse) {};
 };
-
 
 #pragma mark - CBox2D
 
@@ -54,7 +71,9 @@ public:
     //b2PolygonShape *groundBox;
 
     b2Body *theLeftWall, *theGround, *thePlayer, *theRoof, *theObstacle;
-
+    
+    UserData *playerData, *wallData, *obstacleData;
+    
     CContactListener *contactListener;
     CGFloat width, height;
     float totalElapsedTime;
@@ -107,9 +126,14 @@ public:
         leftwallBodyDef.type = b2_kinematicBody;
         leftwallBodyDef.position.Set(Left_Wall_POS_X, Left_Wall_POS_Y);
         theLeftWall = world->CreateBody(&leftwallBodyDef);
+        
+        wallData = new UserData(self,@"LeftWall");
+//        wallData->box2D = self;
+//        wallData->objectName = @"LeftWall";
+        
         if (theLeftWall)
         {
-            theLeftWall->SetUserData((__bridge void *)self);
+            theLeftWall->SetUserData((void *)wallData);
             theLeftWall->SetAwake(false);
             b2PolygonShape dynamicBox;
             dynamicBox.SetAsBox(Left_Wall_WIDTH/2, Left_Wall_HEIGHT/2);
@@ -127,9 +151,15 @@ public:
         playerBodyDef.type = b2_dynamicBody;
         playerBodyDef.position.Set(BALL_POS_X, BALL_POS_Y);
         thePlayer = world->CreateBody(&playerBodyDef);
+        
+        playerData = new UserData(self, @"Player");
+//        playerData->box2D = self;
+//        playerData->objectName = @"Player";
+        
         if (thePlayer)
         {
-            thePlayer->SetUserData((__bridge void *)self);
+            
+            thePlayer->SetUserData((void *)playerData);
             thePlayer->SetAwake(false);
             b2CircleShape circle;
             circle.m_p.Set(0, 0);
@@ -148,9 +178,16 @@ public:
         obstacleBodyDef.type = b2_staticBody;
         obstacleBodyDef.position.Set(OBSTACLE_POS_X, obstacle.posY);
         theObstacle = world->CreateBody(&obstacleBodyDef);
+        //theObstacle->SetUserData(@"Obstacle");
+        
+        obstacleData = new UserData(self, @"Obstacle");
+//        obstacleData->box2D = self;
+//        obstacleData->objectName = @"Obstacle";
+        
         if (theObstacle)
         {
-            theObstacle->SetUserData((__bridge void *)self);
+            
+            theObstacle->SetUserData((void *)obstacleData);
             theObstacle->SetAwake(false);
             b2PolygonShape staticBox;
             staticBox.SetAsBox(obstacle.width/2, obstacle.height/2);
@@ -255,9 +292,13 @@ public:
         obstacleBodyDef.type = b2_staticBody;
         obstacleBodyDef.position.Set(theGround->GetPosition().x + SCREEN_BOUNDS_X/2, obstacle.posY);
         theObstacle = world->CreateBody(&obstacleBodyDef);
+        
+        UserData* obstacleData = new UserData(self,@"Obstacle");
+//        obstacleData->box2D = self;
+//        obstacleData->objectName = @"Obstacle";
         if (theObstacle)
         {
-            theObstacle->SetUserData((__bridge void *)self);
+            theObstacle->SetUserData((void*) obstacleData);
             theObstacle->SetAwake(false);
             b2PolygonShape staticBox;
             staticBox.SetAsBox(obstacle.width/2, obstacle.height/2);
