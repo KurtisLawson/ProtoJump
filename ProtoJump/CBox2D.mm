@@ -356,6 +356,7 @@ public:
     world->SetGravity(*gravity);
 }
 
+//Check the name of the object when the player collides with that object
 -(void)RegisterHit:(NSString *) objectName
 {
     if([objectName  isEqual: @"Obstacle"]){
@@ -370,7 +371,6 @@ public:
         player->state = grounded;
         player.jumpCount = 0;
     }
-    // Set some flag here for processing later...
 }
 
 -(void) SetTargetVector:(float)posX :(float)posY
