@@ -17,10 +17,19 @@
 #define BALL_VELOCITY          100000.0f
 #define BALL_SPHERE_SEGS       128
 
-@interface Player : NSObject{}
+typedef enum {
+    grounded,
+    leftCollision,
+    rightCollision,
+    bottomCollision,
+    airborne
+} PlayerState;
 
-@property (nonatomic, readwrite) float posX, posY;
-@property (nonatomic, readwrite)bool dead;
+@interface Player : NSObject{
+    @public PlayerState state;
+}
+@property (nonatomic, readwrite) float posX, posY, jumpTimer;
+@property (nonatomic, readwrite)bool dead, initialJump;
 
 -(void)updatePos:(float)positionX:(float)positionY;
 -(void) checkCollision:(float)positionX:(float)positionY:(float)width:(float)height;
