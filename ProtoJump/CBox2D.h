@@ -8,6 +8,7 @@
 #import <UIKit/UIKit.h>
 #import <GLKit/GLKit.h>
 
+#import "Player.h"
 #import "Obstacle.h"
 
 
@@ -53,6 +54,7 @@
 @property bool dead;
 @property float slowFactor;
 @property (nonatomic) Obstacle * obstacle;
+@property (nonatomic) Player * player;
 
 // @property b2Vec2 _targetVector;
 
@@ -61,7 +63,8 @@
 //-(void) GenerateObstacle;
 
 -(void) Update:(float)elapsedTime;  // update the Box2D engine
--(void) RegisterHit;                // Register when the ball hits the brick
+-(void) RegisterHit;// Register when the ball hits the brick
+-(void) RegisterHitObstacle;//when ball hits an obstacle body
 -(void *)GetObjectPositions;        // Get the positions of the ball and brick
 
 -(void) InitiateNewJump:(float)posX:(float)posY;
