@@ -402,7 +402,8 @@ public:
         ballHitLeftWall = true;
     }
     if([objectName  isEqual: @"Ground"]){
-        //player->state = grounded;
+        player->state = grounded;
+        player.jumpCount = 0;
     }
     // Set some flag here for processing later...
 }
@@ -424,7 +425,7 @@ public:
 // Halt current velocity, set initial target position
 -(void)InitiateNewJump:(float)posX :(float)posY
 {
-    thePlayer->SetLinearVelocity(b2Vec2(0, 150));
+    thePlayer->SetLinearVelocity(b2Vec2(0, 75));
     
 //    [SetTargetVector:posX :posY];
     
