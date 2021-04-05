@@ -49,8 +49,15 @@ public:
                 CBox2D *parentObj = bodyData->box2D;
                 // Call RegisterHit (assume CBox2D object is in user data)
                 if([bodyData->objectName isEqualToString:@"Obstacle"]){
-                    [parentObj RegisterHit];    // assumes RegisterHit is a callback function to register collision
+                    [parentObj RegisterHitObstacle];    // assumes RegisterHit is a callback function to register collision
                 }
+                if([bodyData->objectName isEqualToString:@"LeftWall"]){
+                    [parentObj RegisterHit];    // call registerhit to signal that left wall was hit
+                }
+                if([bodyData->objectName isEqualToString:@"Ground"]){
+                    [parentObj RegisterHit];    // call registerhit to signal that left wall was hit
+                }
+                
             }
         }
     }
@@ -72,7 +79,7 @@ public:
 
     b2Body *theLeftWall, *theGround, *thePlayer, *theRoof, *theObstacle;
     
-    UserData *playerData, *wallData, *obstacleData;
+    UserData *playerData, *wallData, *obstacleData, *groundData;
     
     CContactListener *contactListener;
     CGFloat width, height;
@@ -80,6 +87,7 @@ public:
     int step;
     // You will also need some extra variables here for the logic
     bool ballHitLeftWall;
+    bool ballHitObstacle;
     bool ballLaunched;
     bool obstacleHitCleaner;
 }
@@ -105,6 +113,11 @@ public:
         gdBodyDef.type = b2_staticBody;
         gdBodyDef.position.Set(GROUND_ROOF_POS_X, GROUND_ROOF_PADDING);//width, height of the ground
         theGround = world->CreateBody(&gdBodyDef);
+        
+        //ground counts as obstacle, since obstacles are non-harmful objects which the ground can be a part of
+        groundData = new UserData(self,@"Obstacle");
+        theGround->SetUserData((void*) groundData);
+        
         b2PolygonShape gdBox;
         gdBox.SetAsBox(GROUND_ROOF_WIDTH, GROUND_ROOF_HEIGHT);
         theGround->CreateFixture(&gdBox, 0.0f);
@@ -147,6 +160,8 @@ public:
         
         //player definition
         player = [[Player alloc]init];
+        player.initialJump = false;
+        player.jumpTimer = 0;
         b2BodyDef playerBodyDef;
         playerBodyDef.type = b2_dynamicBody;
         playerBodyDef.position.Set(BALL_POS_X, BALL_POS_Y);
@@ -219,30 +234,56 @@ public:
     //  and if so, use ApplyLinearImpulse() and SetActive(true)
     if (ballLaunched)
     {
-        thePlayer->ApplyLinearImpulse(b2Vec2(0, BALL_VELOCITY), thePlayer->GetPosition(), true);
-        thePlayer->SetLinearVelocity(b2Vec2(xDir * JUMP_MAGNITUDE, yDir * JUMP_MAGNITUDE));
-        thePlayer->SetActive(true);
+        if(player->state == grounded || player->state == leftCollision || player->state == rightCollision){
+            player->state = airborne;
+            thePlayer->ApplyLinearImpulse(b2Vec2(0, BALL_VELOCITY), thePlayer->GetPosition(), true);
+            thePlayer->SetLinearVelocity(b2Vec2(xDir * JUMP_MAGNITUDE, yDir * JUMP_MAGNITUDE));
+            thePlayer->SetActive(true);
+        } else {
+            //if the timer is 0, it means they haven't used their double jump yet
+            if(player.jumpTimer != 0){
+                if(totalElapsedTime - player.jumpTimer >= 2){
+                    printf("jump reset");
+                    player.jumpTimer = 0;
+                }
+            }
+            else{
+                player.jumpTimer = totalElapsedTime;
+                thePlayer->ApplyLinearImpulse(b2Vec2(0, BALL_VELOCITY), thePlayer->GetPosition(), true);
+                thePlayer->SetLinearVelocity(b2Vec2(xDir * JUMP_MAGNITUDE, yDir * JUMP_MAGNITUDE));
+                thePlayer->SetActive(true);
+            }
+        }
 #ifdef LOG_TO_CONSOLE
         NSLog(@"Applying impulse %f to ball\n", BALL_VELOCITY);
 #endif
         ballLaunched = false;
     }
     
-    [player updatePos:thePlayer->GetPosition().x :thePlayer->GetPosition().y];
-    
+    //in case the player is already dead, therefore dont update playerposition
+    if(!dead){
+        [player updatePos:thePlayer->GetPosition().x :thePlayer->GetPosition().y];
+    }
     // Check if it is time yet to drop the brick, and if so
     //  call SetAwake()
     totalElapsedTime += elapsedTime;
     if ((totalElapsedTime > BRICK_WAIT) && theLeftWall)
         theLeftWall->SetAwake(true);
     
+    if(ballHitLeftWall){
+        world->DestroyBody(thePlayer);
+        thePlayer = NULL;
+        ballHitLeftWall = false;
+        dead = true;
+    }
+    
     // If the last collision test was positive,
     //  stop the ball and destroy the brick
-    if (ballHitLeftWall)
+    if (ballHitObstacle)
     {
 //        world->DestroyBody(thePlayer);
 //        thePlayer = NULL;
-        ballHitLeftWall = false;
+        ballHitObstacle = false;
 //        dead = true;
 //        if(thePlayer->GetPosition().x >= theObstacle->GetPosition().x - obstacle.width/2 &&
 //            thePlayer->GetPosition().x <= theObstacle->GetPosition().x + obstacle.width/2){
@@ -336,6 +377,17 @@ public:
 {
     // Set some flag here for processing later...
     ballHitLeftWall = true;
+}
+
+-(void)RegisterHitObstacle
+{
+    // Set some flag here for processing later...
+    ballHitObstacle = true;
+}
+
+-(void)RegisterHitGround
+{
+    player->state = grounded;
 }
 
 -(void) SetTargetVector:(float)posX :(float)posY
