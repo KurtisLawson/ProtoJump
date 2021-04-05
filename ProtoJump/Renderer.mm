@@ -93,7 +93,7 @@ enum
     lastTime = currentTime;
     [box2d Update:elapsedTime/1000.0f];
     if(!box2d.dead){
-        totalElapsedTime += elapsedTime/1000.0f;
+        totalElapsedTime += (elapsedTime/1000.0f) * box2d.slowFactor;
     }
     // Get the ball and brick objects from Box2D
     auto objPosList = static_cast<std::map<const char *, b2Vec2> *>([box2d GetObjectPositions]);
