@@ -381,7 +381,7 @@ enum
     GLKMatrix4 modelViewMatrix = GLKMatrix4Identity;
     modelViewMatrix = GLKMatrix4Translate(modelViewMatrix, steps, 0, 0);
     modelViewProjectionMatrix = GLKMatrix4Multiply(projectionMatrix, modelViewMatrix);
-    steps -= GAME_SPEED;
+    steps -= GAME_SPEED * box2d.slowFactor;
 }
 
 - (void)draw:(CGRect)drawRect;

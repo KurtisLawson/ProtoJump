@@ -70,6 +70,7 @@ public:
 
 @synthesize xDir, yDir;
 @synthesize dead;
+@synthesize slowFactor;
 @synthesize obstacle;
 //@synthesize _targetVector;
 
@@ -160,6 +161,7 @@ public:
         }
         
         totalElapsedTime = 0;
+        slowFactor = 1;
         ballHitLeftWall = false;
         ballLaunched = false;
     }
@@ -261,7 +263,9 @@ public:
             world->Step(elapsedTime, NUM_VEL_ITERATIONS, NUM_POS_ITERATIONS);
         }
     }
-    step -= GAME_SPEED;
+    step -= GAME_SPEED * slowFactor;
+    gravity->y = GRAVITY * slowFactor;
+    world->SetGravity(*gravity);
 }
 
 -(void)RegisterHit
