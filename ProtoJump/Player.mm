@@ -17,7 +17,7 @@
 @implementation Player
 
 @synthesize posX, posY, jumpTimer, initialJump;
-
+@synthesize jumpCount;
 
 -(instancetype)init {
     self = [super init];
@@ -44,6 +44,7 @@
         if(posY > positionY + height/2){
             printf("Top \n");
             state = grounded;
+            jumpCount = 0;
         }
         else if(posY < positionY - height/2){
                     //change the enum for which side its colliding with to the enum
@@ -56,9 +57,11 @@
         if(posX < positionX + width/2){
             printf("Left \n");
             state = leftCollision;
+            jumpCount = 0;
         } else if(posX > positionX - width/2){
             printf("Right \n");
             state = rightCollision;
+            jumpCount = 0;
         }
     }
 }
