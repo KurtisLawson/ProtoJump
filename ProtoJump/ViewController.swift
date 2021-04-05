@@ -53,8 +53,8 @@ class ViewController: GLKViewController {
             
             if sender.state == .began {
     //            NSLog("User has tapped the button at \(xPos), \(yPos) - OnStateEnter")
+                glesRenderer.box2d.slowFactor = 0.2;
                 glesRenderer.box2d.initiateNewJump(xPos, yPos)
-                
             } else if sender.state == .changed {
                 
     //            NSLog("User has updated their tap at \(xPos), \(yPos) - OnStateChanged")
@@ -62,6 +62,7 @@ class ViewController: GLKViewController {
                 
             } else if sender.state == .ended {
     //            NSLog("User has released the button - OnStateExit")
+                glesRenderer.box2d.slowFactor = 1;
                 glesRenderer.box2d.launchJump()
             }
                 

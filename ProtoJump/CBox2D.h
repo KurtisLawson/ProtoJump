@@ -52,6 +52,7 @@
 @property float xDir;
 @property float yDir;
 @property bool dead;
+@property float slowFactor;
 @property (nonatomic) Obstacle * obstacle;
 @property (nonatomic) Player * player;
 
