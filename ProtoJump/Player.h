@@ -28,7 +28,7 @@ typedef enum {
 @interface Player : NSObject{
     @public PlayerState state;
 }
-@property (nonatomic, readwrite) float posX, posY, jumpTimer;
+@property (nonatomic, readwrite) float posX, posY, jumpTimer, jumpCount, maxJump;
 @property (nonatomic, readwrite)bool dead, initialJump;
 
 -(void)updatePos:(float)positionX:(float)positionY;
