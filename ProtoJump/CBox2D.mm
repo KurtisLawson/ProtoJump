@@ -119,6 +119,7 @@ public:
         groundData = new UserData(self,@"Obstacle");
         theGround->SetUserData((void*) groundData);
         
+
         b2PolygonShape gdBox;
         gdBox.SetAsBox(GROUND_ROOF_WIDTH, GROUND_ROOF_HEIGHT);
         theGround->CreateFixture(&gdBox, 0.0f);
@@ -163,6 +164,8 @@ public:
         player = [[Player alloc]init];
         player.initialJump = false;
         player.jumpTimer = 0;
+        player.jumpCount = 0;
+        player.maxJump = 2;
         b2BodyDef playerBodyDef;
         playerBodyDef.type = b2_dynamicBody;
         playerBodyDef.position.Set(BALL_POS_X, BALL_POS_Y);
@@ -236,20 +239,28 @@ public:
     //  and if so, use ApplyLinearImpulse() and SetActive(true)
     if (ballLaunched)
     {
+        printf("JumpCount %f \n",player.jumpCount);
         if(player->state == grounded || player->state == leftCollision || player->state == rightCollision){
             player->state = airborne;
+            player.jumpCount++;
             thePlayer->ApplyLinearImpulse(b2Vec2(0, BALL_VELOCITY), thePlayer->GetPosition(), true);
             thePlayer->SetLinearVelocity(b2Vec2(xDir * JUMP_MAGNITUDE, yDir * JUMP_MAGNITUDE));
             thePlayer->SetActive(true);
         } else {
             //if the timer is 0, it means they haven't used their double jump yet
-            if(player.jumpTimer != 0){
-                if(totalElapsedTime - player.jumpTimer >= 2){
+            //if(player.jumpTimer != 0){
+            if(player.jumpCount > player.maxJump){
+                //if(totalElapsedTime - player.jumpTimer >= 2){
+                //if(player.jumpCount >= player.maxJump && (player->state == grounded || player->state == leftCollision || player->state == rightCollision)){
+                //if player touches a non hazardous obstacle,reset jump
+                if(player->state == grounded || player->state == leftCollision || player->state == rightCollision){
                     printf("jump reset");
-                    player.jumpTimer = 0;
+                    //player.jumpTimer = 0;
+                    player.jumpCount = 0;
                 }
             }
             else{
+                player.jumpCount++;
                 player.jumpTimer = totalElapsedTime;
                 thePlayer->ApplyLinearImpulse(b2Vec2(0, BALL_VELOCITY), thePlayer->GetPosition(), true);
                 thePlayer->SetLinearVelocity(b2Vec2(xDir * JUMP_MAGNITUDE, yDir * JUMP_MAGNITUDE));
