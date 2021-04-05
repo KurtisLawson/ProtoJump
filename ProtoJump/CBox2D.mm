@@ -183,7 +183,7 @@ public:
         theBall->SetLinearVelocity(b2Vec2(xDir * JUMP_MAGNITUDE, yDir * JUMP_MAGNITUDE));
         theBall->SetActive(true);
 #ifdef LOG_TO_CONSOLE
-        NSLog(@"Applying impulse %f to ball\n", BALL_VELOCITY);
+//        NSLog(@"Applying impulse %f to ball\n", BALL_VELOCITY);
 #endif
         ballLaunched = false;
     }
@@ -223,7 +223,7 @@ public:
     }
     
     if((int)theGround->GetPosition().x - SCREEN_BOUNDS_X/2 >= theObstacle->GetPosition().x) {
-        printf("Obsacle in middle of screen\n");
+//        printf("Obsacle in middle of screen\n");
         [obstacle randomize];
         
         b2BodyDef obstacleBodyDef;
@@ -306,7 +306,7 @@ public:
     xDir = xDir / vectorMagnitude;
     yDir = yDir / vectorMagnitude;
     
-    printf("New tap, velocity targer %4.2f, %4.2f...\n", xDir, yDir);
+//    printf("New tap, velocity target %4.2f, %4.2f...\n", xDir, yDir);
 }
 
 // Update current position vector
@@ -329,7 +329,7 @@ public:
     xDir = xDir / vectorMagnitude;
     yDir = yDir / vectorMagnitude;
     
-    printf("Updating Velocity Target to %4.2f, %4.2f..\n", xDir, yDir);
+//    printf("Updating Velocity Target to %4.2f, %4.2f..\n", xDir, yDir);
 }
 
 //

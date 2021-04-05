@@ -58,6 +58,9 @@
 		784B675525EB158600001842 /* CBox2D.mm in Sources */ = {isa = PBXBuildFile; fileRef = 784B674F25EB158600001842 /* CBox2D.mm */; };
 		784B675625EB158600001842 /* Shader.vsh in Resources */ = {isa = PBXBuildFile; fileRef = 784B675125EB158600001842 /* Shader.vsh */; };
 		784B675725EB158600001842 /* Shader.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 784B675225EB158600001842 /* Shader.fsh */; };
+		9715BBA0261B8CFA0026E123 /* steelTemp.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 9715BB9F261B8CFA0026E123 /* steelTemp.jpg */; };
+		971B5F2C2617EC6700DB4718 /* AnimatedModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 971B5F2B2617EC6700DB4718 /* AnimatedModel.m */; };
+		971B5F302617FADA00DB4718 /* Joint.m in Sources */ = {isa = PBXBuildFile; fileRef = 971B5F2F2617FADA00DB4718 /* Joint.m */; };
 		974B070425DEF8AE00C8679A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 974B070325DEF8AE00C8679A /* AppDelegate.swift */; };
 		974B070625DEF8AE00C8679A /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 974B070525DEF8AE00C8679A /* SceneDelegate.swift */; };
 		974B070825DEF8AE00C8679A /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 974B070725DEF8AE00C8679A /* ViewController.swift */; };
@@ -171,6 +174,11 @@
 		784B675025EB158600001842 /* Renderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Renderer.h; sourceTree = "<group>"; };
 		784B675125EB158600001842 /* Shader.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = Shader.vsh; sourceTree = "<group>"; };
 		784B675225EB158600001842 /* Shader.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = Shader.fsh; sourceTree = "<group>"; };
+		9715BB9F261B8CFA0026E123 /* steelTemp.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = steelTemp.jpg; sourceTree = "<group>"; };
+		971B5F2A2617EC6700DB4718 /* AnimatedModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AnimatedModel.h; sourceTree = "<group>"; };
+		971B5F2B2617EC6700DB4718 /* AnimatedModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AnimatedModel.m; sourceTree = "<group>"; };
+		971B5F2E2617FADA00DB4718 /* Joint.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Joint.h; sourceTree = "<group>"; };
+		971B5F2F2617FADA00DB4718 /* Joint.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Joint.m; sourceTree = "<group>"; };
 		974B070025DEF8AE00C8679A /* ProtoJump.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ProtoJump.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		974B070325DEF8AE00C8679A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		974B070525DEF8AE00C8679A /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -351,6 +359,17 @@
 			path = Shapes;
 			sourceTree = "<group>";
 		};
+		971B5F292617E3A300DB4718 /* Animator */ = {
+			isa = PBXGroup;
+			children = (
+				971B5F2A2617EC6700DB4718 /* AnimatedModel.h */,
+				971B5F2B2617EC6700DB4718 /* AnimatedModel.m */,
+				971B5F2E2617FADA00DB4718 /* Joint.h */,
+				971B5F2F2617FADA00DB4718 /* Joint.m */,
+			);
+			path = Animator;
+			sourceTree = "<group>";
+		};
 		974B06F725DEF8AE00C8679A = {
 			isa = PBXGroup;
 			children = (
@@ -370,8 +389,10 @@
 		974B070225DEF8AE00C8679A /* ProtoJump */ = {
 			isa = PBXGroup;
 			children = (
+				971B5F292617E3A300DB4718 /* Animator */,
 				784B66B325EB0FA600001842 /* Box2D */,
 				784B674B25EB158600001842 /* CBox2D.h */,
+				9715BB9F261B8CFA0026E123 /* steelTemp.jpg */,
 				784B674F25EB158600001842 /* CBox2D.mm */,
 				784B674D25EB158600001842 /* GLESRenderer.cpp */,
 				784B674C25EB158600001842 /* GLESRenderer.hpp */,
@@ -452,6 +473,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				784B675625EB158600001842 /* Shader.vsh in Resources */,
+				9715BBA0261B8CFA0026E123 /* steelTemp.jpg in Resources */,
 				974B071025DEF8AF00C8679A /* LaunchScreen.storyboard in Resources */,
 				974B070D25DEF8AF00C8679A /* Assets.xcassets in Resources */,
 				974B070B25DEF8AE00C8679A /* Main.storyboard in Resources */,
@@ -468,6 +490,7 @@
 			files = (
 				784B674225EB0FA700001842 /* b2PolygonShape.cpp in Sources */,
 				784B672E25EB0FA700001842 /* b2Joint.cpp in Sources */,
+				971B5F302617FADA00DB4718 /* Joint.m in Sources */,
 				784B673325EB0FA700001842 /* b2ContactManager.cpp in Sources */,
 				784B671A25EB0FA700001842 /* b2World.cpp in Sources */,
 				784B672125EB0FA700001842 /* b2ContactSolver.cpp in Sources */,
@@ -486,6 +509,7 @@
 				784B673F25EB0FA700001842 /* b2ChainShape.cpp in Sources */,
 				784B671D25EB0FA700001842 /* b2EdgeAndPolygonContact.cpp in Sources */,
 				784B671C25EB0FA700001842 /* b2ChainAndPolygonContact.cpp in Sources */,
+				971B5F2C2617EC6700DB4718 /* AnimatedModel.m in Sources */,
 				784B672925EB0FA700001842 /* b2DistanceJoint.cpp in Sources */,
 				784B673E25EB0FA700001842 /* b2DynamicTree.cpp in Sources */,
 				784B673225EB0FA700001842 /* b2Island.cpp in Sources */,
