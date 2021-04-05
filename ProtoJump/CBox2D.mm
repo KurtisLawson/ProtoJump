@@ -49,13 +49,13 @@ public:
                 CBox2D *parentObj = bodyData->box2D;
                 // Call RegisterHit (assume CBox2D object is in user data)
                 if([bodyData->objectName isEqualToString:@"Obstacle"]){
-                    [parentObj RegisterHitObstacle];    // assumes RegisterHit is a callback function to register collision
+                    [parentObj RegisterHit:@"Obstacle"];    // assumes RegisterHit is a callback function to register collision
                 }
                 if([bodyData->objectName isEqualToString:@"LeftWall"]){
-                    [parentObj RegisterHit];    // call registerhit to signal that left wall was hit
+                    [parentObj RegisterHit:@"LeftWall"];    // call registerhit to signal that left wall was hit
                 }
                 if([bodyData->objectName isEqualToString:@"Ground"]){
-                    [parentObj RegisterHit];    // call registerhit to signal that left wall was hit
+                    [parentObj RegisterHit:@"Ground"];    // call registerhit to signal that left wall was hit
                 }
                 
             }
@@ -84,7 +84,7 @@ public:
     CContactListener *contactListener;
     CGFloat width, height;
     float totalElapsedTime;
-    int step;
+    float step;
     // You will also need some extra variables here for the logic
     bool ballHitLeftWall;
     bool ballHitObstacle;
@@ -116,7 +116,7 @@ public:
         theGround = world->CreateBody(&gdBodyDef);
         
         //ground counts as obstacle, since obstacles are non-harmful objects which the ground can be a part of
-        groundData = new UserData(self,@"Obstacle");
+        groundData = new UserData(self,@"Ground");
         theGround->SetUserData((void*) groundData);
         
 
@@ -143,8 +143,6 @@ public:
         theLeftWall = world->CreateBody(&leftwallBodyDef);
         
         wallData = new UserData(self,@"LeftWall");
-//        wallData->box2D = self;
-//        wallData->objectName = @"LeftWall";
         
         if (theLeftWall)
         {
@@ -172,8 +170,6 @@ public:
         thePlayer = world->CreateBody(&playerBodyDef);
         
         playerData = new UserData(self, @"Player");
-//        playerData->box2D = self;
-//        playerData->objectName = @"Player";
         
         if (thePlayer)
         {
@@ -200,8 +196,6 @@ public:
         //theObstacle->SetUserData(@"Obstacle");
         
         obstacleData = new UserData(self, @"Obstacle");
-//        obstacleData->box2D = self;
-//        obstacleData->objectName = @"Obstacle";
         
         if (theObstacle)
         {
@@ -248,10 +242,7 @@ public:
             thePlayer->SetActive(true);
         } else {
             //if the timer is 0, it means they haven't used their double jump yet
-            //if(player.jumpTimer != 0){
             if(player.jumpCount > player.maxJump){
-                //if(totalElapsedTime - player.jumpTimer >= 2){
-                //if(player.jumpCount >= player.maxJump && (player->state == grounded || player->state == leftCollision || player->state == rightCollision)){
                 //if player touches a non hazardous obstacle,reset jump
                 if(player->state == grounded || player->state == leftCollision || player->state == rightCollision){
                     printf("jump reset");
@@ -272,7 +263,7 @@ public:
 #endif
         ballLaunched = false;
     }
-    
+
     //in case the player is already dead, therefore dont update playerposition
     if(!dead){
         [player updatePos:thePlayer->GetPosition().x :thePlayer->GetPosition().y];
@@ -294,32 +285,7 @@ public:
     //  stop the ball and destroy the brick
     if (ballHitObstacle)
     {
-//        world->DestroyBody(thePlayer);
-//        thePlayer = NULL;
         ballHitObstacle = false;
-//        dead = true;
-//        if(thePlayer->GetPosition().x >= theObstacle->GetPosition().x - obstacle.width/2 &&
-//            thePlayer->GetPosition().x <= theObstacle->GetPosition().x + obstacle.width/2){
-//
-//                    if(thePlayer->GetPosition().y > theObstacle->GetPosition().y + obstacle.height/2){
-//                        printf("Top \n");
-//                    }
-//                    else if(thePlayer->GetPosition().y < theObstacle->GetPosition().y - obstacle.height/2){
-//                        //change the enum for which side its colliding with to the enum
-//                        //also there will be an enum that states wether the player is grounded or not being set here
-//                        printf("Bottom \n");
-//                    }
-//                }
-//                else {
-//
-//                    if(thePlayer->GetPosition().x < theObstacle->GetPosition().x + obstacle.width/2){
-//                        printf("Left \n");
-//                    } else if(thePlayer->GetPosition().x > theObstacle->GetPosition().x - obstacle.width/2){
-//                        printf("Right \n");
-//                    }
-//
-//                }
-        [player checkCollision:theObstacle->GetPosition().x :theObstacle->GetPosition().y :obstacle.width :obstacle.height];
     }
     
     if(theObstacle)
@@ -383,26 +349,28 @@ public:
             world->Step(elapsedTime, NUM_VEL_ITERATIONS, NUM_POS_ITERATIONS);
         }
     }
+    
+    //Gravity and the viewport translate speed is slowed
     step -= GAME_SPEED * slowFactor;
     gravity->y = GRAVITY * slowFactor;
     world->SetGravity(*gravity);
 }
 
--(void)RegisterHit
+//Check the name of the object when the player collides with that object
+-(void)RegisterHit:(NSString *) objectName
 {
-    // Set some flag here for processing later...
-    ballHitLeftWall = true;
-}
+    if([objectName  isEqual: @"Obstacle"]){
+        [player checkCollision:theObstacle->GetPosition().x :theObstacle->GetPosition().y :obstacle.width :obstacle.height];
 
--(void)RegisterHitObstacle
-{
-    // Set some flag here for processing later...
-    ballHitObstacle = true;
-}
-
--(void)RegisterHitGround
-{
-    player->state = grounded;
+        ballHitObstacle = true;
+    }
+    if([objectName  isEqual: @"LeftWall"]){
+        ballHitLeftWall = true;
+    }
+    if([objectName  isEqual: @"Ground"]){
+        player->state = grounded;
+        player.jumpCount = 0;
+    }
 }
 
 -(void) SetTargetVector:(float)posX :(float)posY
@@ -422,7 +390,7 @@ public:
 // Halt current velocity, set initial target position
 -(void)InitiateNewJump:(float)posX :(float)posY
 {
-    thePlayer->SetLinearVelocity(b2Vec2(0, 150));
+    thePlayer->SetLinearVelocity(b2Vec2(0, 75));
     
 //    [SetTargetVector:posX :posY];
     
