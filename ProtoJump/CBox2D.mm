@@ -49,13 +49,13 @@ public:
                 CBox2D *parentObj = bodyData->box2D;
                 // Call RegisterHit (assume CBox2D object is in user data)
                 if([bodyData->objectName isEqualToString:@"Obstacle"]){
-                    [parentObj RegisterHitObstacle];    // assumes RegisterHit is a callback function to register collision
+                    [parentObj RegisterHit:@"Obstacle"];    // assumes RegisterHit is a callback function to register collision
                 }
                 if([bodyData->objectName isEqualToString:@"LeftWall"]){
-                    [parentObj RegisterHit];    // call registerhit to signal that left wall was hit
+                    [parentObj RegisterHit:@"LeftWall"];    // call registerhit to signal that left wall was hit
                 }
                 if([bodyData->objectName isEqualToString:@"Ground"]){
-                    [parentObj RegisterHit];    // call registerhit to signal that left wall was hit
+                    [parentObj RegisterHit:@"Ground"];    // call registerhit to signal that left wall was hit
                 }
                 
             }
@@ -84,7 +84,10 @@ public:
     CContactListener *contactListener;
     CGFloat width, height;
     float totalElapsedTime;
-    int step;
+    float step;
+    float lerp;
+    float lerpTime;
+    float offset;
     // You will also need some extra variables here for the logic
     bool ballHitLeftWall;
     bool ballHitObstacle;
@@ -116,7 +119,7 @@ public:
         theGround = world->CreateBody(&gdBodyDef);
         
         //ground counts as obstacle, since obstacles are non-harmful objects which the ground can be a part of
-        groundData = new UserData(self,@"Obstacle");
+        groundData = new UserData(self,@"Ground");
         theGround->SetUserData((void*) groundData);
         
         b2PolygonShape gdBox;
@@ -217,6 +220,7 @@ public:
         
         totalElapsedTime = 0;
         slowFactor = 1;
+        lerpTime = GAME_SPEED * 3;
         ballHitLeftWall = false;
         ballLaunched = false;
     }
@@ -261,7 +265,7 @@ public:
 #endif
         ballLaunched = false;
     }
-    
+
     //in case the player is already dead, therefore dont update playerposition
     if(!dead){
         [player updatePos:thePlayer->GetPosition().x :thePlayer->GetPosition().y];
@@ -308,7 +312,6 @@ public:
 //                    }
 //
 //                }
-        [player checkCollision:theObstacle->GetPosition().x :theObstacle->GetPosition().y :obstacle.width :obstacle.height];
     }
     
     if(theObstacle)
@@ -377,21 +380,20 @@ public:
     world->SetGravity(*gravity);
 }
 
--(void)RegisterHit
+-(void)RegisterHit:(NSString *) objectName
 {
-    // Set some flag here for processing later...
-    ballHitLeftWall = true;
-}
+    if([objectName  isEqual: @"Obstacle"]){
+        [player checkCollision:theObstacle->GetPosition().x :theObstacle->GetPosition().y :obstacle.width :obstacle.height];
 
--(void)RegisterHitObstacle
-{
+        ballHitObstacle = true;
+    }
+    if([objectName  isEqual: @"LeftWall"]){
+        ballHitLeftWall = true;
+    }
+    if([objectName  isEqual: @"Ground"]){
+        //player->state = grounded;
+    }
     // Set some flag here for processing later...
-    ballHitObstacle = true;
-}
-
--(void)RegisterHitGround
-{
-    player->state = grounded;
 }
 
 -(void) SetTargetVector:(float)posX :(float)posY
@@ -477,6 +479,11 @@ public:
     if (theRoof)
         (*objPosList)["roof"] = theRoof->GetPosition();
     return reinterpret_cast<void *>(objPosList);
+}
+
+inline float lerpf(float a, float b, float t)
+{
+    return a + (b - a) * t;
 }
 
 @end
