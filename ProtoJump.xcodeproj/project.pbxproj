@@ -58,6 +58,7 @@
 		784B675525EB158600001842 /* CBox2D.mm in Sources */ = {isa = PBXBuildFile; fileRef = 784B674F25EB158600001842 /* CBox2D.mm */; };
 		784B675625EB158600001842 /* Shader.vsh in Resources */ = {isa = PBXBuildFile; fileRef = 784B675125EB158600001842 /* Shader.vsh */; };
 		784B675725EB158600001842 /* Shader.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 784B675225EB158600001842 /* Shader.fsh */; };
+		7850F14F26193A08004A0AC3 /* Player.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7850F14E26193A08004A0AC3 /* Player.mm */; };
 		974B070425DEF8AE00C8679A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 974B070325DEF8AE00C8679A /* AppDelegate.swift */; };
 		974B070625DEF8AE00C8679A /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 974B070525DEF8AE00C8679A /* SceneDelegate.swift */; };
 		974B070825DEF8AE00C8679A /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 974B070725DEF8AE00C8679A /* ViewController.swift */; };
@@ -171,6 +172,8 @@
 		784B675025EB158600001842 /* Renderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Renderer.h; sourceTree = "<group>"; };
 		784B675125EB158600001842 /* Shader.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = Shader.vsh; sourceTree = "<group>"; };
 		784B675225EB158600001842 /* Shader.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = Shader.fsh; sourceTree = "<group>"; };
+		7850F14D26193A08004A0AC3 /* Player.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Player.h; sourceTree = "<group>"; };
+		7850F14E26193A08004A0AC3 /* Player.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Player.mm; sourceTree = "<group>"; };
 		974B070025DEF8AE00C8679A /* ProtoJump.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ProtoJump.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		974B070325DEF8AE00C8679A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		974B070525DEF8AE00C8679A /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -389,6 +392,8 @@
 				784B66A125EB0EC100001842 /* ProtoJump-Bridging-Header.h */,
 				FAA2C3D625EF4F1500209DBD /* Obstacle.mm */,
 				FAA2C3DB25EF506800209DBD /* Obstacle.h */,
+				7850F14D26193A08004A0AC3 /* Player.h */,
+				7850F14E26193A08004A0AC3 /* Player.mm */,
 			);
 			path = ProtoJump;
 			sourceTree = "<group>";
@@ -478,6 +483,7 @@
 				784B673B25EB0FA700001842 /* b2Distance.cpp in Sources */,
 				FAA2C3D725EF4F1500209DBD /* Obstacle.mm in Sources */,
 				784B672625EB0FA700001842 /* b2WeldJoint.cpp in Sources */,
+				7850F14F26193A08004A0AC3 /* Player.mm in Sources */,
 				974B070425DEF8AE00C8679A /* AppDelegate.swift in Sources */,
 				784B674025EB0FA700001842 /* b2EdgeShape.cpp in Sources */,
 				784B673625EB0FA700001842 /* b2BlockAllocator.cpp in Sources */,

@@ -12,6 +12,15 @@ const float MAX_TIMESTEP = REFRESH_RATE;
 const int NUM_VEL_ITERATIONS = 10;
 const int NUM_POS_ITERATIONS = 3;
 
+class UserData{
+public:
+    CBox2D* box2D;
+    NSString* objectName;
+    UserData(CBox2D* box, NSString* name){
+        box2D = box;
+        objectName = name;
+    }
+};
 
 #pragma mark - Box2D contact listener class
 
@@ -31,14 +40,22 @@ public:
         {
             // Use contact->GetFixtureA()->GetBody() to get the body
             b2Body* bodyA = contact->GetFixtureA()->GetBody();
-            CBox2D *parentObj = (__bridge CBox2D *)(bodyA->GetUserData());
-            // Call RegisterHit (assume CBox2D object is in user data)
-            [parentObj RegisterHit];    // assumes RegisterHit is a callback function to register collision
+            
+            //first check if the bodys userdata is not null
+            if(bodyA->GetUserData() != NULL){
+                
+                //body data currently contains
+                UserData* bodyData = (UserData*)(bodyA->GetUserData());
+                CBox2D *parentObj = bodyData->box2D;
+                // Call RegisterHit (assume CBox2D object is in user data)
+                if([bodyData->objectName isEqualToString:@"Obstacle"]){
+                    [parentObj RegisterHit];    // assumes RegisterHit is a callback function to register collision
+                }
+            }
         }
     }
     void PostSolve(b2Contact* contact, const b2ContactImpulse* impulse) {};
 };
-
 
 #pragma mark - CBox2D
 
@@ -53,8 +70,10 @@ public:
     //b2Body *groundBody;
     //b2PolygonShape *groundBox;
 
-    b2Body *theLeftWall, *theBall, *theGround, *theRoof, *theObstacle;
-
+    b2Body *theLeftWall, *theGround, *thePlayer, *theRoof, *theObstacle;
+    
+    UserData *playerData, *wallData, *obstacleData;
+    
     CContactListener *contactListener;
     CGFloat width, height;
     float totalElapsedTime;
@@ -70,6 +89,7 @@ public:
 
 @synthesize xDir, yDir;
 @synthesize dead;
+@synthesize player;
 @synthesize obstacle;
 //@synthesize _targetVector;
 
@@ -106,9 +126,14 @@ public:
         leftwallBodyDef.type = b2_kinematicBody;
         leftwallBodyDef.position.Set(Left_Wall_POS_X, Left_Wall_POS_Y);
         theLeftWall = world->CreateBody(&leftwallBodyDef);
+        
+        wallData = new UserData(self,@"LeftWall");
+//        wallData->box2D = self;
+//        wallData->objectName = @"LeftWall";
+        
         if (theLeftWall)
         {
-            theLeftWall->SetUserData((__bridge void *)self);
+            theLeftWall->SetUserData((void *)wallData);
             theLeftWall->SetAwake(false);
             b2PolygonShape dynamicBox;
             dynamicBox.SetAsBox(Left_Wall_WIDTH/2, Left_Wall_HEIGHT/2);
@@ -118,36 +143,51 @@ public:
             fixtureDef.friction = 0.3f;
             fixtureDef.restitution = 0.0f;
             theLeftWall->CreateFixture(&fixtureDef);
-            
-            b2BodyDef ballBodyDef;
-            ballBodyDef.type = b2_dynamicBody;
-            ballBodyDef.position.Set(BALL_POS_X, BALL_POS_Y);
-            theBall = world->CreateBody(&ballBodyDef);
-            
-            if (theBall)
-            {
-                theBall->SetUserData((__bridge void *)self);
-                theBall->SetAwake(false);
-                b2CircleShape circle;
-                circle.m_p.Set(0, 0);
-                circle.m_radius = BALL_RADIUS;
-                b2FixtureDef circleFixtureDef;
-                circleFixtureDef.shape = &circle;
-                circleFixtureDef.density = 0.1f;
-                circleFixtureDef.friction = 0.3f;
-                circleFixtureDef.restitution = 0.0f;
-                theBall->CreateFixture(&circleFixtureDef);
-            }
         }
         
+        //player definition
+        player = [[Player alloc]init];
+        b2BodyDef playerBodyDef;
+        playerBodyDef.type = b2_dynamicBody;
+        playerBodyDef.position.Set(BALL_POS_X, BALL_POS_Y);
+        thePlayer = world->CreateBody(&playerBodyDef);
+        
+        playerData = new UserData(self, @"Player");
+//        playerData->box2D = self;
+//        playerData->objectName = @"Player";
+        
+        if (thePlayer)
+        {
+            
+            thePlayer->SetUserData((void *)playerData);
+            thePlayer->SetAwake(false);
+            b2CircleShape circle;
+            circle.m_p.Set(0, 0);
+            circle.m_radius = BALL_RADIUS;
+            b2FixtureDef circleFixtureDef;
+            circleFixtureDef.shape = &circle;
+            circleFixtureDef.density = 0.1f;
+            circleFixtureDef.friction = 0.3f;
+            circleFixtureDef.restitution = 0.0f;
+            thePlayer->CreateFixture(&circleFixtureDef);
+        }
+
+        //obstacle definition
         obstacle = [[Obstacle alloc]init];
         b2BodyDef obstacleBodyDef;
         obstacleBodyDef.type = b2_staticBody;
         obstacleBodyDef.position.Set(OBSTACLE_POS_X, obstacle.posY);
         theObstacle = world->CreateBody(&obstacleBodyDef);
+        //theObstacle->SetUserData(@"Obstacle");
+        
+        obstacleData = new UserData(self, @"Obstacle");
+//        obstacleData->box2D = self;
+//        obstacleData->objectName = @"Obstacle";
+        
         if (theObstacle)
         {
-            theObstacle->SetUserData((__bridge void *)self);
+            
+            theObstacle->SetUserData((void *)obstacleData);
             theObstacle->SetAwake(false);
             b2PolygonShape staticBox;
             staticBox.SetAsBox(obstacle.width/2, obstacle.height/2);
@@ -179,14 +219,16 @@ public:
     //  and if so, use ApplyLinearImpulse() and SetActive(true)
     if (ballLaunched)
     {
-        theBall->ApplyLinearImpulse(b2Vec2(0, BALL_VELOCITY), theBall->GetPosition(), true);
-        theBall->SetLinearVelocity(b2Vec2(xDir * JUMP_MAGNITUDE, yDir * JUMP_MAGNITUDE));
-        theBall->SetActive(true);
+        thePlayer->ApplyLinearImpulse(b2Vec2(0, BALL_VELOCITY), thePlayer->GetPosition(), true);
+        thePlayer->SetLinearVelocity(b2Vec2(xDir * JUMP_MAGNITUDE, yDir * JUMP_MAGNITUDE));
+        thePlayer->SetActive(true);
 #ifdef LOG_TO_CONSOLE
         NSLog(@"Applying impulse %f to ball\n", BALL_VELOCITY);
 #endif
         ballLaunched = false;
     }
+    
+    [player updatePos:thePlayer->GetPosition().x :thePlayer->GetPosition().y];
     
     // Check if it is time yet to drop the brick, and if so
     //  call SetAwake()
@@ -198,10 +240,32 @@ public:
     //  stop the ball and destroy the brick
     if (ballHitLeftWall)
     {
-        world->DestroyBody(theBall);
-        theBall = NULL;
+//        world->DestroyBody(thePlayer);
+//        thePlayer = NULL;
         ballHitLeftWall = false;
-        dead = true;
+//        dead = true;
+//        if(thePlayer->GetPosition().x >= theObstacle->GetPosition().x - obstacle.width/2 &&
+//            thePlayer->GetPosition().x <= theObstacle->GetPosition().x + obstacle.width/2){
+//
+//                    if(thePlayer->GetPosition().y > theObstacle->GetPosition().y + obstacle.height/2){
+//                        printf("Top \n");
+//                    }
+//                    else if(thePlayer->GetPosition().y < theObstacle->GetPosition().y - obstacle.height/2){
+//                        //change the enum for which side its colliding with to the enum
+//                        //also there will be an enum that states wether the player is grounded or not being set here
+//                        printf("Bottom \n");
+//                    }
+//                }
+//                else {
+//
+//                    if(thePlayer->GetPosition().x < theObstacle->GetPosition().x + obstacle.width/2){
+//                        printf("Left \n");
+//                    } else if(thePlayer->GetPosition().x > theObstacle->GetPosition().x - obstacle.width/2){
+//                        printf("Right \n");
+//                    }
+//
+//                }
+        [player checkCollision:theObstacle->GetPosition().x :theObstacle->GetPosition().y :obstacle.width :obstacle.height];
     }
     
     if(theObstacle)
@@ -230,9 +294,13 @@ public:
         obstacleBodyDef.type = b2_staticBody;
         obstacleBodyDef.position.Set(theGround->GetPosition().x + SCREEN_BOUNDS_X/2, obstacle.posY);
         theObstacle = world->CreateBody(&obstacleBodyDef);
+        
+        UserData* obstacleData = new UserData(self,@"Obstacle");
+//        obstacleData->box2D = self;
+//        obstacleData->objectName = @"Obstacle";
         if (theObstacle)
         {
-            theObstacle->SetUserData((__bridge void *)self);
+            theObstacle->SetUserData((void*) obstacleData);
             theObstacle->SetAwake(false);
             b2PolygonShape staticBox;
             staticBox.SetAsBox(obstacle.width/2, obstacle.height/2);
@@ -273,7 +341,7 @@ public:
 -(void) SetTargetVector:(float)posX :(float)posY
 {
     // Curate ball Pos value to be scaled to screen space.
-    b2Vec2 currentBallPos = theBall->GetPosition();
+    b2Vec2 currentBallPos = thePlayer->GetPosition();
     currentBallPos.x = ((currentBallPos.x + step)/ SCREEN_BOUNDS_X);
     
     currentBallPos.y = -((currentBallPos.y / SCREEN_BOUNDS_Y) - 1);
@@ -287,12 +355,12 @@ public:
 // Halt current velocity, set initial target position
 -(void)InitiateNewJump:(float)posX :(float)posY
 {
-    theBall->SetLinearVelocity(b2Vec2(0, 150));
+    thePlayer->SetLinearVelocity(b2Vec2(0, 150));
     
 //    [SetTargetVector:posX :posY];
     
     // Curate ball Pos value to be scaled to screen space.
-    b2Vec2 currentBallPos = theBall->GetPosition();
+    b2Vec2 currentBallPos = thePlayer->GetPosition();
     currentBallPos.x = ((currentBallPos.x + step) / SCREEN_BOUNDS_X);
     
     currentBallPos.y = -((currentBallPos.y / SCREEN_BOUNDS_Y) - 1);
@@ -314,7 +382,7 @@ public:
 {
     
     // Curate ball Pos value to be scaled to screen space.
-    b2Vec2 currentBallPos = theBall->GetPosition();
+    b2Vec2 currentBallPos = thePlayer->GetPosition();
     currentBallPos.x = ((currentBallPos.x + step)/ SCREEN_BOUNDS_X);
     
     currentBallPos.y = -((currentBallPos.y / SCREEN_BOUNDS_Y) - 1);
@@ -342,8 +410,8 @@ public:
 -(void *)GetObjectPositions
 {
     auto *objPosList = new std::map<const char *,b2Vec2>;
-    if (theBall)
-        (*objPosList)["ball"] = theBall->GetPosition();
+    if (thePlayer)
+        (*objPosList)["ball"] = thePlayer->GetPosition();
     if (theLeftWall)
         (*objPosList)["leftwall"] = theLeftWall->GetPosition();
     if (theObstacle)
