@@ -85,9 +85,6 @@ public:
     CGFloat width, height;
     float totalElapsedTime;
     float step;
-    float lerp;
-    float lerpTime;
-    float offset;
     // You will also need some extra variables here for the logic
     bool ballHitLeftWall;
     bool ballHitObstacle;
@@ -146,8 +143,6 @@ public:
         theLeftWall = world->CreateBody(&leftwallBodyDef);
         
         wallData = new UserData(self,@"LeftWall");
-//        wallData->box2D = self;
-//        wallData->objectName = @"LeftWall";
         
         if (theLeftWall)
         {
@@ -175,8 +170,6 @@ public:
         thePlayer = world->CreateBody(&playerBodyDef);
         
         playerData = new UserData(self, @"Player");
-//        playerData->box2D = self;
-//        playerData->objectName = @"Player";
         
         if (thePlayer)
         {
@@ -203,8 +196,6 @@ public:
         //theObstacle->SetUserData(@"Obstacle");
         
         obstacleData = new UserData(self, @"Obstacle");
-//        obstacleData->box2D = self;
-//        obstacleData->objectName = @"Obstacle";
         
         if (theObstacle)
         {
@@ -223,7 +214,6 @@ public:
         
         totalElapsedTime = 0;
         slowFactor = 1;
-        lerpTime = GAME_SPEED * 3;
         ballHitLeftWall = false;
         ballLaunched = false;
     }
@@ -252,10 +242,7 @@ public:
             thePlayer->SetActive(true);
         } else {
             //if the timer is 0, it means they haven't used their double jump yet
-            //if(player.jumpTimer != 0){
             if(player.jumpCount > player.maxJump){
-                //if(totalElapsedTime - player.jumpTimer >= 2){
-                //if(player.jumpCount >= player.maxJump && (player->state == grounded || player->state == leftCollision || player->state == rightCollision)){
                 //if player touches a non hazardous obstacle,reset jump
                 if(player->state == grounded || player->state == leftCollision || player->state == rightCollision){
                     printf("jump reset");
@@ -298,31 +285,7 @@ public:
     //  stop the ball and destroy the brick
     if (ballHitObstacle)
     {
-//        world->DestroyBody(thePlayer);
-//        thePlayer = NULL;
         ballHitObstacle = false;
-//        dead = true;
-//        if(thePlayer->GetPosition().x >= theObstacle->GetPosition().x - obstacle.width/2 &&
-//            thePlayer->GetPosition().x <= theObstacle->GetPosition().x + obstacle.width/2){
-//
-//                    if(thePlayer->GetPosition().y > theObstacle->GetPosition().y + obstacle.height/2){
-//                        printf("Top \n");
-//                    }
-//                    else if(thePlayer->GetPosition().y < theObstacle->GetPosition().y - obstacle.height/2){
-//                        //change the enum for which side its colliding with to the enum
-//                        //also there will be an enum that states wether the player is grounded or not being set here
-//                        printf("Bottom \n");
-//                    }
-//                }
-//                else {
-//
-//                    if(thePlayer->GetPosition().x < theObstacle->GetPosition().x + obstacle.width/2){
-//                        printf("Left \n");
-//                    } else if(thePlayer->GetPosition().x > theObstacle->GetPosition().x - obstacle.width/2){
-//                        printf("Right \n");
-//                    }
-//
-//                }
     }
     
     if(theObstacle)
@@ -386,6 +349,8 @@ public:
             world->Step(elapsedTime, NUM_VEL_ITERATIONS, NUM_POS_ITERATIONS);
         }
     }
+    
+    //Gravity and the viewport translate speed is slowed
     step -= GAME_SPEED * slowFactor;
     gravity->y = GRAVITY * slowFactor;
     world->SetGravity(*gravity);
@@ -491,11 +456,6 @@ public:
     if (theRoof)
         (*objPosList)["roof"] = theRoof->GetPosition();
     return reinterpret_cast<void *>(objPosList);
-}
-
-inline float lerpf(float a, float b, float t)
-{
-    return a + (b - a) * t;
 }
 
 @end

@@ -40,8 +40,8 @@ enum
     std::chrono::time_point<std::chrono::steady_clock> lastTime;    // used to calculated elapsed time
 
     GLuint brickVertexArray, ballVertexArray, groundVertexArray, roofVertexArray, obstacleVertexArray;   // vertex arrays for brick and ball
-    int numLeftWallVerts, numBallVerts, numObstacleVerts, numGroundVerts, numRoofVerts, steps;
-
+    int numLeftWallVerts, numBallVerts, numObstacleVerts, numGroundVerts, numRoofVerts;
+    float step;
     GLKMatrix4 modelViewProjectionMatrix;   // model-view-projection matrix
 }
 
@@ -379,9 +379,9 @@ enum
     // For now assume simple ortho projection since it's only 2D
     GLKMatrix4 projectionMatrix = GLKMatrix4MakeOrtho(0, 800, 0, 600, -10, 100);    // note bounding box matches Box2D world
     GLKMatrix4 modelViewMatrix = GLKMatrix4Identity;
-    modelViewMatrix = GLKMatrix4Translate(modelViewMatrix, steps, 0, 0);
+    modelViewMatrix = GLKMatrix4Translate(modelViewMatrix, step, 0, 0);
     modelViewProjectionMatrix = GLKMatrix4Multiply(projectionMatrix, modelViewMatrix);
-    steps -= GAME_SPEED * box2d.slowFactor;
+    step -= GAME_SPEED * box2d.slowFactor;
 }
 
 - (void)draw:(CGRect)drawRect;
