@@ -67,6 +67,8 @@
 		974B070B25DEF8AE00C8679A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 974B070925DEF8AE00C8679A /* Main.storyboard */; };
 		974B070D25DEF8AF00C8679A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 974B070C25DEF8AF00C8679A /* Assets.xcassets */; };
 		974B071025DEF8AF00C8679A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 974B070E25DEF8AF00C8679A /* LaunchScreen.storyboard */; };
+		977896BE261CFD6700DE0817 /* blueEnergy.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 977896BD261CFD6700DE0817 /* blueEnergy.jpg */; };
+		977896C1261D038100DE0817 /* steelAlt.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 977896C0261D038100DE0817 /* steelAlt.jpg */; };
 		FAA2C3D725EF4F1500209DBD /* Obstacle.mm in Sources */ = {isa = PBXBuildFile; fileRef = FAA2C3D625EF4F1500209DBD /* Obstacle.mm */; };
 /* End PBXBuildFile section */
 
@@ -187,6 +189,8 @@
 		974B070C25DEF8AF00C8679A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		974B070F25DEF8AF00C8679A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		974B071125DEF8AF00C8679A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		977896BD261CFD6700DE0817 /* blueEnergy.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = blueEnergy.jpg; sourceTree = "<group>"; };
+		977896C0261D038100DE0817 /* steelAlt.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = steelAlt.jpg; sourceTree = "<group>"; };
 		FAA2C3D625EF4F1500209DBD /* Obstacle.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = Obstacle.mm; sourceTree = "<group>"; };
 		FAA2C3DB25EF506800209DBD /* Obstacle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Obstacle.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -393,6 +397,8 @@
 				784B66B325EB0FA600001842 /* Box2D */,
 				784B674B25EB158600001842 /* CBox2D.h */,
 				9715BB9F261B8CFA0026E123 /* steelTemp.jpg */,
+				977896C0261D038100DE0817 /* steelAlt.jpg */,
+				977896BD261CFD6700DE0817 /* blueEnergy.jpg */,
 				784B674F25EB158600001842 /* CBox2D.mm */,
 				784B674D25EB158600001842 /* GLESRenderer.cpp */,
 				784B674C25EB158600001842 /* GLESRenderer.hpp */,
@@ -473,7 +479,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				784B675625EB158600001842 /* Shader.vsh in Resources */,
+				977896C1261D038100DE0817 /* steelAlt.jpg in Resources */,
 				9715BBA0261B8CFA0026E123 /* steelTemp.jpg in Resources */,
+				977896BE261CFD6700DE0817 /* blueEnergy.jpg in Resources */,
 				974B071025DEF8AF00C8679A /* LaunchScreen.storyboard in Resources */,
 				974B070D25DEF8AF00C8679A /* Assets.xcassets in Resources */,
 				974B070B25DEF8AE00C8679A /* Main.storyboard in Resources */,
