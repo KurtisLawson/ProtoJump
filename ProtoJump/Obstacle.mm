@@ -11,12 +11,13 @@
 
 @synthesize red, green, blue;
 @synthesize width, height, posY;
+@synthesize hazards;
 
 -(instancetype)init {
     self = [super init];
     if(self){
-        red = 1;
-        green = blue = 0;
+        blue = 1;
+        red = green = 0;
 
         self.width = arc4random_uniform(OBSTACLE_MAX_WIDTH - OBSTACLE_MIN_WIDTH + 1) + OBSTACLE_MIN_WIDTH;
         self.height = arc4random_uniform(OBSTACLE_MAX_HEIGHT - OBSTACLE_MIN_HEIGHT + 1) + OBSTACLE_MIN_HEIGHT;

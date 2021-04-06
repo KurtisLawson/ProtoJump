@@ -28,6 +28,7 @@
 @property (nonatomic, readwrite) float red, green, blue;
 @property (nonatomic, readwrite) int posY;
 @property (nonatomic, readwrite) float width, height;
+@property (nonatomic, readwrite) NSArray* hazards;
 
 -(void)randomize;
 -(void)dealloc;
