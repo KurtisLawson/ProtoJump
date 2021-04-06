@@ -263,10 +263,17 @@ public:
 #endif
         ballLaunched = false;
     }
-
+    
     //in case the player is already dead, therefore dont update playerposition
     if(!dead){
         [player updatePos:thePlayer->GetPosition().x :thePlayer->GetPosition().y];
+        
+        //if the ball hit either sides of the wall, apply upward force to negate gravity
+        if(player->state == leftCollision||player->state == rightCollision){
+            thePlayer->SetGravityScale(0.4);
+        } else {
+            thePlayer->SetGravityScale(1);
+        }
     }
     // Check if it is time yet to drop the brick, and if so
     //  call SetAwake()
@@ -361,7 +368,6 @@ public:
 {
     if([objectName  isEqual: @"Obstacle"]){
         [player checkCollision:theObstacle->GetPosition().x :theObstacle->GetPosition().y :obstacle.width :obstacle.height];
-
         ballHitObstacle = true;
     }
     if([objectName  isEqual: @"LeftWall"]){
