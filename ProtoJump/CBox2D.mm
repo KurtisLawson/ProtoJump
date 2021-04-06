@@ -54,6 +54,9 @@ public:
                 if([bodyData->objectName isEqualToString:@"LeftWall"]){
                     [parentObj RegisterHit:@"LeftWall"];    // call registerhit to signal that left wall was hit
                 }
+                if([bodyData->objectName isEqualToString:@"Hazard"]){
+                    [parentObj RegisterHit:@"Hazard"];
+                }
                 if([bodyData->objectName isEqualToString:@"Ground"]){
                     [parentObj RegisterHit:@"Ground"];    // call registerhit to signal that left wall was hit
                 }
@@ -77,9 +80,9 @@ public:
     //b2Body *groundBody;
     //b2PolygonShape *groundBox;
 
-    b2Body *theLeftWall, *theGround, *thePlayer, *theRoof, *theObstacle, *theHazard1, *theHazard2, *theHazard3;
+    b2Body *theLeftWall, *theGround, *thePlayer, *theRoof, *theObstacle, *theHazardLeft, *theHazardTop, *theHazardRight, *theHazardBot;
     
-    UserData *playerData, *wallData, *obstacleData, *hazard1Data, *hazard2Data, *hazard3Data, *groundData;
+    UserData *playerData, *wallData, *obstacleData, *hazardLeftData, *hazardTopData, *hazardRightData, *hazardBotData, *groundData;
     
     CContactListener *contactListener;
     CGFloat width, height;
@@ -187,9 +190,11 @@ public:
             thePlayer->CreateFixture(&circleFixtureDef);
         }
 
-        //obstacle definition
+        //Chunk creation
         chunk = [[Chunk alloc]init];
         [chunk create:chunk_single];
+        
+        //Obstacle definition
         Obstacle* obs = [chunk.obstacles objectAtIndex:0];
         b2BodyDef obstacleBodyDef;
         obstacleBodyDef.type = b2_staticBody;
@@ -197,19 +202,30 @@ public:
         theObstacle = world->CreateBody(&obstacleBodyDef);
         obstacleData = new UserData(self, @"Obstacle");
         
-        if (theObstacle)
-        {
+        //Hazard definition
+        Hazard* hz = [chunk.hazards objectAtIndex:0];
+        b2BodyDef hazardBodyDef;
+        hazardBodyDef.type = b2_staticBody;
+        hazardBodyDef.position.Set(CHUNK_POS_X-(obs.width/2), obs.posY);
+        theHazardLeft = world->CreateBody(&hazardBodyDef);
+        hazardLeftData = new UserData(self, @"HazardLeft");
+        
+        if(chunk){
+            if (theObstacle)
+            {
             
-            theObstacle->SetUserData((void *)obstacleData);
-            theObstacle->SetAwake(false);
-            b2PolygonShape staticBox;
-            staticBox.SetAsBox(obs.width/2, obs.height/2);
-            b2FixtureDef fixtureDef;
-            fixtureDef.shape = &staticBox;
-            fixtureDef.density = 1.0f;
-            fixtureDef.friction = 0.3f;
-            fixtureDef.restitution = 0.0f;
-            theObstacle->CreateFixture(&fixtureDef);
+                theObstacle->SetUserData((void *)obstacleData);
+                theObstacle->SetAwake(false);
+                b2PolygonShape staticBox;
+                staticBox.SetAsBox(obs.width/2, obs.height/2);
+                b2FixtureDef fixtureDef;
+                fixtureDef.shape = &staticBox;
+                fixtureDef.density = 1.0f;
+                fixtureDef.friction = 0.3f;
+                fixtureDef.restitution = 0.0f;
+                theObstacle->CreateFixture(&fixtureDef);
+            }
+            
         }
         
         totalElapsedTime = 0;
@@ -270,7 +286,7 @@ public:
         
         //if the ball hit either sides of the wall, apply upward force to negate gravity
         if(player->state == leftCollision||player->state == rightCollision){
-            thePlayer->SetGravityScale(0.4);
+            thePlayer->SetGravityScale(0.2);
         } else {
             thePlayer->SetGravityScale(1);
         }
@@ -376,6 +392,9 @@ public:
     if([objectName  isEqual: @"LeftWall"]){
         ballHitLeftWall = true;
     }
+    if([objectName isEqual:@"Hazard"]){
+        ballHitLeftWall = true;
+    }
     if([objectName  isEqual: @"Ground"]){
         player->state = grounded;
         player.jumpCount = 0;
@@ -399,7 +418,7 @@ public:
 // Halt current velocity, set initial target position
 -(void)InitiateNewJump:(float)posX :(float)posY
 {
-    thePlayer->SetLinearVelocity(b2Vec2(0, 75));
+    thePlayer->SetLinearVelocity(b2Vec2(0, 0));
     
 //    [SetTargetVector:posX :posY];
     

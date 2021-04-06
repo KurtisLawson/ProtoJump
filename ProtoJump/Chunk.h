@@ -15,6 +15,9 @@
 #include "Hazard.h"
 
 #define CHUNK_POS_X     900
+#define TOTAL_HAZ_NUM   4
+#define MAX_HAZ_AMOUNT  3
+#define HAZ_CHANCE      25
 
 typedef enum {
     chunk_single = 1,

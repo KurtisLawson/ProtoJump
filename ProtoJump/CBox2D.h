@@ -26,10 +26,10 @@
 #define REFRESH_RATE           0.05/60
 
 
-#define Left_Wall_POS_X            0
-#define Left_Wall_POS_Y            300
-#define Left_Wall_WIDTH            100.0f
-#define Left_Wall_HEIGHT           600.0f
+#define Left_Wall_POS_X        0
+#define Left_Wall_POS_Y        300
+#define Left_Wall_WIDTH        100.0f
+#define Left_Wall_HEIGHT       600.0f
 
 #define BRICK_POS_X            400
 #define BRICK_POS_Y            500
