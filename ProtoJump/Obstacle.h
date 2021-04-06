@@ -18,7 +18,6 @@
 #define OBSTACLE_MIN_WIDTH     50.0f
 #define OBSTACLE_MAX_HEIGHT    350.0f
 #define OBSTACLE_MIN_HEIGHT    100.0f
-//#define OBSTACLE_DISTANCE      900
 
 
 @interface Obstacle : NSObject {}
