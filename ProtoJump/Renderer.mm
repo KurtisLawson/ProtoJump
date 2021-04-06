@@ -251,9 +251,9 @@ enum
         GLfloat vertCol[numObstacleVerts*3];
         for (k=0; k<numObstacleVerts*3; k+=3)
         {
-            vertCol[k] = box2d.obstacle.red;
-            vertCol[k+1] = box2d.obstacle.green;
-            vertCol[k+2] = box2d.obstacle.blue;
+            vertCol[k] = box2d.obstacle.R;
+            vertCol[k+1] = box2d.obstacle.G;
+            vertCol[k+2] = box2d.obstacle.B;
         }
         glBindBuffer(GL_ARRAY_BUFFER, vertexBuffers[1]);
         glBufferData(GL_ARRAY_BUFFER, sizeof(vertCol), vertCol, GL_STATIC_DRAW);    // Send vertex data to VBO
