@@ -108,56 +108,59 @@ enum
     playerModel = [[AnimatedModel alloc] init];
     [playerModel setupVAO];
     
-    // First cube (centre, textured)
-    glGenVertexArrays(1, &staticObjects[0].vao);
-    glGenBuffers(1, &staticObjects[0].ibo);
+    // Wall and ceilings:
+    for (int i = 0; i < 3; ++i) {
+        // First cube (centre, textured)
+        glGenVertexArrays(1, &staticObjects[i].vao);
+        glGenBuffers(1, &staticObjects[i].ibo);
 
-    // get crate data
-    staticObjects[0].numIndices = glesRenderer.GenCube(1.0f, &staticObjects[0].vertices, &staticObjects[0].normals, &staticObjects[0].texCoords, &staticObjects[0].indices);
-    
-    // set up VBOs (one per attribute)
-    glBindVertexArray(staticObjects[0].vao);
-    GLuint vbo[4];
-    glGenBuffers(4, vbo);
+        // get crate data
+        staticObjects[i].numIndices = glesRenderer.GenCube(1.0f, &staticObjects[i].vertices, &staticObjects[i].normals, &staticObjects[i].texCoords, &staticObjects[i].indices);
+        
+        // set up VBOs (one per attribute)
+        glBindVertexArray(staticObjects[i].vao);
+        GLuint vbo[4];
+        glGenBuffers(4, vbo);
 
-    // pass on position data
-    glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
-    glBufferData(GL_ARRAY_BUFFER, 3*24*sizeof(GLfloat), staticObjects[0].vertices, GL_STATIC_DRAW);
-    glEnableVertexAttribArray(ATTRIB_POSITION);
-    glVertexAttribPointer(ATTRIB_POSITION, 3, GL_FLOAT, GL_FALSE, 3*sizeof(GLfloat), BUFFER_OFFSET(0));
-    
-    // pass on color data
-    glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
-    GLfloat vertCol[24*3];
-    for (int k = 0; k<24*3; k+=3)
-    {
-        vertCol[k] = 1.0f;
-        vertCol[k+1] = 0.5f;
-        vertCol[k+2] = 0.5f;
+        // pass on position data
+        glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
+        glBufferData(GL_ARRAY_BUFFER, 3*24*sizeof(GLfloat), staticObjects[i].vertices, GL_STATIC_DRAW);
+        glEnableVertexAttribArray(ATTRIB_POSITION);
+        glVertexAttribPointer(ATTRIB_POSITION, 3, GL_FLOAT, GL_FALSE, 3*sizeof(GLfloat), BUFFER_OFFSET(0));
+        
+        // pass on color data
+        glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
+        GLfloat vertCol[24*3];
+        for (int k = 0; k<24*3; k+=3)
+        {
+            vertCol[k] = 1.0f;
+            vertCol[k+1] = 1.0f;
+            vertCol[k+2] = 1.0f;
+        }
+        
+        glBufferData(GL_ARRAY_BUFFER, sizeof(vertCol), vertCol, GL_STATIC_DRAW);    // Send vertex data to VBO
+        glEnableVertexAttribArray(ATTRIB_COL);
+        glVertexAttribPointer(ATTRIB_COL, 3, GL_FLOAT, GL_FALSE, 3*sizeof(GLfloat), BUFFER_OFFSET(0));
+
+        // pass on normals
+        glBindBuffer(GL_ARRAY_BUFFER, vbo[2]);
+        glBufferData(GL_ARRAY_BUFFER, 3*24*sizeof(GLfloat), staticObjects[i].normals, GL_STATIC_DRAW);
+        glEnableVertexAttribArray(ATTRIB_NORMAL);
+        glVertexAttribPointer(ATTRIB_NORMAL, 3, GL_FLOAT, GL_FALSE, 3*sizeof(GLfloat), BUFFER_OFFSET(0));
+
+        // pass on texture coordinates
+        glBindBuffer(GL_ARRAY_BUFFER, vbo[3]);
+        glBufferData(GL_ARRAY_BUFFER, 2*24*sizeof(GLfloat), staticObjects[i].texCoords, GL_STATIC_DRAW);
+        glEnableVertexAttribArray(ATTRIB_TEXTURE);
+        glVertexAttribPointer(ATTRIB_TEXTURE, 3, GL_FLOAT, GL_FALSE, 2*sizeof(GLfloat), BUFFER_OFFSET(0));
+        
+        // bind the ibo's
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, staticObjects[i].ibo);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(staticObjects[i].indices[0]) * staticObjects[i].numIndices, staticObjects[i].indices, GL_STATIC_DRAW);
+
+        // deselect the VAOs just to be clean
+        glBindVertexArray(0);
     }
-    
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertCol), vertCol, GL_STATIC_DRAW);    // Send vertex data to VBO
-    glEnableVertexAttribArray(ATTRIB_COL);
-    glVertexAttribPointer(ATTRIB_COL, 3, GL_FLOAT, GL_FALSE, 3*sizeof(GLfloat), BUFFER_OFFSET(0));
-
-    // pass on normals
-    glBindBuffer(GL_ARRAY_BUFFER, vbo[2]);
-    glBufferData(GL_ARRAY_BUFFER, 3*24*sizeof(GLfloat), staticObjects[0].normals, GL_STATIC_DRAW);
-    glEnableVertexAttribArray(ATTRIB_NORMAL);
-    glVertexAttribPointer(ATTRIB_NORMAL, 3, GL_FLOAT, GL_FALSE, 3*sizeof(GLfloat), BUFFER_OFFSET(0));
-
-    // pass on texture coordinates
-    glBindBuffer(GL_ARRAY_BUFFER, vbo[3]);
-    glBufferData(GL_ARRAY_BUFFER, 2*24*sizeof(GLfloat), staticObjects[0].texCoords, GL_STATIC_DRAW);
-    glEnableVertexAttribArray(ATTRIB_TEXTURE);
-    glVertexAttribPointer(ATTRIB_TEXTURE, 3, GL_FLOAT, GL_FALSE, 2*sizeof(GLfloat), BUFFER_OFFSET(0));
-    
-    // bind the ibo's
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, staticObjects[0].ibo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(staticObjects[0].indices[0]) * staticObjects[0].numIndices, staticObjects[0].indices, GL_STATIC_DRAW);
-
-    // deselect the VAOs just to be clean
-    glBindVertexArray(0);
 }
 
 - (void)setup:(GLKView *)view
@@ -209,7 +212,7 @@ enum
 
      //Projection Matrices
         float aspect = (float)theView.drawableWidth / (float)theView.drawableHeight;
-        GLKMatrix4 perspectiveMatrix = GLKMatrix4MakePerspective(60.0f * M_PI / 180.0f, aspect, 1.0f, 20.0f);
+        GLKMatrix4 perspectiveMatrix = GLKMatrix4MakePerspective(50.0f * M_PI / 180.0f, aspect, 1.0f, 20.0f);
         GLKMatrix4 projectionMatrix = GLKMatrix4MakeOrtho(0, 800, 0, 600, -10, 100);    // note bounding box matches Box2D world
     //>>>>>>-------
 
@@ -217,7 +220,7 @@ enum
         glClearColor ( 0.0f, 0.0f, 0.0f, 0.0f );
         specularComponent = GLKVector4Make(0.2f, 0.2f, 0.2f, 1.0f);
         ambientComponent = GLKVector4Make(0.4, 0.4, 0.4, 1.0);
-    //    specularLightPosition = GLKVector4Make(-5, 0.0f, -3, 1.0f);   // make specular light move with camera
+//        specularLightPosition = GLKVector4Make(-5, 0.0f, -3, 1.0f);   // make specular light move with camera
     
     // Get the ball and brick objects from Box2D
     auto objPosList = static_cast<std::map<const char *, b2Vec2> *>([box2d GetObjectPositions]);
@@ -231,81 +234,111 @@ enum
     // initialize MVP matrix for both objects to set the "camera"
     staticObjects[0].mvp = GLKMatrix4Translate(GLKMatrix4Identity, 0.0, 0.0, -5.0);
 
-    // apply transformations to first (textured cube)
-    //>>>>>>-------
+    // apply transformations to the ground
     if (theGround) {
-        staticObjects[0].mvm = staticObjects[0].mvp = GLKMatrix4Translate(staticObjects[0].mvp, 3, 2, 0.0) ;
+        staticObjects[0].mvm = staticObjects[0].mvp = GLKMatrix4Translate(staticObjects[0].mvp, 0, -3, -1.0);
+        staticObjects[0].mvm = staticObjects[0].mvp = GLKMatrix4Rotate(staticObjects[0].mvp, 0.0, 1.0, 0.0, 1.0 );
+          staticObjects[0].mvm = staticObjects[0].mvp = GLKMatrix4Scale(staticObjects[0].mvp, 12, 1, 1 );
+              
+          staticObjects[0].normalMatrix = GLKMatrix3InvertAndTranspose(GLKMatrix4GetMatrix3(staticObjects[0].mvp), NULL);
+          staticObjects[0].mvp = GLKMatrix4Multiply(perspectiveMatrix, staticObjects[0].mvp);
+          
+      //    NSLog(@"Object MVP ");
     }
-    //>>>>>>-------
-
-//    staticObjects[0].mvm = staticObjects[0].mvp = GLKMatrix4Rotate(staticObjects[0].mvp, 0.0, 1.0, 0.0, 1.0 );
-//    staticObjects[0].mvm = staticObjects[0].mvp = GLKMatrix4Scale(staticObjects[0].mvp, 1, 1, 1 );
-        
-    staticObjects[0].normalMatrix = GLKMatrix3InvertAndTranspose(GLKMatrix4GetMatrix3(staticObjects[0].mvp), NULL);
-    staticObjects[0].mvp = GLKMatrix4Multiply(perspectiveMatrix, staticObjects[0].mvp);
-    
-//    NSLog(@"Object MVP ");
         
     // **********************************************
+    
+    // ******************************************************************
+    // initialize MVP matrix for both objects to set the "camera"
+    staticObjects[1].mvp = GLKMatrix4Translate(GLKMatrix4Identity, 0.0, 0.0, -5.0);
 
-    if (theLeftWall)
-    {
-        // Set up VAO/VBO for brick
-        glGenVertexArrays(1, &brickVertexArray);
-        glBindVertexArray(brickVertexArray);
-        
-        GLuint vertexBuffers[2];
-        glGenBuffers(2, vertexBuffers);
-        
-        // VBO for vertex positions
-        glBindBuffer(GL_ARRAY_BUFFER, vertexBuffers[0]);
-        GLfloat vertPos[18];    // 2 triangles x 3 vertices/triangle x 3 coords (x,y,z) per vertex
-        int k = 0;
-        numLeftWallVerts = 0;
-        vertPos[k++] = theLeftWall->x - Left_Wall_WIDTH/2;
-        vertPos[k++] = theLeftWall->y + Left_Wall_HEIGHT/2;
-        vertPos[k++] = 10;  // z-value is always set to same value since 2D
-        numLeftWallVerts++;
-        vertPos[k++] = theLeftWall->x + Left_Wall_WIDTH/2;
-        vertPos[k++] = theLeftWall->y + Left_Wall_HEIGHT/2;
-        vertPos[k++] = 10;
-        numLeftWallVerts++;
-        vertPos[k++] = theLeftWall->x + Left_Wall_WIDTH/2;
-        vertPos[k++] = theLeftWall->y - Left_Wall_HEIGHT/2;
-        vertPos[k++] = 10;
-        numLeftWallVerts++;
-        vertPos[k++] = theLeftWall->x - Left_Wall_WIDTH/2;
-        vertPos[k++] = theLeftWall->y + Left_Wall_HEIGHT/2;
-        vertPos[k++] = 10;
-        numLeftWallVerts++;
-        vertPos[k++] = theLeftWall->x + Left_Wall_WIDTH/2;
-        vertPos[k++] = theLeftWall->y - Left_Wall_HEIGHT/2;
-        vertPos[k++] = 10;
-        numLeftWallVerts++;
-        vertPos[k++] = theLeftWall->x - Left_Wall_WIDTH/2;
-        vertPos[k++] = theLeftWall->y - Left_Wall_HEIGHT/2;
-        vertPos[k++] = 10;
-        numLeftWallVerts++;
-        glBufferData(GL_ARRAY_BUFFER, sizeof(vertPos), vertPos, GL_STATIC_DRAW);    // Send vertex data to VBO
-        glEnableVertexAttribArray(ATTRIB_POSITION);
-        glVertexAttribPointer(ATTRIB_POSITION, 3, GL_FLOAT, GL_FALSE, 3*sizeof(GLfloat), BUFFER_OFFSET(0));
-        
-        // VBO for vertex colours
-        GLfloat vertCol[numLeftWallVerts*3];
-        for (k=0; k<numLeftWallVerts*3; k+=3)
-        {
-            vertCol[k] = 1.0f;
-            vertCol[k+1] = 0.0f;
-            vertCol[k+2] = 0.0f;
-        }
-        
-        glBindBuffer(GL_ARRAY_BUFFER, vertexBuffers[1]);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(vertCol), vertCol, GL_STATIC_DRAW);    // Send vertex data to VBO
-        glEnableVertexAttribArray(ATTRIB_COL);
-        glVertexAttribPointer(ATTRIB_COL, 3, GL_FLOAT, GL_FALSE, 3*sizeof(GLfloat), BUFFER_OFFSET(0));
-
-        glBindVertexArray(0);
+    // apply transformations to the ground
+    if (theRoof) {
+        staticObjects[1].mvm = staticObjects[1].mvp = GLKMatrix4Translate(staticObjects[1].mvp, 0, 3, -1.0);
+        staticObjects[1].mvm = staticObjects[1].mvp = GLKMatrix4Rotate(staticObjects[1].mvp, 0.0, 1.0, 0.0, 1.0 );
+          staticObjects[1].mvm = staticObjects[1].mvp = GLKMatrix4Scale(staticObjects[1].mvp, 12, 1, 1 );
+              
+          staticObjects[1].normalMatrix = GLKMatrix3InvertAndTranspose(GLKMatrix4GetMatrix3(staticObjects[1].mvp), NULL);
+          staticObjects[1].mvp = GLKMatrix4Multiply(perspectiveMatrix, staticObjects[1].mvp);
+          
+      //    NSLog(@"Object MVP ");
     }
+        
+    // **********************************************
+    
+    // initialize MVP matrix for both objects to set the "camera"
+    staticObjects[2].mvp = GLKMatrix4Translate(GLKMatrix4Identity, 0.0, 0.0, -5.0);
+
+    // apply transformations to the ground
+    if (theLeftWall) {
+        staticObjects[2].mvm = staticObjects[2].mvp = GLKMatrix4Translate(staticObjects[2].mvp, -5, 0, -1.0);
+        staticObjects[2].mvm = staticObjects[2].mvp = GLKMatrix4Rotate(staticObjects[2].mvp, 0.0, 1.0, 0.0, 1.0 );
+          staticObjects[2].mvm = staticObjects[2].mvp = GLKMatrix4Scale(staticObjects[2].mvp, 1, 12, 1 );
+              
+          staticObjects[2].normalMatrix = GLKMatrix3InvertAndTranspose(GLKMatrix4GetMatrix3(staticObjects[2].mvp), NULL);
+          staticObjects[2].mvp = GLKMatrix4Multiply(perspectiveMatrix, staticObjects[2].mvp);
+          
+      //    NSLog(@"Object MVP ");
+    }
+    
+//    if (theLeftWall)
+//    {
+//        // Set up VAO/VBO for brick
+//        glGenVertexArrays(1, &brickVertexArray);
+//        glBindVertexArray(brickVertexArray);
+//
+//        GLuint vertexBuffers[2];
+//        glGenBuffers(2, vertexBuffers);
+//
+//        // VBO for vertex positions
+//        glBindBuffer(GL_ARRAY_BUFFER, vertexBuffers[0]);
+//        GLfloat vertPos[18];    // 2 triangles x 3 vertices/triangle x 3 coords (x,y,z) per vertex
+//        int k = 0;
+//        numLeftWallVerts = 0;
+//        vertPos[k++] = theLeftWall->x - Left_Wall_WIDTH/2;
+//        vertPos[k++] = theLeftWall->y + Left_Wall_HEIGHT/2;
+//        vertPos[k++] = 10;  // z-value is always set to same value since 2D
+//        numLeftWallVerts++;
+//        vertPos[k++] = theLeftWall->x + Left_Wall_WIDTH/2;
+//        vertPos[k++] = theLeftWall->y + Left_Wall_HEIGHT/2;
+//        vertPos[k++] = 10;
+//        numLeftWallVerts++;
+//        vertPos[k++] = theLeftWall->x + Left_Wall_WIDTH/2;
+//        vertPos[k++] = theLeftWall->y - Left_Wall_HEIGHT/2;
+//        vertPos[k++] = 10;
+//        numLeftWallVerts++;
+//        vertPos[k++] = theLeftWall->x - Left_Wall_WIDTH/2;
+//        vertPos[k++] = theLeftWall->y + Left_Wall_HEIGHT/2;
+//        vertPos[k++] = 10;
+//        numLeftWallVerts++;
+//        vertPos[k++] = theLeftWall->x + Left_Wall_WIDTH/2;
+//        vertPos[k++] = theLeftWall->y - Left_Wall_HEIGHT/2;
+//        vertPos[k++] = 10;
+//        numLeftWallVerts++;
+//        vertPos[k++] = theLeftWall->x - Left_Wall_WIDTH/2;
+//        vertPos[k++] = theLeftWall->y - Left_Wall_HEIGHT/2;
+//        vertPos[k++] = 10;
+//        numLeftWallVerts++;
+//        glBufferData(GL_ARRAY_BUFFER, sizeof(vertPos), vertPos, GL_STATIC_DRAW);    // Send vertex data to VBO
+//        glEnableVertexAttribArray(ATTRIB_POSITION);
+//        glVertexAttribPointer(ATTRIB_POSITION, 3, GL_FLOAT, GL_FALSE, 3*sizeof(GLfloat), BUFFER_OFFSET(0));
+//
+//        // VBO for vertex colours
+//        GLfloat vertCol[numLeftWallVerts*3];
+//        for (k=0; k<numLeftWallVerts*3; k+=3)
+//        {
+//            vertCol[k] = 1.0f;
+//            vertCol[k+1] = 0.0f;
+//            vertCol[k+2] = 0.0f;
+//        }
+//
+//        glBindBuffer(GL_ARRAY_BUFFER, vertexBuffers[1]);
+//        glBufferData(GL_ARRAY_BUFFER, sizeof(vertCol), vertCol, GL_STATIC_DRAW);    // Send vertex data to VBO
+//        glEnableVertexAttribArray(ATTRIB_COL);
+//        glVertexAttribPointer(ATTRIB_COL, 3, GL_FLOAT, GL_FALSE, 3*sizeof(GLfloat), BUFFER_OFFSET(0));
+//
+//        glBindVertexArray(0);
+//    }
 
 
     if (theBall)
@@ -412,120 +445,120 @@ enum
         glBindVertexArray(0);
     }
 
-    if (theGround)
-    {
-        // Set up VAO/VBO for brick
-        glGenVertexArrays(1, &groundVertexArray);
-        glBindVertexArray(groundVertexArray);
-        GLuint vertexBuffers[2];
-        glGenBuffers(2, vertexBuffers);
-        
-        // VBO for vertex positions
-        glBindBuffer(GL_ARRAY_BUFFER, vertexBuffers[0]);
-        int numVerts = 18;
-        GLfloat vertPos[numVerts];    // 2 triangles x 3 vertices/triangle x 3 coords (x,y,z) per vertex
-        int k = 0;
-        numGroundVerts = 0;
-        vertPos[k++] = theGround->x - GROUND_ROOF_WIDTH/2;
-        vertPos[k++] = theGround->y + GROUND_ROOF_HEIGHT/2;
-        vertPos[k++] = 10;  // z-value is always set to same value since 2D
-        numGroundVerts++;
-        vertPos[k++] = theGround->x + GROUND_ROOF_WIDTH/2;
-        vertPos[k++] = theGround->y + GROUND_ROOF_HEIGHT/2;
-        vertPos[k++] = 10;
-        numGroundVerts++;
-        vertPos[k++] = theGround->x + GROUND_ROOF_WIDTH/2;
-        vertPos[k++] = theGround->y - GROUND_ROOF_HEIGHT/2;
-        vertPos[k++] = 10;
-        numGroundVerts++;
-        vertPos[k++] = theGround->x - GROUND_ROOF_WIDTH/2;
-        vertPos[k++] = theGround->y + GROUND_ROOF_HEIGHT/2;
-        vertPos[k++] = 10;
-        numGroundVerts++;
-        vertPos[k++] = theGround->x + GROUND_ROOF_WIDTH/2;
-        vertPos[k++] = theGround->y - GROUND_ROOF_HEIGHT/2;
-        vertPos[k++] = 10;
-        numGroundVerts++;
-        vertPos[k++] = theGround->x - GROUND_ROOF_WIDTH/2;
-        vertPos[k++] = theGround->y - GROUND_ROOF_HEIGHT/2;
-        vertPos[k++] = 10;
-        numGroundVerts++;
-        glBufferData(GL_ARRAY_BUFFER, sizeof(vertPos), vertPos, GL_STATIC_DRAW);    // Send vertex data to VBO
-        glEnableVertexAttribArray(ATTRIB_POSITION);
-        glVertexAttribPointer(ATTRIB_POSITION, 3, GL_FLOAT, GL_FALSE, 3*sizeof(GLfloat), BUFFER_OFFSET(0));
-        
-        // VBO for vertex colours
-        GLfloat vertCol[numGroundVerts*3];
-        for (k=0; k<numGroundVerts*3; k+=3)
-        {
-            vertCol[k] = 0.0f;
-            vertCol[k+1] = 0.0f;
-            vertCol[k+2] = 1.0f;
-        }
-        glBindBuffer(GL_ARRAY_BUFFER, vertexBuffers[1]);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(vertCol), vertCol, GL_STATIC_DRAW);    // Send vertex data to VBO
-        glEnableVertexAttribArray(ATTRIB_COL);
-        glVertexAttribPointer(ATTRIB_COL, 3, GL_FLOAT, GL_FALSE, 3*sizeof(GLfloat), BUFFER_OFFSET(0));
+//    if (theGround)
+//    {
+//        // Set up VAO/VBO for brick
+//        glGenVertexArrays(1, &groundVertexArray);
+//        glBindVertexArray(groundVertexArray);
+//        GLuint vertexBuffers[2];
+//        glGenBuffers(2, vertexBuffers);
+//
+//        // VBO for vertex positions
+//        glBindBuffer(GL_ARRAY_BUFFER, vertexBuffers[0]);
+//        int numVerts = 18;
+//        GLfloat vertPos[numVerts];    // 2 triangles x 3 vertices/triangle x 3 coords (x,y,z) per vertex
+//        int k = 0;
+//        numGroundVerts = 0;
+//        vertPos[k++] = theGround->x - GROUND_ROOF_WIDTH/2;
+//        vertPos[k++] = theGround->y + GROUND_ROOF_HEIGHT/2;
+//        vertPos[k++] = 10;  // z-value is always set to same value since 2D
+//        numGroundVerts++;
+//        vertPos[k++] = theGround->x + GROUND_ROOF_WIDTH/2;
+//        vertPos[k++] = theGround->y + GROUND_ROOF_HEIGHT/2;
+//        vertPos[k++] = 10;
+//        numGroundVerts++;
+//        vertPos[k++] = theGround->x + GROUND_ROOF_WIDTH/2;
+//        vertPos[k++] = theGround->y - GROUND_ROOF_HEIGHT/2;
+//        vertPos[k++] = 10;
+//        numGroundVerts++;
+//        vertPos[k++] = theGround->x - GROUND_ROOF_WIDTH/2;
+//        vertPos[k++] = theGround->y + GROUND_ROOF_HEIGHT/2;
+//        vertPos[k++] = 10;
+//        numGroundVerts++;
+//        vertPos[k++] = theGround->x + GROUND_ROOF_WIDTH/2;
+//        vertPos[k++] = theGround->y - GROUND_ROOF_HEIGHT/2;
+//        vertPos[k++] = 10;
+//        numGroundVerts++;
+//        vertPos[k++] = theGround->x - GROUND_ROOF_WIDTH/2;
+//        vertPos[k++] = theGround->y - GROUND_ROOF_HEIGHT/2;
+//        vertPos[k++] = 10;
+//        numGroundVerts++;
+//        glBufferData(GL_ARRAY_BUFFER, sizeof(vertPos), vertPos, GL_STATIC_DRAW);    // Send vertex data to VBO
+//        glEnableVertexAttribArray(ATTRIB_POSITION);
+//        glVertexAttribPointer(ATTRIB_POSITION, 3, GL_FLOAT, GL_FALSE, 3*sizeof(GLfloat), BUFFER_OFFSET(0));
+//
+//        // VBO for vertex colours
+//        GLfloat vertCol[numGroundVerts*3];
+//        for (k=0; k<numGroundVerts*3; k+=3)
+//        {
+//            vertCol[k] = 0.0f;
+//            vertCol[k+1] = 0.0f;
+//            vertCol[k+2] = 1.0f;
+//        }
+//        glBindBuffer(GL_ARRAY_BUFFER, vertexBuffers[1]);
+//        glBufferData(GL_ARRAY_BUFFER, sizeof(vertCol), vertCol, GL_STATIC_DRAW);    // Send vertex data to VBO
+//        glEnableVertexAttribArray(ATTRIB_COL);
+//        glVertexAttribPointer(ATTRIB_COL, 3, GL_FLOAT, GL_FALSE, 3*sizeof(GLfloat), BUFFER_OFFSET(0));
+//
+//        glBindVertexArray(0);
+//    }
 
-        glBindVertexArray(0);
-    }
-
-    if (theRoof)
-    {
-        // Set up VAO/VBO for brick
-        glGenVertexArrays(1, &roofVertexArray);
-        glBindVertexArray(roofVertexArray);
-        GLuint vertexBuffers[2];
-        glGenBuffers(2, vertexBuffers);
-        
-        // VBO for vertex positions
-        glBindBuffer(GL_ARRAY_BUFFER, vertexBuffers[0]);
-        GLfloat vertPos[18];    // 2 triangles x 3 vertices/triangle x 3 coords (x,y,z) per vertex
-        int k = 0;
-        numRoofVerts = 0;
-        vertPos[k++] = theRoof->x - GROUND_ROOF_WIDTH/2;
-        vertPos[k++] = theRoof->y + GROUND_ROOF_HEIGHT/2;
-        vertPos[k++] = 10;  // z-value is always set to same value since 2D
-        numRoofVerts++;
-        vertPos[k++] = theRoof->x + GROUND_ROOF_WIDTH/2;
-        vertPos[k++] = theRoof->y + GROUND_ROOF_HEIGHT/2;
-        vertPos[k++] = 10;
-        numRoofVerts++;
-        vertPos[k++] = theRoof->x + GROUND_ROOF_WIDTH/2;
-        vertPos[k++] = theRoof->y - GROUND_ROOF_HEIGHT/2;
-        vertPos[k++] = 10;
-        numRoofVerts++;
-        vertPos[k++] = theRoof->x - GROUND_ROOF_WIDTH/2;
-        vertPos[k++] = theRoof->y + GROUND_ROOF_HEIGHT/2;
-        vertPos[k++] = 10;
-        numRoofVerts++;
-        vertPos[k++] = theRoof->x + GROUND_ROOF_WIDTH/2;
-        vertPos[k++] = theRoof->y - GROUND_ROOF_HEIGHT/2;
-        vertPos[k++] = 10;
-        numRoofVerts++;
-        vertPos[k++] = theRoof->x - GROUND_ROOF_WIDTH/2;
-        vertPos[k++] = theRoof->y - GROUND_ROOF_HEIGHT/2;
-        vertPos[k++] = 10;
-        numRoofVerts++;
-        glBufferData(GL_ARRAY_BUFFER, sizeof(vertPos), vertPos, GL_STATIC_DRAW);    // Send vertex data to VBO
-        glEnableVertexAttribArray(ATTRIB_POSITION);
-        glVertexAttribPointer(ATTRIB_POSITION, 3, GL_FLOAT, GL_FALSE, 3*sizeof(GLfloat), BUFFER_OFFSET(0));
-        
-        // VBO for vertex colours
-        GLfloat vertCol[numRoofVerts*3];
-        for (k=0; k<numRoofVerts*3; k+=3)
-        {
-            vertCol[k] = 0.0f;
-            vertCol[k+1] = 0.0f;
-            vertCol[k+2] = 1.0f;
-        }
-        glBindBuffer(GL_ARRAY_BUFFER, vertexBuffers[1]);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(vertCol), vertCol, GL_STATIC_DRAW);    // Send vertex data to VBO
-        glEnableVertexAttribArray(ATTRIB_COL);
-        glVertexAttribPointer(ATTRIB_COL, 3, GL_FLOAT, GL_FALSE, 3*sizeof(GLfloat), BUFFER_OFFSET(0));
-
-        glBindVertexArray(0);
-    }
+//    if (theRoof)
+//    {
+//        // Set up VAO/VBO for brick
+//        glGenVertexArrays(1, &roofVertexArray);
+//        glBindVertexArray(roofVertexArray);
+//        GLuint vertexBuffers[2];
+//        glGenBuffers(2, vertexBuffers);
+//
+//        // VBO for vertex positions
+//        glBindBuffer(GL_ARRAY_BUFFER, vertexBuffers[0]);
+//        GLfloat vertPos[18];    // 2 triangles x 3 vertices/triangle x 3 coords (x,y,z) per vertex
+//        int k = 0;
+//        numRoofVerts = 0;
+//        vertPos[k++] = theRoof->x - GROUND_ROOF_WIDTH/2;
+//        vertPos[k++] = theRoof->y + GROUND_ROOF_HEIGHT/2;
+//        vertPos[k++] = 10;  // z-value is always set to same value since 2D
+//        numRoofVerts++;
+//        vertPos[k++] = theRoof->x + GROUND_ROOF_WIDTH/2;
+//        vertPos[k++] = theRoof->y + GROUND_ROOF_HEIGHT/2;
+//        vertPos[k++] = 10;
+//        numRoofVerts++;
+//        vertPos[k++] = theRoof->x + GROUND_ROOF_WIDTH/2;
+//        vertPos[k++] = theRoof->y - GROUND_ROOF_HEIGHT/2;
+//        vertPos[k++] = 10;
+//        numRoofVerts++;
+//        vertPos[k++] = theRoof->x - GROUND_ROOF_WIDTH/2;
+//        vertPos[k++] = theRoof->y + GROUND_ROOF_HEIGHT/2;
+//        vertPos[k++] = 10;
+//        numRoofVerts++;
+//        vertPos[k++] = theRoof->x + GROUND_ROOF_WIDTH/2;
+//        vertPos[k++] = theRoof->y - GROUND_ROOF_HEIGHT/2;
+//        vertPos[k++] = 10;
+//        numRoofVerts++;
+//        vertPos[k++] = theRoof->x - GROUND_ROOF_WIDTH/2;
+//        vertPos[k++] = theRoof->y - GROUND_ROOF_HEIGHT/2;
+//        vertPos[k++] = 10;
+//        numRoofVerts++;
+//        glBufferData(GL_ARRAY_BUFFER, sizeof(vertPos), vertPos, GL_STATIC_DRAW);    // Send vertex data to VBO
+//        glEnableVertexAttribArray(ATTRIB_POSITION);
+//        glVertexAttribPointer(ATTRIB_POSITION, 3, GL_FLOAT, GL_FALSE, 3*sizeof(GLfloat), BUFFER_OFFSET(0));
+//
+//        // VBO for vertex colours
+//        GLfloat vertCol[numRoofVerts*3];
+//        for (k=0; k<numRoofVerts*3; k+=3)
+//        {
+//            vertCol[k] = 0.0f;
+//            vertCol[k+1] = 0.0f;
+//            vertCol[k+2] = 1.0f;
+//        }
+//        glBindBuffer(GL_ARRAY_BUFFER, vertexBuffers[1]);
+//        glBufferData(GL_ARRAY_BUFFER, sizeof(vertCol), vertCol, GL_STATIC_DRAW);    // Send vertex data to VBO
+//        glEnableVertexAttribArray(ATTRIB_COL);
+//        glVertexAttribPointer(ATTRIB_COL, 3, GL_FLOAT, GL_FALSE, 3*sizeof(GLfloat), BUFFER_OFFSET(0));
+//
+//        glBindVertexArray(0);
+//    }
     
     // For now assume simple ortho projection since it's only 2D
     GLKMatrix4 modelViewMatrix = GLKMatrix4Identity;
@@ -552,16 +585,18 @@ enum
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, floorTexture);
     
-    glUniform1i(uniforms[UNIFORM_USE_TEXTURE], 0);
-    glUniform4fv(uniforms[UNIFORM_LIGHT_DIFFUSE_POSITION], 1, staticObjects[0].diffuseLightPosition.v);
-    glUniform4fv(uniforms[UNIFORM_LIGHT_DIFFUSE_COMPONENT], 1, staticObjects[0].diffuseComponent.v);
-    glUniformMatrix4fv(uniforms[UNIFORM_MODELVIEWPROJECTION_MATRIX], 1, FALSE, (const float *)staticObjects[0].mvp.m);
-    glUniformMatrix4fv(uniforms[UNIFORM_MODELVIEW_MATRIX], 1, FALSE, (const float *)staticObjects[0].mvm.m);
-    glUniformMatrix3fv(uniforms[UNIFORM_NORMAL_MATRIX], 1, 0, staticObjects[0].normalMatrix.m);
-    
-    glBindVertexArray(staticObjects[0].vao);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, staticObjects[0].ibo);
-    glDrawElements(GL_TRIANGLES, (GLsizei)staticObjects[0].numIndices, GL_UNSIGNED_INT, 0);
+    for (int i = 0; i < 3; ++i) {
+        glUniform1i(uniforms[UNIFORM_USE_TEXTURE], 1);
+        glUniform4fv(uniforms[UNIFORM_LIGHT_DIFFUSE_POSITION], 1, staticObjects[i].diffuseLightPosition.v);
+        glUniform4fv(uniforms[UNIFORM_LIGHT_DIFFUSE_COMPONENT], 1, staticObjects[i].diffuseComponent.v);
+        glUniformMatrix4fv(uniforms[UNIFORM_MODELVIEWPROJECTION_MATRIX], 1, FALSE, (const float *)staticObjects[i].mvp.m);
+        glUniformMatrix4fv(uniforms[UNIFORM_MODELVIEW_MATRIX], 1, FALSE, (const float *)staticObjects[i].mvm.m);
+        glUniformMatrix3fv(uniforms[UNIFORM_NORMAL_MATRIX], 1, 0, staticObjects[i].normalMatrix.m);
+        
+        glBindVertexArray(staticObjects[i].vao);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, staticObjects[i].ibo);
+        glDrawElements(GL_TRIANGLES, (GLsizei)staticObjects[i].numIndices, GL_UNSIGNED_INT, 0);
+    }
 
     // Pass along updated MVP matrix
     glUniformMatrix4fv(uniforms[UNIFORM_MODELVIEWPROJECTION_MATRIX], 1, 0, modelViewProjectionMatrix.m);
@@ -581,6 +616,8 @@ enum
     printf("\n");
 #endif
     
+    glUniform1i(uniforms[UNIFORM_USE_TEXTURE], 0);
+    
     // Bind each vertex array and call glDrawArrays for each of the ball and brick
     glBindVertexArray(brickVertexArray);
     if (theLeftWall && numLeftWallVerts > 0)
@@ -593,9 +630,9 @@ enum
     glBindVertexArray(obstacleVertexArray);
     if(theObstacle && numObstacleVerts > 0)
         glDrawArrays(GL_TRIANGLES, 0, numObstacleVerts);
-    glBindVertexArray(groundVertexArray);
-    if (theGround && numGroundVerts > 0)
-        glDrawArrays(GL_TRIANGLES, 0, numGroundVerts);
+//    glBindVertexArray(groundVertexArray);
+//    if (theGround && numGroundVerts > 0)
+//        glDrawArrays(GL_TRIANGLES, 0, numGroundVerts);
     
     glBindVertexArray(roofVertexArray);
     if (theRoof && numRoofVerts > 0)

@@ -71,7 +71,9 @@ void main()
 //        o_fragColor = (ambient + diffuse + specular) + v_color;
 //    } else {
         // pass through flat-lit v color
-        o_fragColor = v_color;
+    vec3 cameraDirection = vec3(0, 0, 1);
+    float theta = dot(normalize(eyePos.xyz), normalize(cameraDirection));
+    o_fragColor = v_color;
 //    }
     
     if (useTexture)
