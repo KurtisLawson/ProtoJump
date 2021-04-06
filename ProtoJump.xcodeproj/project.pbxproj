@@ -66,6 +66,7 @@
 		974B070D25DEF8AF00C8679A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 974B070C25DEF8AF00C8679A /* Assets.xcassets */; };
 		974B071025DEF8AF00C8679A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 974B070E25DEF8AF00C8679A /* LaunchScreen.storyboard */; };
 		FAA2C3D725EF4F1500209DBD /* Obstacle.mm in Sources */ = {isa = PBXBuildFile; fileRef = FAA2C3D625EF4F1500209DBD /* Obstacle.mm */; };
+		FABBD9FC261BF94400AB56DE /* Hazard.mm in Sources */ = {isa = PBXBuildFile; fileRef = FABBD9FB261BF94400AB56DE /* Hazard.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -184,6 +185,8 @@
 		974B071125DEF8AF00C8679A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		FAA2C3D625EF4F1500209DBD /* Obstacle.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = Obstacle.mm; sourceTree = "<group>"; };
 		FAA2C3DB25EF506800209DBD /* Obstacle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Obstacle.h; sourceTree = "<group>"; };
+		FABBD9FA261BF90300AB56DE /* Hazard.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Hazard.h; sourceTree = "<group>"; };
+		FABBD9FB261BF94400AB56DE /* Hazard.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = Hazard.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -390,8 +393,10 @@
 				974B070E25DEF8AF00C8679A /* LaunchScreen.storyboard */,
 				974B071125DEF8AF00C8679A /* Info.plist */,
 				784B66A125EB0EC100001842 /* ProtoJump-Bridging-Header.h */,
-				FAA2C3D625EF4F1500209DBD /* Obstacle.mm */,
 				FAA2C3DB25EF506800209DBD /* Obstacle.h */,
+				FAA2C3D625EF4F1500209DBD /* Obstacle.mm */,
+				FABBD9FA261BF90300AB56DE /* Hazard.h */,
+				FABBD9FB261BF94400AB56DE /* Hazard.mm */,
 				7850F14D26193A08004A0AC3 /* Player.h */,
 				7850F14E26193A08004A0AC3 /* Player.mm */,
 			);
@@ -506,6 +511,7 @@
 				784B672525EB0FA700001842 /* b2WorldCallbacks.cpp in Sources */,
 				784B672D25EB0FA700001842 /* b2GearJoint.cpp in Sources */,
 				784B673125EB0FA700001842 /* b2RopeJoint.cpp in Sources */,
+				FABBD9FC261BF94400AB56DE /* Hazard.mm in Sources */,
 				784B673A25EB0FA700001842 /* b2Math.cpp in Sources */,
 				784B673025EB0FA700001842 /* b2PulleyJoint.cpp in Sources */,
 				784B675425EB158600001842 /* Renderer.mm in Sources */,
