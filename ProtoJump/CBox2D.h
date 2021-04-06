@@ -9,7 +9,9 @@
 #import <GLKit/GLKit.h>
 
 #import "Player.h"
+#import "Chunk.h"
 #import "Obstacle.h"
+#import "Hazard.h"
 
 
 // Set up brick and ball physics parameters here:
@@ -53,7 +55,7 @@
 @property float yDir;
 @property bool dead;
 @property float slowFactor;
-@property (nonatomic) Obstacle * obstacle;
+@property (nonatomic) Chunk * chunk;
 @property (nonatomic) Player * player;
 
 // @property b2Vec2 _targetVector;

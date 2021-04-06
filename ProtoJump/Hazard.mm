@@ -11,6 +11,7 @@
 
 @synthesize R, G, B;
 @synthesize width, height;
+@synthesize posX, posY;
 @synthesize isVertical;
 
 -(instancetype)init:(bool)isVertical{
