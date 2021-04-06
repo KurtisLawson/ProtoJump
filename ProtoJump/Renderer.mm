@@ -83,7 +83,6 @@ enum
     GLKVector4 specularComponent;
     GLfloat shininess;
     GLKVector4 ambientComponent;
-    GLKVector3 camPos, camFront, camUp;
 
     GLKMatrix4 modelViewProjectionMatrix;   // model-view-projection matrix
     
@@ -118,27 +117,42 @@ enum
     
     // set up VBOs (one per attribute)
     glBindVertexArray(staticObjects[0].vao);
-    GLuint vbo[3];
-    glGenBuffers(3, vbo);
+    GLuint vbo[4];
+    glGenBuffers(4, vbo);
 
     // pass on position data
     glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
     glBufferData(GL_ARRAY_BUFFER, 3*24*sizeof(GLfloat), staticObjects[0].vertices, GL_STATIC_DRAW);
     glEnableVertexAttribArray(ATTRIB_POSITION);
     glVertexAttribPointer(ATTRIB_POSITION, 3, GL_FLOAT, GL_FALSE, 3*sizeof(GLfloat), BUFFER_OFFSET(0));
+    
+    // pass on color data
+    glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
+    GLfloat vertCol[24*3];
+    for (int k = 0; k<24*3; k+=3)
+    {
+        vertCol[k] = 1.0f;
+        vertCol[k+1] = 0.0f;
+        vertCol[k+2] = 0.0f;
+    }
+    
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertCol), vertCol, GL_STATIC_DRAW);    // Send vertex data to VBO
+    glEnableVertexAttribArray(ATTRIB_COL);
+    glVertexAttribPointer(ATTRIB_COL, 3, GL_FLOAT, GL_FALSE, 3*sizeof(GLfloat), BUFFER_OFFSET(0));
 
     // pass on normals
-    glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo[2]);
     glBufferData(GL_ARRAY_BUFFER, 3*24*sizeof(GLfloat), staticObjects[0].normals, GL_STATIC_DRAW);
     glEnableVertexAttribArray(ATTRIB_NORMAL);
     glVertexAttribPointer(ATTRIB_NORMAL, 3, GL_FLOAT, GL_FALSE, 3*sizeof(GLfloat), BUFFER_OFFSET(0));
 
     // pass on texture coordinates
-    glBindBuffer(GL_ARRAY_BUFFER, vbo[2]);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo[3]);
     glBufferData(GL_ARRAY_BUFFER, 2*24*sizeof(GLfloat), staticObjects[0].texCoords, GL_STATIC_DRAW);
     glEnableVertexAttribArray(ATTRIB_TEXTURE);
     glVertexAttribPointer(ATTRIB_TEXTURE, 3, GL_FLOAT, GL_FALSE, 2*sizeof(GLfloat), BUFFER_OFFSET(0));
-
+    
+    // bind the ibo's
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, staticObjects[0].ibo);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(staticObjects[0].indices[0]) * staticObjects[0].numIndices, staticObjects[0].indices, GL_STATIC_DRAW);
 
@@ -177,11 +191,6 @@ enum
     staticObjects[0].diffuseLightPosition = GLKVector4Make(0.0f, 1.0f, 0.0f, 1.0f);
     staticObjects[0].diffuseComponent = GLKVector4Make(1.0f, 1.0f, 1.0f, 1.0f);
 
-    // set up camera properties
-//    camPos = GLKVector3Make(0.0f, 0.0f, 0.0f);
-//    camFront = GLKVector3Make(0.0f, 0.0f, -1.0f);
-//    camUp = GLKVector3Make(0.0f, 1.0f, 0.0f);
-
     // Initialize timer
     glEnable(GL_DEPTH_TEST);
     lastTime = std::chrono::steady_clock::now();
@@ -202,8 +211,8 @@ enum
     }
     
     // Projection Matrices
-    //    float aspect = (float)theView.drawableWidth / (float)theView.drawableHeight;
-    //    GLKMatrix4 perspective = GLKMatrix4MakePerspective(60.0f * M_PI / 180.0f, aspect, -10.0f, 100.0f);
+//        float aspect = (float)theView.drawableWidth / (float)theView.drawableHeight;
+//        GLKMatrix4 projectionMatrix = GLKMatrix4MakePerspective(60.0f * M_PI / 180.0f, aspect, -10.0f, 100.0f);
         GLKMatrix4 projectionMatrix = GLKMatrix4MakeOrtho(0, 800, 0, 600, -10, 100);    // note bounding box matches Box2D world
         
         // Create lighting components
@@ -220,19 +229,22 @@ enum
     b2Vec2 *theGround = (((*objPosList).find("ground") == (*objPosList).end()) ? nullptr : &(*objPosList)["ground"]);
     b2Vec2 *theRoof = (((*objPosList).find("roof") == (*objPosList).end()) ? nullptr : &(*objPosList)["roof"]);
     
+    // ******************************************************************
     // initialize MVP matrix for both objects to set the "camera"
     staticObjects[0].mvp = GLKMatrix4Translate(GLKMatrix4Identity, 0.0, 0.0, -5.0);
 
     // apply transformations to first (textured cube)
     if (theBall) {
-        staticObjects[0].mvm = staticObjects[0].mvp = GLKMatrix4Multiply(GLKMatrix4Translate(GLKMatrix4Identity, theBall->x, theBall->y, 0.0), staticObjects[0].mvp);
+        staticObjects[0].mvm = staticObjects[0].mvp = GLKMatrix4Translate(staticObjects[0].mvp, theBall->x, theBall->y, 0.0) ;
     }
+    
 //    staticObjects[0].mvm = staticObjects[0].mvp = GLKMatrix4Rotate(staticObjects[0].mvp, 0.0, 1.0, 0.0, 1.0 );
-    staticObjects[0].mvm = staticObjects[0].mvp = GLKMatrix4Scale(staticObjects[0].mvp, 1, 1, 1 );
-        
+//    staticObjects[0].mvm = staticObjects[0].mvp = GLKMatrix4Scale(staticObjects[0].mvp, 1, 1, 1 );
         
     staticObjects[0].normalMatrix = GLKMatrix3InvertAndTranspose(GLKMatrix4GetMatrix3(staticObjects[0].mvp), NULL);
     staticObjects[0].mvp = GLKMatrix4Multiply(projectionMatrix, staticObjects[0].mvp);
+    
+//    NSLog(@"Object MVP ");
         
     // **********************************************
 
@@ -241,6 +253,7 @@ enum
         // Set up VAO/VBO for brick
         glGenVertexArrays(1, &brickVertexArray);
         glBindVertexArray(brickVertexArray);
+        
         GLuint vertexBuffers[2];
         glGenBuffers(2, vertexBuffers);
         
@@ -300,6 +313,7 @@ enum
         // Set up VAO/VBO for brick
         glGenVertexArrays(1, &ballVertexArray);
         glBindVertexArray(ballVertexArray);
+        
         GLuint vertexBuffers[2];
         glGenBuffers(2, vertexBuffers);
         
@@ -514,7 +528,6 @@ enum
     }
     
     // For now assume simple ortho projection since it's only 2D
-    
     GLKMatrix4 modelViewMatrix = GLKMatrix4Identity;
     modelViewMatrix = GLKMatrix4Translate(modelViewMatrix, steps, 0, 0);
     modelViewProjectionMatrix = GLKMatrix4Multiply(projectionMatrix, modelViewMatrix);
@@ -540,7 +553,6 @@ enum
     glBindTexture(GL_TEXTURE_2D, floorTexture);
     
     glUniform1i(uniforms[UNIFORM_USE_TEXTURE], 0);
-    glUniform1i(uniforms[UNIFORM_LIGHT_OBJECT], 1);
     glUniform4fv(uniforms[UNIFORM_LIGHT_DIFFUSE_POSITION], 1, staticObjects[0].diffuseLightPosition.v);
     glUniform4fv(uniforms[UNIFORM_LIGHT_DIFFUSE_COMPONENT], 1, staticObjects[0].diffuseComponent.v);
     glUniformMatrix4fv(uniforms[UNIFORM_MODELVIEWPROJECTION_MATRIX], 1, FALSE, (const float *)staticObjects[0].mvp.m);
