@@ -132,8 +132,8 @@ enum
     for (int k = 0; k<24*3; k+=3)
     {
         vertCol[k] = 1.0f;
-        vertCol[k+1] = 0.0f;
-        vertCol[k+2] = 0.0f;
+        vertCol[k+1] = 0.5f;
+        vertCol[k+2] = 0.5f;
     }
     
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertCol), vertCol, GL_STATIC_DRAW);    // Send vertex data to VBO
@@ -175,10 +175,6 @@ enum
     if (![self setupShaders])
         return;
     
-    // Bind floor textures
-    GLuint vbo[3];
-    glGenBuffers(3, vbo);
-    
     // Bind Crate texture
     floorTexture = [self setupTexture:@"steelTemp.jpg"];
     
@@ -209,12 +205,14 @@ enum
     if(!box2d.dead){
         totalElapsedTime += elapsedTime/1000.0f;
     }
-    
-    // Projection Matrices
-//        float aspect = (float)theView.drawableWidth / (float)theView.drawableHeight;
-//        GLKMatrix4 projectionMatrix = GLKMatrix4MakePerspective(60.0f * M_PI / 180.0f, aspect, -10.0f, 100.0f);
+    //>>>>>>-------
+
+     //Projection Matrices
+        float aspect = (float)theView.drawableWidth / (float)theView.drawableHeight;
+        GLKMatrix4 perspectiveMatrix = GLKMatrix4MakePerspective(60.0f * M_PI / 180.0f, aspect, 1.0f, 20.0f);
         GLKMatrix4 projectionMatrix = GLKMatrix4MakeOrtho(0, 800, 0, 600, -10, 100);    // note bounding box matches Box2D world
-        
+    //>>>>>>-------
+
         // Create lighting components
         glClearColor ( 0.0f, 0.0f, 0.0f, 0.0f );
         specularComponent = GLKVector4Make(0.2f, 0.2f, 0.2f, 1.0f);
@@ -234,15 +232,17 @@ enum
     staticObjects[0].mvp = GLKMatrix4Translate(GLKMatrix4Identity, 0.0, 0.0, -5.0);
 
     // apply transformations to first (textured cube)
-    if (theBall) {
-        staticObjects[0].mvm = staticObjects[0].mvp = GLKMatrix4Translate(staticObjects[0].mvp, theBall->x, theBall->y, 0.0) ;
+    //>>>>>>-------
+    if (theGround) {
+        staticObjects[0].mvm = staticObjects[0].mvp = GLKMatrix4Translate(staticObjects[0].mvp, 3, 2, 0.0) ;
     }
-    
+    //>>>>>>-------
+
 //    staticObjects[0].mvm = staticObjects[0].mvp = GLKMatrix4Rotate(staticObjects[0].mvp, 0.0, 1.0, 0.0, 1.0 );
 //    staticObjects[0].mvm = staticObjects[0].mvp = GLKMatrix4Scale(staticObjects[0].mvp, 1, 1, 1 );
         
     staticObjects[0].normalMatrix = GLKMatrix3InvertAndTranspose(GLKMatrix4GetMatrix3(staticObjects[0].mvp), NULL);
-    staticObjects[0].mvp = GLKMatrix4Multiply(projectionMatrix, staticObjects[0].mvp);
+    staticObjects[0].mvp = GLKMatrix4Multiply(perspectiveMatrix, staticObjects[0].mvp);
     
 //    NSLog(@"Object MVP ");
         
