@@ -67,6 +67,7 @@
 		974B071025DEF8AF00C8679A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 974B070E25DEF8AF00C8679A /* LaunchScreen.storyboard */; };
 		FAA2C3D725EF4F1500209DBD /* Obstacle.mm in Sources */ = {isa = PBXBuildFile; fileRef = FAA2C3D625EF4F1500209DBD /* Obstacle.mm */; };
 		FABBD9FC261BF94400AB56DE /* Hazard.mm in Sources */ = {isa = PBXBuildFile; fileRef = FABBD9FB261BF94400AB56DE /* Hazard.mm */; };
+		FAE809D2261CCB11000F0230 /* Chunk.mm in Sources */ = {isa = PBXBuildFile; fileRef = FAE809D1261CCB11000F0230 /* Chunk.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -187,6 +188,8 @@
 		FAA2C3DB25EF506800209DBD /* Obstacle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Obstacle.h; sourceTree = "<group>"; };
 		FABBD9FA261BF90300AB56DE /* Hazard.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Hazard.h; sourceTree = "<group>"; };
 		FABBD9FB261BF94400AB56DE /* Hazard.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = Hazard.mm; sourceTree = "<group>"; };
+		FAE809D1261CCB11000F0230 /* Chunk.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = Chunk.mm; sourceTree = "<group>"; };
+		FAE809D5261CCB7E000F0230 /* Chunk.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Chunk.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -393,6 +396,8 @@
 				974B070E25DEF8AF00C8679A /* LaunchScreen.storyboard */,
 				974B071125DEF8AF00C8679A /* Info.plist */,
 				784B66A125EB0EC100001842 /* ProtoJump-Bridging-Header.h */,
+				FAE809D5261CCB7E000F0230 /* Chunk.h */,
+				FAE809D1261CCB11000F0230 /* Chunk.mm */,
 				FAA2C3DB25EF506800209DBD /* Obstacle.h */,
 				FAA2C3D625EF4F1500209DBD /* Obstacle.mm */,
 				FABBD9FA261BF90300AB56DE /* Hazard.h */,
@@ -527,6 +532,7 @@
 				784B672025EB0FA700001842 /* b2PolygonContact.cpp in Sources */,
 				784B673925EB0FA700001842 /* b2StackAllocator.cpp in Sources */,
 				784B672C25EB0FA700001842 /* b2RevoluteJoint.cpp in Sources */,
+				FAE809D2261CCB11000F0230 /* Chunk.mm in Sources */,
 				974B070625DEF8AE00C8679A /* SceneDelegate.swift in Sources */,
 				784B671F25EB0FA700001842 /* b2PolygonAndCircleContact.cpp in Sources */,
 				784B672425EB0FA700001842 /* b2Contact.cpp in Sources */,
