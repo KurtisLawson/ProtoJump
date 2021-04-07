@@ -11,20 +11,19 @@
 #include <time.h>
 #include <stdlib.h>
 
-#define OBSTACLE_POS_X         900
-#define OBSTACLE_MAX_POS_Y     400
-#define OBSTACLE_MIN_POS_Y     200
-#define OBSTACLE_MAX_WIDTH     100.0f
-#define OBSTACLE_MIN_WIDTH     50.0f
-#define OBSTACLE_MAX_HEIGHT    350.0f
-#define OBSTACLE_MIN_HEIGHT    100.0f
-
+#define OBSTACLE_MAX_POS_Y     0.72f
+#define OBSTACLE_MIN_POS_Y     0.28f
+#define OBSTACLE_POS_X         1.0f
+#define OBSTACLE_MAX_WIDTH     0.12f
+#define OBSTACLE_MIN_WIDTH     0.06f
+#define OBSTACLE_MAX_HEIGHT    0.5f
+#define OBSTACLE_MIN_HEIGHT    0.25f
 
 @interface Obstacle : NSObject {}
 
 @property (nonatomic, readwrite) float R, G, B;
-@property (nonatomic, readwrite) int posY;
 @property (nonatomic, readwrite) float width, height;
+@property (nonatomic, readwrite) float posX, posY;
 
 -(void)randomize;
 -(void)dealloc;

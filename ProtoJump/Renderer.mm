@@ -429,6 +429,8 @@ enum
     
     if (theObstacle)
     {
+        Obstacle* obs = [box2d.chunk.obstacles objectAtIndex:0];
+        
         // Set up VAO/VBO for obstacle
         glGenVertexArrays(1, &obstacleVertexArray);
         glBindVertexArray(obstacleVertexArray);
@@ -441,28 +443,28 @@ enum
         GLfloat vertPos[18];    // 2 triangles x 3 vertices/triangle x 3 coords (x,y,z) per vertex
         int k = 0;
         numObstacleVerts = 0;
-        vertPos[k++] = theObstacle->x - box2d.obstacle.width/2;
-        vertPos[k++] = theObstacle->y + box2d.obstacle.height/2;
+        vertPos[k++] = theObstacle->x - obs.width/2;
+        vertPos[k++] = theObstacle->y + obs.height/2;
         vertPos[k++] = 10;  // z-value is always set to same value since 2D
         numObstacleVerts++;
-        vertPos[k++] = theObstacle->x + box2d.obstacle.width/2;
-        vertPos[k++] = theObstacle->y + box2d.obstacle.height/2;
+        vertPos[k++] = theObstacle->x + obs.width/2;
+        vertPos[k++] = theObstacle->y + obs.height/2;
         vertPos[k++] = 10;
         numObstacleVerts++;
-        vertPos[k++] = theObstacle->x + box2d.obstacle.width/2;
-        vertPos[k++] = theObstacle->y - box2d.obstacle.height/2;
+        vertPos[k++] = theObstacle->x + obs.width/2;
+        vertPos[k++] = theObstacle->y - obs.height/2;
         vertPos[k++] = 10;
         numObstacleVerts++;
-        vertPos[k++] = theObstacle->x - box2d.obstacle.width/2;
-        vertPos[k++] = theObstacle->y + box2d.obstacle.height/2;
+        vertPos[k++] = theObstacle->x - obs.width/2;
+        vertPos[k++] = theObstacle->y + obs.height/2;
         vertPos[k++] = 10;
         numObstacleVerts++;
-        vertPos[k++] = theObstacle->x + box2d.obstacle.width/2;
-        vertPos[k++] = theObstacle->y - box2d.obstacle.height/2;
+        vertPos[k++] = theObstacle->x + obs.width/2;
+        vertPos[k++] = theObstacle->y - obs.height/2;
         vertPos[k++] = 10;
         numObstacleVerts++;
-        vertPos[k++] = theObstacle->x - box2d.obstacle.width/2;
-        vertPos[k++] = theObstacle->y - box2d.obstacle.height/2;
+        vertPos[k++] = theObstacle->x - obs.width/2;
+        vertPos[k++] = theObstacle->y - obs.height/2;
         vertPos[k++] = 10;
         numObstacleVerts++;
         glBufferData(GL_ARRAY_BUFFER, sizeof(vertPos), vertPos, GL_STATIC_DRAW);    // Send vertex data to VBO
@@ -473,9 +475,9 @@ enum
         GLfloat vertCol[numObstacleVerts*3];
         for (k=0; k<numObstacleVerts*3; k+=3)
         {
-            vertCol[k] = box2d.obstacle.R;
-            vertCol[k+1] = box2d.obstacle.G;
-            vertCol[k+2] = box2d.obstacle.B;
+            vertCol[k] = obs.R;
+            vertCol[k+1] = obs.G;
+            vertCol[k+2] = obs.B;
         }
         glBindBuffer(GL_ARRAY_BUFFER, vertexBuffers[1]);
         glBufferData(GL_ARRAY_BUFFER, sizeof(vertCol), vertCol, GL_STATIC_DRAW);    // Send vertex data to VBO
