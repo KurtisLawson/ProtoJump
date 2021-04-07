@@ -11,30 +11,11 @@
 // macro to hep with GL calls
 #define BUFFER_OFFSET(i) ((char *)NULL + (i))
 
-//// uniform variables for shaders
-//enum
-//{
-//    UNIFORM_MODELVIEWPROJECTION_MATRIX,
-//    UNIFORM_MODELVIEW_MATRIX,
-//    UNIFORM_NORMAL_MATRIX,
-//    UNIFORM_TEXTURE,
-//    UNIFORM_LIGHT_SPECULAR_POSITION,
-//    UNIFORM_LIGHT_DIFFUSE_POSITION,
-//    UNIFORM_LIGHT_DIFFUSE_COMPONENT,
-//    UNIFORM_LIGHT_SHININESS,
-//    UNIFORM_LIGHT_SPECULAR_COMPONENT,
-//    UNIFORM_LIGHT_AMBIENT_COMPONENT,
-//    UNIFORM_USE_FOG,
-//    UNIFORM_USE_TEXTURE,
-//    UNIFORM_FLASHLIGHT,
-//    NUM_UNIFORMS
-//};
-//GLint uniforms[NUM_UNIFORMS];
-
 // vertex attributes
 enum
 {
     ATTRIB_POSITION,
+    ATTRIB_COL,
     ATTRIB_NORMAL,
     ATTRIB_TEXTURE,
     NUM_ATTRIBUTES
@@ -100,33 +81,44 @@ enum
     
     // set up VBOs (one per attribute)
     glBindVertexArray(self->vao);
-    GLuint vbo[3];
-    glGenBuffers(3, vbo);
+    GLuint vbo[4];
+    glGenBuffers(4, vbo);
 
     // pass on position data
     glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
     glBufferData(GL_ARRAY_BUFFER, 3*24*sizeof(GLfloat), self->vertices, GL_STATIC_DRAW);
     glEnableVertexAttribArray(ATTRIB_POSITION);
     glVertexAttribPointer(ATTRIB_POSITION, 3, GL_FLOAT, GL_FALSE, 3*sizeof(GLfloat), BUFFER_OFFSET(0));
+    
+    // pass on color data
+    glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
+    GLfloat vertCol[24*3];
+    for (int k = 0; k<24*3; k+=3)
+    {
+        vertCol[k] = 1.0f;
+        vertCol[k+1] = 1.0f;
+        vertCol[k+2] = 1.0f;
+    }
+    
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertCol), vertCol, GL_STATIC_DRAW);    // Send vertex data to VBO
+    glEnableVertexAttribArray(ATTRIB_COL);
+    glVertexAttribPointer(ATTRIB_COL, 3, GL_FLOAT, GL_FALSE, 3*sizeof(GLfloat), BUFFER_OFFSET(0));
 
     // pass on normals
-    glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo[2]);
     glBufferData(GL_ARRAY_BUFFER, 3*24*sizeof(GLfloat), self->normals, GL_STATIC_DRAW);
     glEnableVertexAttribArray(ATTRIB_NORMAL);
     glVertexAttribPointer(ATTRIB_NORMAL, 3, GL_FLOAT, GL_FALSE, 3*sizeof(GLfloat), BUFFER_OFFSET(0));
 
     // pass on texture coordinates
-    glBindBuffer(GL_ARRAY_BUFFER, vbo[2]);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo[3]);
     glBufferData(GL_ARRAY_BUFFER, 2*24*sizeof(GLfloat), self->texCoords, GL_STATIC_DRAW);
     glEnableVertexAttribArray(ATTRIB_TEXTURE);
     glVertexAttribPointer(ATTRIB_TEXTURE, 3, GL_FLOAT, GL_FALSE, 2*sizeof(GLfloat), BUFFER_OFFSET(0));
-
+    
+    // bind the ibo's
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, self->ibo);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(self->indices[0]) * self->numIndices, self->indices, GL_STATIC_DRAW);
-
-
-    // Second cube (to the side, not textured) - repeat above, minus the texture
-    // Must be done for each maze wall...
 
     // deselect the VAOs just to be clean
     glBindVertexArray(0);

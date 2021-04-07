@@ -89,7 +89,8 @@ enum
 
     GLKMatrix4 modelViewProjectionMatrix;   // model-view-projection matrix
     
-    AnimatedModel *playerModel;
+//    AnimatedModel *playerModel;
+    RenderObject player;
     RenderObject staticObjects[10];
     
     // Environment animation parameters
@@ -112,15 +113,123 @@ enum
     glDeleteProgram(programObject);
 }
 
+- (void) loadPlayerModel {
+    glGenVertexArrays(1, &player.vao);
+    glGenBuffers(1, &player.ibo);
+
+    // get crate data
+    player.numIndices = glesRenderer.GenCube(1.0, &player.vertices, &player.normals, &player.texCoords, &player.indices);
+    
+    // set up VBOs (one per attribute)
+    glBindVertexArray(player.vao);
+    GLuint vbo[4];
+    glGenBuffers(4, vbo);
+
+    // pass on position data
+    glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
+    glBufferData(GL_ARRAY_BUFFER, 3*24*sizeof(GLfloat), player.vertices, GL_STATIC_DRAW);
+    glEnableVertexAttribArray(ATTRIB_POSITION);
+    glVertexAttribPointer(ATTRIB_POSITION, 3, GL_FLOAT, GL_FALSE, 3*sizeof(GLfloat), BUFFER_OFFSET(0));
+    
+    // pass on color data
+    glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
+    GLfloat vertCol[24*3];
+    for (int k = 0; k<24*3; k+=3)
+    {
+        vertCol[k] = 1.0f;
+        vertCol[k+1] = 1.0f;
+        vertCol[k+2] = 1.0f;
+    }
+    
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertCol), vertCol, GL_STATIC_DRAW);    // Send vertex data to VBO
+    glEnableVertexAttribArray(ATTRIB_COL);
+    glVertexAttribPointer(ATTRIB_COL, 3, GL_FLOAT, GL_FALSE, 3*sizeof(GLfloat), BUFFER_OFFSET(0));
+
+    // pass on normals
+    glBindBuffer(GL_ARRAY_BUFFER, vbo[2]);
+    glBufferData(GL_ARRAY_BUFFER, 3*24*sizeof(GLfloat), player.normals, GL_STATIC_DRAW);
+    glEnableVertexAttribArray(ATTRIB_NORMAL);
+    glVertexAttribPointer(ATTRIB_NORMAL, 3, GL_FLOAT, GL_FALSE, 3*sizeof(GLfloat), BUFFER_OFFSET(0));
+
+    // pass on texture coordinates
+    glBindBuffer(GL_ARRAY_BUFFER, vbo[3]);
+    glBufferData(GL_ARRAY_BUFFER, 2*24*sizeof(GLfloat), player.texCoords, GL_STATIC_DRAW);
+    glEnableVertexAttribArray(ATTRIB_TEXTURE);
+    glVertexAttribPointer(ATTRIB_TEXTURE, 3, GL_FLOAT, GL_FALSE, 2*sizeof(GLfloat), BUFFER_OFFSET(0));
+    
+    // bind the ibo's
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, player.ibo);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(player.indices[0]) * player.numIndices, player.indices, GL_STATIC_DRAW);
+
+    // deselect the VAOs just to be clean
+    glBindVertexArray(0);
+}
+
+//-(void)loadRenderObject:(RenderObject) obj {
+//    // setup vao
+//    glGenVertexArrays(1, &obj.vao);
+//    glGenBuffers(1, &obj.ibo);
+//
+//    // get crate data
+//    obj.numIndices = glesRenderer.GenCube(1.0f, &obj.vertices, &obj.normals, &obj.texCoords, &obj.indices);
+//
+//    // set up VBOs (one per attribute)
+//    glBindVertexArray(obj.vao);
+//    GLuint vbo[4];
+//    glGenBuffers(4, vbo);
+//
+//    // pass on position data
+//    glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
+//    glBufferData(GL_ARRAY_BUFFER, 3*24*sizeof(GLfloat), obj.vertices, GL_STATIC_DRAW);
+//    glEnableVertexAttribArray(ATTRIB_POSITION);
+//    glVertexAttribPointer(ATTRIB_POSITION, 3, GL_FLOAT, GL_FALSE, 3*sizeof(GLfloat), BUFFER_OFFSET(0));
+//
+//    // pass on color data
+//    glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
+//    GLfloat vertCol[24*3];
+//    for (int k = 0; k<24*3; k+=3)
+//    {
+//        vertCol[k] = 1.0f;
+//        vertCol[k+1] = 1.0f;
+//        vertCol[k+2] = 1.0f;
+//    }
+//
+//    glBufferData(GL_ARRAY_BUFFER, sizeof(vertCol), vertCol, GL_STATIC_DRAW);    // Send vertex data to VBO
+//    glEnableVertexAttribArray(ATTRIB_COL);
+//    glVertexAttribPointer(ATTRIB_COL, 3, GL_FLOAT, GL_FALSE, 3*sizeof(GLfloat), BUFFER_OFFSET(0));
+//
+//    // pass on normals
+//    glBindBuffer(GL_ARRAY_BUFFER, vbo[2]);
+//    glBufferData(GL_ARRAY_BUFFER, 3*24*sizeof(GLfloat), obj.normals, GL_STATIC_DRAW);
+//    glEnableVertexAttribArray(ATTRIB_NORMAL);
+//    glVertexAttribPointer(ATTRIB_NORMAL, 3, GL_FLOAT, GL_FALSE, 3*sizeof(GLfloat), BUFFER_OFFSET(0));
+//
+//    // pass on texture coordinates
+//    glBindBuffer(GL_ARRAY_BUFFER, vbo[3]);
+//    glBufferData(GL_ARRAY_BUFFER, 2*24*sizeof(GLfloat), obj.texCoords, GL_STATIC_DRAW);
+//    glEnableVertexAttribArray(ATTRIB_TEXTURE);
+//    glVertexAttribPointer(ATTRIB_TEXTURE, 3, GL_FLOAT, GL_FALSE, 2*sizeof(GLfloat), BUFFER_OFFSET(0));
+//
+//    // bind the ibo's
+//    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, obj.ibo);
+//    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(obj.indices[0]) * obj.numIndices, obj.indices, GL_STATIC_DRAW);
+//
+//    // deselect the VAOs just to be clean
+//    glBindVertexArray(0);
+//}
+
 - (void)loadModels
 {
     NSLog(@"Loading Models");
-    playerModel = [[AnimatedModel alloc] init];
-    [playerModel setupVAO];
+//    playerModel = [[AnimatedModel alloc] init];
+//    [playerModel setupVAO];
+    
+    [self loadPlayerModel];
     
     // Wall and ceilings:
     for (int i = 0; i < 10; ++i) {
-        // First cube (centre, textured)
+//        [self loadRenderObject:staticObjects[i]];
+        // Object vao
         glGenVertexArrays(1, &staticObjects[i].vao);
         glGenBuffers(1, &staticObjects[i].ibo);
 
@@ -268,6 +377,7 @@ enum
     
     NSLog(@"Floor offset is %f", screenOffset);
     
+    // ******** GROUND 1 **********
     // apply transformations to the ground
     staticObjects[0].mvm = staticObjects[0].mvp = GLKMatrix4Translate(staticObjects[0].mvp, screenOffset, -3, -1.0);
     staticObjects[0].mvm = staticObjects[0].mvp = GLKMatrix4Rotate(staticObjects[0].mvp, 0.0, 1.0, 0.0, 1.0 );
@@ -275,13 +385,11 @@ enum
               
     staticObjects[0].normalMatrix = GLKMatrix3InvertAndTranspose(GLKMatrix4GetMatrix3(staticObjects[0].mvp), NULL);
     staticObjects[0].mvp = GLKMatrix4Multiply(perspectiveMatrix, staticObjects[0].mvp);
-        
-    // **********************************************
     
-    // ******************************************************************
     // initialize MVP matrix for both objects to set the "camera"
     staticObjects[1].mvp = GLKMatrix4Translate(GLKMatrix4Identity, 0.0, 0.0, -5.0);
     
+    // ******** GROUND 2 **********
     // apply transformations to the ground
     staticObjects[1].mvm = staticObjects[1].mvp = GLKMatrix4Translate(staticObjects[1].mvp, 10 + screenOffset, -3, -1.0);
     staticObjects[1].mvm = staticObjects[1].mvp = GLKMatrix4Rotate(staticObjects[1].mvp, 0.0, 1.0, 0.0, 1.0 );
@@ -289,10 +397,8 @@ enum
               
     staticObjects[1].normalMatrix = GLKMatrix3InvertAndTranspose(GLKMatrix4GetMatrix3(staticObjects[1].mvp), NULL);
     staticObjects[1].mvp = GLKMatrix4Multiply(perspectiveMatrix, staticObjects[1].mvp);
-          
-      //    NSLog(@"Object MVP ");
         
-    // **********************************************
+    // ******** LEFT WALL **********
     
     // initialize MVP matrix for both objects to set the "camera"
     staticObjects[2].mvp = GLKMatrix4Translate(GLKMatrix4Identity, 0.0, 0.0, -5.0);
@@ -306,8 +412,7 @@ enum
     staticObjects[2].mvp = GLKMatrix4Multiply(perspectiveMatrix, staticObjects[2].mvp);
           
     
-    
-    // **********************************************
+    // ******** OBSTACLE **********
     if (theObstacle) {
         // initialize MVP matrix for both objects to set the "camera"
         staticObjects[5].mvp = GLKMatrix4Translate(GLKMatrix4Identity, 0.0, 0.0, -5.0);
@@ -320,52 +425,6 @@ enum
         staticObjects[5].normalMatrix = GLKMatrix3InvertAndTranspose(GLKMatrix4GetMatrix3(staticObjects[5].mvp), NULL);
         staticObjects[5].mvp = GLKMatrix4Multiply(perspectiveMatrix, staticObjects[5].mvp);
           //    NSLog(@"Object MVP ");
-    }
-    
-    if (theBall)
-    {
-        // Set up VAO/VBO for brick
-        glGenVertexArrays(1, &ballVertexArray);
-        glBindVertexArray(ballVertexArray);
-        
-        GLuint vertexBuffers[2];
-        glGenBuffers(2, vertexBuffers);
-        
-        // VBO for vertex colours
-        glBindBuffer(GL_ARRAY_BUFFER, vertexBuffers[0]);
-        GLfloat vertPos[3*(BALL_SPHERE_SEGS+2)];    // triangle fan, so need 3 coords for each vertex; need to close the sphere; and need the center of the sphere
-        int k = 0;
-        // Center of the sphere
-        vertPos[k++] = theBall->x;
-        vertPos[k++] = theBall->y;
-        vertPos[k++] = 0;
-        numBallVerts = 1;
-        for (int n=0; n<=BALL_SPHERE_SEGS; n++)
-        {
-            float const t = 2*M_PI*(float)n/(float)BALL_SPHERE_SEGS;
-            vertPos[k++] = theBall->x + sin(t)*BALL_RADIUS;
-            vertPos[k++] = theBall->y + cos(t)*BALL_RADIUS;
-            vertPos[k++] = 0;
-            numBallVerts++;
-        }
-        glBufferData(GL_ARRAY_BUFFER, sizeof(vertPos), vertPos, GL_STATIC_DRAW);    // Send vertex data to VBO
-        glEnableVertexAttribArray(ATTRIB_POSITION);
-        glVertexAttribPointer(ATTRIB_POSITION, 3, GL_FLOAT, GL_FALSE, 3*sizeof(GLfloat), BUFFER_OFFSET(0));
-        
-        // VBO for vertex colours
-        GLfloat vertCol[numBallVerts*3];
-        for (k=0; k<numBallVerts*3; k+=3)
-        {
-            vertCol[k] = 0.0f;
-            vertCol[k+1] = 1.0f;
-            vertCol[k+2] = 0.0f;
-        }
-        glBindBuffer(GL_ARRAY_BUFFER, vertexBuffers[1]);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(vertCol), vertCol, GL_STATIC_DRAW);    // Send vertex data to VBO
-        glEnableVertexAttribArray(ATTRIB_COL);
-        glVertexAttribPointer(ATTRIB_COL, 3, GL_FLOAT, GL_FALSE, 3*sizeof(GLfloat), BUFFER_OFFSET(0));
-
-        glBindVertexArray(0);
     }
     
     if (theObstacle)
@@ -426,6 +485,63 @@ enum
         glBindVertexArray(0);
     }
     
+    // ******** PLAYER **********
+    player.mvp = GLKMatrix4Translate(GLKMatrix4Identity, 0.0, 0.0, -5.0);
+
+    // apply transformations to the ground
+    player.mvm = player.mvp = GLKMatrix4Translate(player.mvp, 0,0, -1.0);
+    player.mvm = player.mvp = GLKMatrix4Rotate(player.mvp, 0.0, 1.0, 0.0, 1.0 );
+    player.mvm = player.mvp = GLKMatrix4Scale(player.mvp, 1, 1, 1 );
+              
+    player.normalMatrix = GLKMatrix3InvertAndTranspose(GLKMatrix4GetMatrix3(player.mvp), NULL);
+    player.mvp = GLKMatrix4Multiply(perspectiveMatrix, player.mvp);
+    
+    if (theBall)
+    {
+        // Set up VAO/VBO for brick
+        glGenVertexArrays(1, &ballVertexArray);
+        glBindVertexArray(ballVertexArray);
+        
+        GLuint vertexBuffers[2];
+        glGenBuffers(2, vertexBuffers);
+        
+        // VBO for vertex colours
+        glBindBuffer(GL_ARRAY_BUFFER, vertexBuffers[0]);
+        GLfloat vertPos[3*(BALL_SPHERE_SEGS+2)];    // triangle fan, so need 3 coords for each vertex; need to close the sphere; and need the center of the sphere
+        int k = 0;
+        // Center of the sphere
+        vertPos[k++] = theBall->x;
+        vertPos[k++] = theBall->y;
+        vertPos[k++] = 0;
+        numBallVerts = 1;
+        for (int n=0; n<=BALL_SPHERE_SEGS; n++)
+        {
+            float const t = 2*M_PI*(float)n/(float)BALL_SPHERE_SEGS;
+            vertPos[k++] = theBall->x + sin(t)*BALL_RADIUS;
+            vertPos[k++] = theBall->y + cos(t)*BALL_RADIUS;
+            vertPos[k++] = 0;
+            numBallVerts++;
+        }
+        glBufferData(GL_ARRAY_BUFFER, sizeof(vertPos), vertPos, GL_STATIC_DRAW);    // Send vertex data to VBO
+        glEnableVertexAttribArray(ATTRIB_POSITION);
+        glVertexAttribPointer(ATTRIB_POSITION, 3, GL_FLOAT, GL_FALSE, 3*sizeof(GLfloat), BUFFER_OFFSET(0));
+        
+        // VBO for vertex colours
+        GLfloat vertCol[numBallVerts*3];
+        for (k=0; k<numBallVerts*3; k+=3)
+        {
+            vertCol[k] = 0.0f;
+            vertCol[k+1] = 1.0f;
+            vertCol[k+2] = 0.0f;
+        }
+        glBindBuffer(GL_ARRAY_BUFFER, vertexBuffers[1]);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(vertCol), vertCol, GL_STATIC_DRAW);    // Send vertex data to VBO
+        glEnableVertexAttribArray(ATTRIB_COL);
+        glVertexAttribPointer(ATTRIB_COL, 3, GL_FLOAT, GL_FALSE, 3*sizeof(GLfloat), BUFFER_OFFSET(0));
+
+        glBindVertexArray(0);
+    }
+    
     // For now assume simple ortho projection since it's only 2D
     GLKMatrix4 modelViewMatrix = GLKMatrix4Identity;
     modelViewMatrix = GLKMatrix4Translate(modelViewMatrix, steps, 0, 0);
@@ -448,47 +564,23 @@ enum
     glClear ( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
     glUseProgram ( programObject );
     
+    // *************** DRAW ENERGY OBJECTS *****************
+    
     // Bind the objects in the staticObject collection
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, energyTexture);
     
-    glUniform1i(uniforms[UNIFORM_USE_TEXTURE], 1);
-    glUniform4fv(uniforms[UNIFORM_LIGHT_DIFFUSE_POSITION], 1, staticObjects[2].diffuseLightPosition.v);
-    glUniform4fv(uniforms[UNIFORM_LIGHT_DIFFUSE_COMPONENT], 1, staticObjects[2].diffuseComponent.v);
-    glUniformMatrix4fv(uniforms[UNIFORM_MODELVIEWPROJECTION_MATRIX], 1, FALSE, (const float *)staticObjects[2].mvp.m);
-    glUniformMatrix4fv(uniforms[UNIFORM_MODELVIEW_MATRIX], 1, FALSE, (const float *)staticObjects[2].mvm.m);
-    glUniformMatrix3fv(uniforms[UNIFORM_NORMAL_MATRIX], 1, 0, staticObjects[2].normalMatrix.m);
     
-    glBindVertexArray(staticObjects[2].vao);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, staticObjects[2].ibo);
-    glDrawElements(GL_TRIANGLES, (GLsizei)staticObjects[2].numIndices, GL_UNSIGNED_INT, 0);
-    
-    for (int i = 0; i < 2; ++i) {
-        glUniform1i(uniforms[UNIFORM_USE_TEXTURE], 1);
-        glUniform4fv(uniforms[UNIFORM_LIGHT_DIFFUSE_POSITION], 1, staticObjects[i].diffuseLightPosition.v);
-        glUniform4fv(uniforms[UNIFORM_LIGHT_DIFFUSE_COMPONENT], 1, staticObjects[i].diffuseComponent.v);
-        glUniformMatrix4fv(uniforms[UNIFORM_MODELVIEWPROJECTION_MATRIX], 1, FALSE, (const float *)staticObjects[i].mvp.m);
-        glUniformMatrix4fv(uniforms[UNIFORM_MODELVIEW_MATRIX], 1, FALSE, (const float *)staticObjects[i].mvm.m);
-        glUniformMatrix3fv(uniforms[UNIFORM_NORMAL_MATRIX], 1, 0, staticObjects[i].normalMatrix.m);
-        
-        glBindVertexArray(staticObjects[i].vao);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, staticObjects[i].ibo);
-        glDrawElements(GL_TRIANGLES, (GLsizei)staticObjects[i].numIndices, GL_UNSIGNED_INT, 0);
+    for (int i = 0; i < 3; ++i) {
+        [self drawRenderObject:staticObjects[i]];
     }
+    
+    // *************** DRAW STEEL OBJECTS *****************
     
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, obstacleTexture);
     
-    glUniform1i(uniforms[UNIFORM_USE_TEXTURE], 1);
-    glUniform4fv(uniforms[UNIFORM_LIGHT_DIFFUSE_POSITION], 1, staticObjects[5].diffuseLightPosition.v);
-    glUniform4fv(uniforms[UNIFORM_LIGHT_DIFFUSE_COMPONENT], 1, staticObjects[5].diffuseComponent.v);
-    glUniformMatrix4fv(uniforms[UNIFORM_MODELVIEWPROJECTION_MATRIX], 1, FALSE, (const float *)staticObjects[5].mvp.m);
-    glUniformMatrix4fv(uniforms[UNIFORM_MODELVIEW_MATRIX], 1, FALSE, (const float *)staticObjects[5].mvm.m);
-    glUniformMatrix3fv(uniforms[UNIFORM_NORMAL_MATRIX], 1, 0, staticObjects[5].normalMatrix.m);
-    
-    glBindVertexArray(staticObjects[5].vao);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, staticObjects[5].ibo);
-    glDrawElements(GL_TRIANGLES, (GLsizei)staticObjects[5].numIndices, GL_UNSIGNED_INT, 0);
+    [self drawRenderObject:staticObjects[5]];
 
     // Pass along updated MVP matrix
     glUniformMatrix4fv(uniforms[UNIFORM_MODELVIEWPROJECTION_MATRIX], 1, 0, modelViewProjectionMatrix.m);
@@ -510,11 +602,6 @@ enum
     
     glUniform1i(uniforms[UNIFORM_USE_TEXTURE], 0);
     
-    // Bind each vertex array and call glDrawArrays for each of the ball and brick
-    glBindVertexArray(brickVertexArray);
-    if (theLeftWall && numLeftWallVerts > 0)
-        glDrawArrays(GL_TRIANGLES, 0, numLeftWallVerts);
-
     glBindVertexArray(ballVertexArray);
     if (theBall && numBallVerts > 0)
         glDrawArrays(GL_TRIANGLE_FAN, 0, numBallVerts);
@@ -522,14 +609,31 @@ enum
     glBindVertexArray(obstacleVertexArray);
     if(theObstacle && numObstacleVerts > 0)
         glDrawArrays(GL_TRIANGLES, 0, numObstacleVerts);
-//    glBindVertexArray(groundVertexArray);
-//    if (theGround && numGroundVerts > 0)
-//        glDrawArrays(GL_TRIANGLES, 0, numGroundVerts);
     
-    glBindVertexArray(roofVertexArray);
-    if (theRoof && numRoofVerts > 0)
-        glDrawArrays(GL_TRIANGLES, 0, numRoofVerts);
+    // *************** PLAYER *****************
+    glUniform4fv(uniforms[UNIFORM_LIGHT_DIFFUSE_POSITION], 1, player.diffuseLightPosition.v);
+    glUniform4fv(uniforms[UNIFORM_LIGHT_DIFFUSE_COMPONENT], 1, player.diffuseComponent.v);
+    glUniformMatrix4fv(uniforms[UNIFORM_MODELVIEWPROJECTION_MATRIX], 1, FALSE, (const float *)player.mvp.m);
+    glUniformMatrix4fv(uniforms[UNIFORM_MODELVIEW_MATRIX], 1, FALSE, (const float *)player.mvm.m);
+    glUniformMatrix3fv(uniforms[UNIFORM_NORMAL_MATRIX], 1, 0, player.normalMatrix.m);
     
+    glBindVertexArray(player.vao);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, player.ibo);
+    glDrawElements(GL_TRIANGLES, (GLsizei)player.numIndices, GL_UNSIGNED_INT, 0);
+    
+}
+
+-(void)drawRenderObject:(RenderObject) obj {
+    glUniform1i(uniforms[UNIFORM_USE_TEXTURE], 1);
+    glUniform4fv(uniforms[UNIFORM_LIGHT_DIFFUSE_POSITION], 1, obj.diffuseLightPosition.v);
+    glUniform4fv(uniforms[UNIFORM_LIGHT_DIFFUSE_COMPONENT], 1, obj.diffuseComponent.v);
+    glUniformMatrix4fv(uniforms[UNIFORM_MODELVIEWPROJECTION_MATRIX], 1, FALSE, (const float *)obj.mvp.m);
+    glUniformMatrix4fv(uniforms[UNIFORM_MODELVIEW_MATRIX], 1, FALSE, (const float *)obj.mvm.m);
+    glUniformMatrix3fv(uniforms[UNIFORM_NORMAL_MATRIX], 1, 0, obj.normalMatrix.m);
+    
+    glBindVertexArray(obj.vao);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, obj.ibo);
+    glDrawElements(GL_TRIANGLES, (GLsizei)obj.numIndices, GL_UNSIGNED_INT, 0);
 }
 
 
