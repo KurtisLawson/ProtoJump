@@ -193,13 +193,12 @@ public:
         //Chunk creation
         chunk = [[Chunk alloc]init];
         
-        
         //Obstacle definition
         b2BodyDef obstacleBodyDef;
         obstacleBodyDef.type = b2_staticBody;
-        float pixelX = [chunk XtoPixel:chunk.obs.posX];
-        float pixelY = [chunk YtoPixel:chunk.obs.posY];
-        obstacleBodyDef.position.Set(pixelX, pixelY);
+        float posX = [chunk toPixel:chunk.obs.posX :SCREEN_BOUNDS_X + SCREEN_OFFSET];
+        float posY = [chunk toPixel:chunk.obs.posY :SCREEN_BOUNDS_Y];
+        obstacleBodyDef.position.Set(posX, posY);
         theObstacle = world->CreateBody(&obstacleBodyDef);
         obstacleData = new UserData(self, @"Obstacle");
         
@@ -214,11 +213,12 @@ public:
         if(chunk){
             if (theObstacle)
             {
-            
+                float width = [chunk toPixel:chunk.obs.width :SCREEN_BOUNDS_X + SCREEN_OFFSET];
+                float height = [chunk toPixel:chunk.obs.height :SCREEN_BOUNDS_Y];
                 theObstacle->SetUserData((void *)obstacleData);
                 theObstacle->SetAwake(false);
                 b2PolygonShape staticBox;
-                staticBox.SetAsBox(chunk.obs.width/2, chunk.obs.height/2);
+                staticBox.SetAsBox(width/2, height/2);
                 b2FixtureDef fixtureDef;
                 fixtureDef.shape = &staticBox;
                 fixtureDef.density = 1.0f;
@@ -295,7 +295,7 @@ public:
     // Check if it is time yet to drop the brick, and if so
     //  call SetAwake()
     totalElapsedTime += elapsedTime;
-    if ((totalElapsedTime > BRICK_WAIT) && theLeftWall)
+    if (theLeftWall)
         theLeftWall->SetAwake(true);
     
     if(ballHitLeftWall){
@@ -334,10 +334,11 @@ public:
     if((int)theGround->GetPosition().x - SCREEN_BOUNDS_X/2 >= theObstacle->GetPosition().x) {
         printf("Obsacle is at the end of screen\n");
         [chunk randomize];
+        float posY = [chunk toPixel:chunk.obs.posY :SCREEN_BOUNDS_Y];
         
         b2BodyDef obstacleBodyDef;
         obstacleBodyDef.type = b2_staticBody;
-        obstacleBodyDef.position.Set(theGround->GetPosition().x + SCREEN_BOUNDS_X/2, chunk.obs.posY);
+        obstacleBodyDef.position.Set(theGround->GetPosition().x + SCREEN_BOUNDS_X/2, posY);
         theObstacle = world->CreateBody(&obstacleBodyDef);
         
         UserData* obstacleData = new UserData(self,@"Obstacle");
@@ -348,7 +349,9 @@ public:
             theObstacle->SetUserData((void*) obstacleData);
             theObstacle->SetAwake(false);
             b2PolygonShape staticBox;
-            staticBox.SetAsBox(chunk.obs.width/2, chunk.obs.height/2);
+            float width = [chunk toPixel:chunk.obs.width :SCREEN_BOUNDS_X + SCREEN_OFFSET];
+            float height = [chunk toPixel:chunk.obs.height :SCREEN_BOUNDS_Y];
+            staticBox.SetAsBox(width/2, height/2);
             b2FixtureDef fixtureDef;
             fixtureDef.shape = &staticBox;
             fixtureDef.density = 1.0f;
@@ -356,9 +359,9 @@ public:
             fixtureDef.restitution = 0.0f;
             theObstacle->CreateFixture(&fixtureDef);
         }
-        
-        
-        //theObstacle->SetTransform(b2Vec2(theObstacle->GetPosition().x + OBSTACLE_DISTANCE, obstacle.posY), theObstacle->GetAngle());
+    } else {
+        float pixelPos = theObstacle->GetPosition().x - (theGround->GetPosition().x - SCREEN_BOUNDS_X/2);
+        chunk.obs.posX = [chunk toDec:pixelPos :SCREEN_BOUNDS_X + SCREEN_OFFSET];
     }
     
     if (world)

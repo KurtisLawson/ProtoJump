@@ -77,6 +77,14 @@
     }
 }
 
+-(float)toPixel:(float)dec :(float)pix{
+    return dec * pix;
+}
+
+-(float)toDec:(float)curr :(float)pix{
+    return curr / pix;
+}
+
 -(bool)rollForTrue:(int)percentage{
     return arc4random_uniform(100) < percentage;
 }

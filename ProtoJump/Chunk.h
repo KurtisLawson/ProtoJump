@@ -34,9 +34,8 @@ typedef enum {
 @property NSMutableArray* hazards;
 
 -(void)randomize;
--(float)YtoPixel:(float)y;
--(float)XtoPixel:(float)x;
--(float)XtoDec:(float)x;
+-(float)toPixel:(float)dec :(float)pix;
+-(float)toDec:(float)curr :(float)pix;
 -(void)dealloc;
 
 @end
