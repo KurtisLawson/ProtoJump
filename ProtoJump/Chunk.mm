@@ -48,10 +48,10 @@
             
             if(i%2 == 0){
                 hz.isVertical = true;
-                [hz randomize:obs.height/2];
+                //[hz randomize:obs.height/2];
             } else {
                 hz.isVertical = false;
-                [hz randomize:obs.width/2];
+                //[hz randomize:obs.width/2];
             }
             
             [hazards addObject:hz];
