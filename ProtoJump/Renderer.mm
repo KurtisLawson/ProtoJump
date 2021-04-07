@@ -415,77 +415,77 @@ enum
     // ******** OBSTACLE **********
     if (theObstacle) {
         // initialize MVP matrix for both objects to set the "camera"
-        staticObjects[5].mvp = GLKMatrix4Translate(GLKMatrix4Identity, 0.0, 0.0, -5.0);
+        staticObjects[5].mvp = GLKMatrix4Translate(GLKMatrix4Identity, 0.0, 0.0, -5.9);
 
         // apply transformations to the ground
-        staticObjects[5].mvm = staticObjects[5].mvp = GLKMatrix4Translate(staticObjects[5].mvp, (theObstacle->x / SCREEN_BOUNDS_X)* 5+obstacleOffset - 0.5, ((theObstacle->y/SCREEN_BOUNDS_Y) -0.5)*3, 0.0);
+        staticObjects[5].mvm = staticObjects[5].mvp = GLKMatrix4Translate(staticObjects[5].mvp, (box2d.chunk.obs.posX-0.5) * 10 +0.5, (box2d.chunk.obs.posY-0.5) * 6, 0.0);
         staticObjects[5].mvm = staticObjects[5].mvp = GLKMatrix4Rotate(staticObjects[5].mvp, 0.0, 1.0, 0.0, 1.0 );
-        staticObjects[5].mvm = staticObjects[5].mvp = GLKMatrix4Scale(staticObjects[5].mvp, 0.6, 2, 3 );
+        staticObjects[5].mvm = staticObjects[5].mvp = GLKMatrix4Scale(staticObjects[5].mvp, box2d.chunk.obs.width*10,box2d.chunk.obs.height*5, 1 );
                   
         staticObjects[5].normalMatrix = GLKMatrix3InvertAndTranspose(GLKMatrix4GetMatrix3(staticObjects[5].mvp), NULL);
         staticObjects[5].mvp = GLKMatrix4Multiply(perspectiveMatrix, staticObjects[5].mvp);
           //    NSLog(@"Object MVP ");
     }
-    
-    if (theObstacle)
-    {
-        Obstacle* obs = [box2d.chunk.obstacles objectAtIndex:0];
-        
-        // Set up VAO/VBO for obstacle
-        glGenVertexArrays(1, &obstacleVertexArray);
-        glBindVertexArray(obstacleVertexArray);
-        GLuint vertexBuffers[2];
-        glGenBuffers(2, vertexBuffers);
-        
-        
-        // VBO for vertex positions
-        glBindBuffer(GL_ARRAY_BUFFER, vertexBuffers[0]);
-        GLfloat vertPos[18];    // 2 triangles x 3 vertices/triangle x 3 coords (x,y,z) per vertex
-        int k = 0;
-        numObstacleVerts = 0;
-        vertPos[k++] = theObstacle->x - obs.width/2;
-        vertPos[k++] = theObstacle->y + obs.height/2;
-        vertPos[k++] = 10;  // z-value is always set to same value since 2D
-        numObstacleVerts++;
-        vertPos[k++] = theObstacle->x + obs.width/2;
-        vertPos[k++] = theObstacle->y + obs.height/2;
-        vertPos[k++] = 10;
-        numObstacleVerts++;
-        vertPos[k++] = theObstacle->x + obs.width/2;
-        vertPos[k++] = theObstacle->y - obs.height/2;
-        vertPos[k++] = 10;
-        numObstacleVerts++;
-        vertPos[k++] = theObstacle->x - obs.width/2;
-        vertPos[k++] = theObstacle->y + obs.height/2;
-        vertPos[k++] = 10;
-        numObstacleVerts++;
-        vertPos[k++] = theObstacle->x + obs.width/2;
-        vertPos[k++] = theObstacle->y - obs.height/2;
-        vertPos[k++] = 10;
-        numObstacleVerts++;
-        vertPos[k++] = theObstacle->x - obs.width/2;
-        vertPos[k++] = theObstacle->y - obs.height/2;
-        vertPos[k++] = 10;
-        numObstacleVerts++;
-        glBufferData(GL_ARRAY_BUFFER, sizeof(vertPos), vertPos, GL_STATIC_DRAW);    // Send vertex data to VBO
-        glEnableVertexAttribArray(ATTRIB_POSITION);
-        glVertexAttribPointer(ATTRIB_POSITION, 3, GL_FLOAT, GL_FALSE, 3*sizeof(GLfloat), BUFFER_OFFSET(0));
-        
-        // VBO for vertex colours
-        GLfloat vertCol[numObstacleVerts*3];
-        for (k=0; k<numObstacleVerts*3; k+=3)
-        {
-            vertCol[k] = obs.R;
-            vertCol[k+1] = obs.G;
-            vertCol[k+2] = obs.B;
-        }
-        glBindBuffer(GL_ARRAY_BUFFER, vertexBuffers[1]);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(vertCol), vertCol, GL_STATIC_DRAW);    // Send vertex data to VBO
-        glEnableVertexAttribArray(ATTRIB_COL);
-        glVertexAttribPointer(ATTRIB_COL, 3, GL_FLOAT, GL_FALSE, 3*sizeof(GLfloat), BUFFER_OFFSET(0));
-
-        glBindVertexArray(0);
-    }
+//
+//    if (theObstacle)
+//    {
+//        Obstacle* obs = box2d.chunk.obs;
+//
+//        // Set up VAO/VBO for obstacle
+//        glGenVertexArrays(1, &obstacleVertexArray);
+//        glBindVertexArray(obstacleVertexArray);
+//        GLuint vertexBuffers[2];
+//        glGenBuffers(2, vertexBuffers);
+//
+//
+//        // VBO for vertex positions
+//        glBindBuffer(GL_ARRAY_BUFFER, vertexBuffers[0]);
+//        GLfloat vertPos[18];    // 2 triangles x 3 vertices/triangle x 3 coords (x,y,z) per vertex
+//        int k = 0;
+//        numObstacleVerts = 0;
+//        vertPos[k++] = theObstacle->x - (obs.width * SCREEN_BOUNDS_X)/2;
+//        vertPos[k++] = theObstacle->y + (obs.height * SCREEN_BOUNDS_Y)/2;
+//        vertPos[k++] = 10;  // z-value is always set to same value since 2D
+//        numObstacleVerts++;
+//        vertPos[k++] = theObstacle->x + (obs.width * SCREEN_BOUNDS_X)/2;
+//        vertPos[k++] = theObstacle->y + (obs.height * SCREEN_BOUNDS_Y)/2;
+//        vertPos[k++] = 10;
+//        numObstacleVerts++;
+//        vertPos[k++] = theObstacle->x + (obs.width * SCREEN_BOUNDS_X)/2;
+//        vertPos[k++] = theObstacle->y - (obs.height * SCREEN_BOUNDS_Y)/2;
+//        vertPos[k++] = 10;
+//        numObstacleVerts++;
+//        vertPos[k++] = theObstacle->x - (obs.width * SCREEN_BOUNDS_X)/2;
+//        vertPos[k++] = theObstacle->y + (obs.height * SCREEN_BOUNDS_Y)/2;
+//        vertPos[k++] = 10;
+//        numObstacleVerts++;
+//        vertPos[k++] = theObstacle->x + (obs.width * SCREEN_BOUNDS_X)/2;
+//        vertPos[k++] = theObstacle->y - (obs.height * SCREEN_BOUNDS_Y)/2;
+//        vertPos[k++] = 10;
+//        numObstacleVerts++;
+//        vertPos[k++] = theObstacle->x - (obs.width * SCREEN_BOUNDS_X)/2;
+//        vertPos[k++] = theObstacle->y - (obs.height * SCREEN_BOUNDS_Y)/2;
+//        vertPos[k++] = 10;
+//        numObstacleVerts++;
+//        glBufferData(GL_ARRAY_BUFFER, sizeof(vertPos), vertPos, GL_STATIC_DRAW);    // Send vertex data to VBO
+//        glEnableVertexAttribArray(ATTRIB_POSITION);
+//        glVertexAttribPointer(ATTRIB_POSITION, 3, GL_FLOAT, GL_FALSE, 3*sizeof(GLfloat), BUFFER_OFFSET(0));
+//
+//        // VBO for vertex colours
+//        GLfloat vertCol[numObstacleVerts*3];
+//        for (k=0; k<numObstacleVerts*3; k+=3)
+//        {
+//            vertCol[k] = obs.R;
+//            vertCol[k+1] = obs.G;
+//            vertCol[k+2] = obs.B;
+//        }
+//        glBindBuffer(GL_ARRAY_BUFFER, vertexBuffers[1]);
+//        glBufferData(GL_ARRAY_BUFFER, sizeof(vertCol), vertCol, GL_STATIC_DRAW);    // Send vertex data to VBO
+//        glEnableVertexAttribArray(ATTRIB_COL);
+//        glVertexAttribPointer(ATTRIB_COL, 3, GL_FLOAT, GL_FALSE, 3*sizeof(GLfloat), BUFFER_OFFSET(0));
+//
+//        glBindVertexArray(0);
+//    }
     
     // ******** PLAYER **********
     player.mvp = GLKMatrix4Translate(GLKMatrix4Identity, 0.0, 0.0, -5.0);
