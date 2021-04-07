@@ -18,6 +18,8 @@
 - (void)update;
 - (void)draw:(CGRect)drawRect;
 
+- (GLuint)setupTexture:(NSString *)fileName;
+
 @end
 
 #endif /* Renderer_h */
