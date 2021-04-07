@@ -19,6 +19,7 @@
 //   and how long to wait before dropping brick
 #define SCREEN_BOUNDS_X        800
 #define SCREEN_BOUNDS_Y        600
+#define SCREEN_OFFSET          100
 
 // Physics & Game-Speed Parameters
 #define JUMP_MAGNITUDE         400
@@ -31,11 +32,11 @@
 #define Left_Wall_WIDTH        100.0f
 #define Left_Wall_HEIGHT       600.0f
 
-#define BRICK_POS_X            400
-#define BRICK_POS_Y            500
-#define BRICK_WIDTH            100.0f
-#define BRICK_HEIGHT           100.0f
-#define BRICK_WAIT             0.0f
+//#define BRICK_POS_X            400
+//#define BRICK_POS_Y            500
+//#define BRICK_WIDTH            100.0f
+//#define BRICK_HEIGHT           100.0f
+//#define BRICK_WAIT             0.0f
 
 #define BALL_POS_X             400
 #define BALL_POS_Y             50

@@ -14,32 +14,29 @@
 #include "Obstacle.h"
 #include "Hazard.h"
 
-#define CHUNK_POS_X     900
-#define TOTAL_HAZ_NUM   4
-#define MAX_HAZ_AMOUNT  3
+
+#define TOTAL_HAZ_SLOTS 4
+#define MAX_HAZ         3
 #define HAZ_CHANCE      25
+#define MIN_HAZ_RATIO   5.0
+#define MAX_HAZ_RATIO   2.0
 
 typedef enum {
-    chunk_single = 1,
-    chunk_multi
-} Type;
-
-typedef enum {
-    chunk_left = 0,
-    chunk_top,
-    chunk_right,
-    chunk_bottom
+    haz_left = 0,
+    haz_top,
+    haz_right,
+    haz_bottom
 } Side;
 
 @interface Chunk : NSObject {}
 
-@property float distance;
-@property NSMutableArray* obstacles;
+@property Obstacle* obs;
 @property NSMutableArray* hazards;
-@property int chunkType;
 
--(void)create:(int)chunkType;
 -(void)randomize;
+-(float)YtoPixel:(float)y;
+-(float)XtoPixel:(float)x;
+-(float)XtoDec:(float)x;
 -(void)dealloc;
 
 @end

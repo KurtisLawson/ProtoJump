@@ -18,7 +18,6 @@
 @property float R, G, B;
 @property float width, height;
 @property float posX, posY;
-@property bool isVertical;
 
 -(void)vRandomize:(float)minSize :(float)maxSize;
 -(void)hRandomize:(float)minSize :(float)maxSize;

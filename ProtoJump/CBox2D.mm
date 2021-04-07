@@ -192,23 +192,24 @@ public:
 
         //Chunk creation
         chunk = [[Chunk alloc]init];
-        [chunk create:chunk_single];
+        
         
         //Obstacle definition
-        Obstacle* obs = [chunk.obstacles objectAtIndex:0];
         b2BodyDef obstacleBodyDef;
         obstacleBodyDef.type = b2_staticBody;
-        obstacleBodyDef.position.Set(CHUNK_POS_X, obs.posY);
+        float pixelX = [chunk XtoPixel:chunk.obs.posX];
+        float pixelY = [chunk YtoPixel:chunk.obs.posY];
+        obstacleBodyDef.position.Set(pixelX, pixelY);
         theObstacle = world->CreateBody(&obstacleBodyDef);
         obstacleData = new UserData(self, @"Obstacle");
         
         //Hazard definition
-        Hazard* hz = [chunk.hazards objectAtIndex:0];
-        b2BodyDef hazardBodyDef;
-        hazardBodyDef.type = b2_staticBody;
-        hazardBodyDef.position.Set(CHUNK_POS_X-(obs.width/2), obs.posY);
-        theHazardLeft = world->CreateBody(&hazardBodyDef);
-        hazardLeftData = new UserData(self, @"HazardLeft");
+//        Hazard* hz = [chunk.hazards objectAtIndex:0];
+//        b2BodyDef hazardBodyDef;
+//        hazardBodyDef.type = b2_staticBody;
+//        hazardBodyDef.position.Set(CHUNK_POS_X-(obs.width/2), obs.posY);
+//        theHazardLeft = world->CreateBody(&hazardBodyDef);
+//        hazardLeftData = new UserData(self, @"HazardLeft");
         
         if(chunk){
             if (theObstacle)
@@ -217,7 +218,7 @@ public:
                 theObstacle->SetUserData((void *)obstacleData);
                 theObstacle->SetAwake(false);
                 b2PolygonShape staticBox;
-                staticBox.SetAsBox(obs.width/2, obs.height/2);
+                staticBox.SetAsBox(chunk.obs.width/2, chunk.obs.height/2);
                 b2FixtureDef fixtureDef;
                 fixtureDef.shape = &staticBox;
                 fixtureDef.density = 1.0f;
@@ -334,10 +335,9 @@ public:
         printf("Obsacle is at the end of screen\n");
         [chunk randomize];
         
-        Obstacle* obs = [chunk.obstacles objectAtIndex:0];
         b2BodyDef obstacleBodyDef;
         obstacleBodyDef.type = b2_staticBody;
-        obstacleBodyDef.position.Set(theGround->GetPosition().x + SCREEN_BOUNDS_X/2, obs.posY);
+        obstacleBodyDef.position.Set(theGround->GetPosition().x + SCREEN_BOUNDS_X/2, chunk.obs.posY);
         theObstacle = world->CreateBody(&obstacleBodyDef);
         
         UserData* obstacleData = new UserData(self,@"Obstacle");
@@ -348,7 +348,7 @@ public:
             theObstacle->SetUserData((void*) obstacleData);
             theObstacle->SetAwake(false);
             b2PolygonShape staticBox;
-            staticBox.SetAsBox(obs.width/2, obs.height/2);
+            staticBox.SetAsBox(chunk.obs.width/2, chunk.obs.height/2);
             b2FixtureDef fixtureDef;
             fixtureDef.shape = &staticBox;
             fixtureDef.density = 1.0f;
@@ -385,8 +385,7 @@ public:
 -(void)RegisterHit:(NSString *) objectName
 {
     if([objectName  isEqual: @"Obstacle"]){
-        Obstacle* obs = [chunk.obstacles objectAtIndex:0];
-        [player checkCollision:theObstacle->GetPosition().x :theObstacle->GetPosition().y :obs.width :obs.height];
+        [player checkCollision:theObstacle->GetPosition().x :theObstacle->GetPosition().y :chunk.obs.width :chunk.obs.height];
         ballHitObstacle = true;
     }
     if([objectName  isEqual: @"LeftWall"]){
