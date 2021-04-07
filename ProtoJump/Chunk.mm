@@ -53,25 +53,25 @@
     
     //Position Hazards relative to obs
     Hazard* tmp = [hazards objectAtIndex:haz_left];
-    if(tmp){
+    if(![tmp isEqual:[NSNull null]]){
         tmp.posX = obs.posX - obs.width / 2;
         tmp.posY = [self randomDec:obs.posY - obs.height / 4                              :obs.posY + obs.height / 4];
     }
     
     tmp = [hazards objectAtIndex:haz_top];
-    if(tmp){
+    if(![tmp isEqual:[NSNull null]]){
         tmp.posY = obs.posY + obs.height / 2;
         tmp.posX = [self randomDec:obs.posX - obs.width / 4                              :obs.posX + obs.width / 4];
     }
     
     tmp = [hazards objectAtIndex:haz_right];
-    if(tmp){
+    if(![tmp isEqual:[NSNull null]]){
         tmp.posX = obs.posX + obs.width / 2;
         tmp.posY = [self randomDec:obs.posY - obs.height / 4                              :obs.posY + obs.height / 4];
     }
     
     tmp = [hazards objectAtIndex:haz_bottom];
-    if(tmp){
+    if(![tmp isEqual:[NSNull null]]){
         tmp.posY = obs.posY - obs.height / 2;
         tmp.posX = [self randomDec:obs.posX - obs.width / 4                              :obs.posX + obs.width / 4];
     }

@@ -10,7 +10,8 @@
 @implementation Obstacle
 
 @synthesize R, G, B;
-@synthesize width, height, posX, posY;
+@synthesize width, height;
+@synthesize posX, posY;
 
 -(instancetype)init{
     self = [super init];

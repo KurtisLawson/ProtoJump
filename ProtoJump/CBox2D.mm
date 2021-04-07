@@ -398,8 +398,9 @@ public:
         ballHitLeftWall = true;
     }
     if([objectName  isEqual: @"Ground"]){
-        player->state = grounded;
-        player.jumpCount = 0;
+//        player->state = grounded;
+//        player.jumpCount = 0;
+        ballHitLeftWall = true;
     }
 }
 
