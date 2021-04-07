@@ -19,6 +19,8 @@ public:
     int GenCube(float scale, float **vertices, float **normals,
                 float **texCoords, int **indices);
     int GenSquare(float scale, float **vertices, int **indices);
+    
+    int GenSphere(int numSlices, float radius, float **vertices, float **normals, float **texCoords, int **indices);
 
 };
 

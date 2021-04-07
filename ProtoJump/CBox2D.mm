@@ -12,6 +12,15 @@ const float MAX_TIMESTEP = REFRESH_RATE;
 const int NUM_VEL_ITERATIONS = 10;
 const int NUM_POS_ITERATIONS = 3;
 
+class UserData{
+public:
+    CBox2D* box2D;
+    NSString* objectName;
+    UserData(CBox2D* box, NSString* name){
+        box2D = box;
+        objectName = name;
+    }
+};
 
 #pragma mark - Box2D contact listener class
 
@@ -31,14 +40,32 @@ public:
         {
             // Use contact->GetFixtureA()->GetBody() to get the body
             b2Body* bodyA = contact->GetFixtureA()->GetBody();
-            CBox2D *parentObj = (__bridge CBox2D *)(bodyA->GetUserData());
-            // Call RegisterHit (assume CBox2D object is in user data)
-            [parentObj RegisterHit];    // assumes RegisterHit is a callback function to register collision
+            
+            //first check if the bodys userdata is not null
+            if(bodyA->GetUserData() != NULL){
+                
+                //body data currently contains
+                UserData* bodyData = (UserData*)(bodyA->GetUserData());
+                CBox2D *parentObj = bodyData->box2D;
+                // Call RegisterHit (assume CBox2D object is in user data)
+                if([bodyData->objectName isEqualToString:@"Obstacle"]){
+                    [parentObj RegisterHit:@"Obstacle"];    // assumes RegisterHit is a callback function to register collision
+                }
+                if([bodyData->objectName isEqualToString:@"LeftWall"]){
+                    [parentObj RegisterHit:@"LeftWall"];    // call registerhit to signal that left wall was hit
+                }
+                if([bodyData->objectName isEqualToString:@"Hazard"]){
+                    [parentObj RegisterHit:@"Hazard"];
+                }
+                if([bodyData->objectName isEqualToString:@"Ground"]){
+                    [parentObj RegisterHit:@"Ground"];    // call registerhit to signal that left wall was hit
+                }
+                
+            }
         }
     }
     void PostSolve(b2Contact* contact, const b2ContactImpulse* impulse) {};
 };
-
 
 #pragma mark - CBox2D
 
@@ -53,14 +80,17 @@ public:
     //b2Body *groundBody;
     //b2PolygonShape *groundBox;
 
-    b2Body *theLeftWall, *theBall, *theGround, *theRoof, *theObstacle;
-
+    b2Body *theLeftWall, *theGround, *thePlayer, *theRoof, *theObstacle, *theHazardLeft, *theHazardTop, *theHazardRight, *theHazardBot;
+    
+    UserData *playerData, *wallData, *obstacleData, *hazardLeftData, *hazardTopData, *hazardRightData, *hazardBotData, *groundData;
+    
     CContactListener *contactListener;
     CGFloat width, height;
     float totalElapsedTime;
-    int step;
+    float step;
     // You will also need some extra variables here for the logic
     bool ballHitLeftWall;
+    bool ballHitObstacle;
     bool ballLaunched;
     bool obstacleHitCleaner;
 }
@@ -70,7 +100,9 @@ public:
 
 @synthesize xDir, yDir;
 @synthesize dead;
-@synthesize obstacle;
+@synthesize slowFactor;
+@synthesize player;
+@synthesize chunk;
 //@synthesize _targetVector;
 
 - (instancetype)init
@@ -85,6 +117,12 @@ public:
         gdBodyDef.type = b2_staticBody;
         gdBodyDef.position.Set(GROUND_ROOF_POS_X, GROUND_ROOF_PADDING);//width, height of the ground
         theGround = world->CreateBody(&gdBodyDef);
+        
+        //ground counts as obstacle, since obstacles are non-harmful objects which the ground can be a part of
+        groundData = new UserData(self,@"Ground");
+        theGround->SetUserData((void*) groundData);
+        
+
         b2PolygonShape gdBox;
         gdBox.SetAsBox(GROUND_ROOF_WIDTH, GROUND_ROOF_HEIGHT);
         theGround->CreateFixture(&gdBox, 0.0f);
@@ -106,9 +144,12 @@ public:
         leftwallBodyDef.type = b2_kinematicBody;
         leftwallBodyDef.position.Set(Left_Wall_POS_X, Left_Wall_POS_Y);
         theLeftWall = world->CreateBody(&leftwallBodyDef);
+        
+        wallData = new UserData(self,@"LeftWall");
+        
         if (theLeftWall)
         {
-            theLeftWall->SetUserData((__bridge void *)self);
+            theLeftWall->SetUserData((void *)wallData);
             theLeftWall->SetAwake(false);
             b2PolygonShape dynamicBox;
             dynamicBox.SetAsBox(Left_Wall_WIDTH/2, Left_Wall_HEIGHT/2);
@@ -118,48 +159,78 @@ public:
             fixtureDef.friction = 0.3f;
             fixtureDef.restitution = 0.0f;
             theLeftWall->CreateFixture(&fixtureDef);
-            
-            b2BodyDef ballBodyDef;
-            ballBodyDef.type = b2_dynamicBody;
-            ballBodyDef.position.Set(BALL_POS_X, BALL_POS_Y);
-            theBall = world->CreateBody(&ballBodyDef);
-            
-            if (theBall)
-            {
-                theBall->SetUserData((__bridge void *)self);
-                theBall->SetAwake(false);
-                b2CircleShape circle;
-                circle.m_p.Set(0, 0);
-                circle.m_radius = BALL_RADIUS;
-                b2FixtureDef circleFixtureDef;
-                circleFixtureDef.shape = &circle;
-                circleFixtureDef.density = 0.1f;
-                circleFixtureDef.friction = 0.3f;
-                circleFixtureDef.restitution = 0.0f;
-                theBall->CreateFixture(&circleFixtureDef);
-            }
         }
         
-        obstacle = [[Obstacle alloc]init];
+        //player definition
+        player = [[Player alloc]init];
+        player.initialJump = false;
+        player.jumpTimer = 0;
+        player.jumpCount = 0;
+        player.maxJump = 2;
+        b2BodyDef playerBodyDef;
+        playerBodyDef.type = b2_dynamicBody;
+        playerBodyDef.position.Set(BALL_POS_X, BALL_POS_Y);
+        thePlayer = world->CreateBody(&playerBodyDef);
+        
+        playerData = new UserData(self, @"Player");
+        
+        if (thePlayer)
+        {
+            
+            thePlayer->SetUserData((void *)playerData);
+            thePlayer->SetAwake(false);
+            b2CircleShape circle;
+            circle.m_p.Set(0, 0);
+            circle.m_radius = BALL_RADIUS;
+            b2FixtureDef circleFixtureDef;
+            circleFixtureDef.shape = &circle;
+            circleFixtureDef.density = 0.1f;
+            circleFixtureDef.friction = 0.3f;
+            circleFixtureDef.restitution = 0.0f;
+            thePlayer->CreateFixture(&circleFixtureDef);
+        }
+
+        //Chunk creation
+        chunk = [[Chunk alloc]init];
+        
+        //Obstacle definition
         b2BodyDef obstacleBodyDef;
         obstacleBodyDef.type = b2_staticBody;
-        obstacleBodyDef.position.Set(OBSTACLE_POS_X, obstacle.posY);
+        float posX = [chunk toPixel:chunk.obs.posX :SCREEN_BOUNDS_X + SCREEN_OFFSET];
+        float posY = [chunk toPixel:chunk.obs.posY :SCREEN_BOUNDS_Y];
+        obstacleBodyDef.position.Set(posX, posY);
         theObstacle = world->CreateBody(&obstacleBodyDef);
-        if (theObstacle)
-        {
-            theObstacle->SetUserData((__bridge void *)self);
-            theObstacle->SetAwake(false);
-            b2PolygonShape staticBox;
-            staticBox.SetAsBox(obstacle.width/2, obstacle.height/2);
-            b2FixtureDef fixtureDef;
-            fixtureDef.shape = &staticBox;
-            fixtureDef.density = 1.0f;
-            fixtureDef.friction = 0.3f;
-            fixtureDef.restitution = 0.0f;
-            theObstacle->CreateFixture(&fixtureDef);
+        obstacleData = new UserData(self, @"Obstacle");
+        
+        //Hazard definition
+//        Hazard* hz = [chunk.hazards objectAtIndex:0];
+//        b2BodyDef hazardBodyDef;
+//        hazardBodyDef.type = b2_staticBody;
+//        hazardBodyDef.position.Set(CHUNK_POS_X-(obs.width/2), obs.posY);
+//        theHazardLeft = world->CreateBody(&hazardBodyDef);
+//        hazardLeftData = new UserData(self, @"HazardLeft");
+        
+        if(chunk){
+            if (theObstacle)
+            {
+                float width = [chunk toPixel:chunk.obs.width :SCREEN_BOUNDS_X + SCREEN_OFFSET];
+                float height = [chunk toPixel:chunk.obs.height :SCREEN_BOUNDS_Y];
+                theObstacle->SetUserData((void *)obstacleData);
+                theObstacle->SetAwake(false);
+                b2PolygonShape staticBox;
+                staticBox.SetAsBox(width/2, height/2);
+                b2FixtureDef fixtureDef;
+                fixtureDef.shape = &staticBox;
+                fixtureDef.density = 1.0f;
+                fixtureDef.friction = 0.3f;
+                fixtureDef.restitution = 0.0f;
+                theObstacle->CreateFixture(&fixtureDef);
+            }
+            
         }
         
         totalElapsedTime = 0;
+        slowFactor = 1;
         ballHitLeftWall = false;
         ballLaunched = false;
     }
@@ -179,29 +250,66 @@ public:
     //  and if so, use ApplyLinearImpulse() and SetActive(true)
     if (ballLaunched)
     {
-        theBall->ApplyLinearImpulse(b2Vec2(0, BALL_VELOCITY), theBall->GetPosition(), true);
-        theBall->SetLinearVelocity(b2Vec2(xDir * JUMP_MAGNITUDE, yDir * JUMP_MAGNITUDE));
-        theBall->SetActive(true);
+        printf("JumpCount %f \n",player.jumpCount);
+        if(player->state == grounded || player->state == leftCollision || player->state == rightCollision){
+            player->state = airborne;
+            player.jumpCount++;
+            thePlayer->ApplyLinearImpulse(b2Vec2(0, BALL_VELOCITY), thePlayer->GetPosition(), true);
+            thePlayer->SetLinearVelocity(b2Vec2(xDir * JUMP_MAGNITUDE, yDir * JUMP_MAGNITUDE));
+            thePlayer->SetActive(true);
+        } else {
+            //if the timer is 0, it means they haven't used their double jump yet
+            if(player.jumpCount > player.maxJump){
+                //if player touches a non hazardous obstacle,reset jump
+                if(player->state == grounded || player->state == leftCollision || player->state == rightCollision){
+                    printf("jump reset");
+                    //player.jumpTimer = 0;
+                    player.jumpCount = 0;
+                }
+            }
+            else{
+                player.jumpCount++;
+                player.jumpTimer = totalElapsedTime;
+                thePlayer->ApplyLinearImpulse(b2Vec2(0, BALL_VELOCITY), thePlayer->GetPosition(), true);
+                thePlayer->SetLinearVelocity(b2Vec2(xDir * JUMP_MAGNITUDE, yDir * JUMP_MAGNITUDE));
+                thePlayer->SetActive(true);
+            }
+        }
 #ifdef LOG_TO_CONSOLE
         NSLog(@"Applying impulse %f to ball\n", BALL_VELOCITY);
 #endif
         ballLaunched = false;
     }
     
+    //in case the player is already dead, therefore dont update playerposition
+    if(!dead){
+        [player updatePos:thePlayer->GetPosition().x :thePlayer->GetPosition().y];
+        
+        //if the ball hit either sides of the wall, apply upward force to negate gravity
+        if(player->state == leftCollision||player->state == rightCollision){
+            thePlayer->SetGravityScale(0.2);
+        } else {
+            thePlayer->SetGravityScale(1);
+        }
+    }
     // Check if it is time yet to drop the brick, and if so
     //  call SetAwake()
     totalElapsedTime += elapsedTime;
-    if ((totalElapsedTime > BRICK_WAIT) && theLeftWall)
+    if (theLeftWall)
         theLeftWall->SetAwake(true);
+    
+    if(ballHitLeftWall){
+        world->DestroyBody(thePlayer);
+        thePlayer = NULL;
+        ballHitLeftWall = false;
+        dead = true;
+    }
     
     // If the last collision test was positive,
     //  stop the ball and destroy the brick
-    if (ballHitLeftWall)
+    if (ballHitObstacle)
     {
-        world->DestroyBody(theBall);
-        theBall = NULL;
-        ballHitLeftWall = false;
-        dead = true;
+        ballHitObstacle = false;
     }
     
     if(theObstacle)
@@ -222,20 +330,28 @@ public:
         theLeftWall->SetTransform(b2Vec2(0 + step/SCREEN_BOUNDS_X - step,SCREEN_BOUNDS_Y/2), theLeftWall->GetAngle());
     }
     
+    // Updating Obstacle
     if((int)theGround->GetPosition().x - SCREEN_BOUNDS_X/2 >= theObstacle->GetPosition().x) {
-        printf("Obsacle in middle of screen\n");
-        [obstacle randomize];
+        printf("Obsacle is at the end of screen\n");
+        [chunk randomize];
+        float posY = [chunk toPixel:chunk.obs.posY :SCREEN_BOUNDS_Y];
         
         b2BodyDef obstacleBodyDef;
         obstacleBodyDef.type = b2_staticBody;
-        obstacleBodyDef.position.Set(theGround->GetPosition().x + SCREEN_BOUNDS_X/2, obstacle.posY);
+        obstacleBodyDef.position.Set(theGround->GetPosition().x + SCREEN_BOUNDS_X/2, posY);
         theObstacle = world->CreateBody(&obstacleBodyDef);
+        
+        UserData* obstacleData = new UserData(self,@"Obstacle");
+//        obstacleData->box2D = self;
+//        obstacleData->objectName = @"Obstacle";
         if (theObstacle)
         {
-            theObstacle->SetUserData((__bridge void *)self);
+            theObstacle->SetUserData((void*) obstacleData);
             theObstacle->SetAwake(false);
             b2PolygonShape staticBox;
-            staticBox.SetAsBox(obstacle.width/2, obstacle.height/2);
+            float width = [chunk toPixel:chunk.obs.width :SCREEN_BOUNDS_X + SCREEN_OFFSET];
+            float height = [chunk toPixel:chunk.obs.height :SCREEN_BOUNDS_Y];
+            staticBox.SetAsBox(width/2, height/2);
             b2FixtureDef fixtureDef;
             fixtureDef.shape = &staticBox;
             fixtureDef.density = 1.0f;
@@ -243,9 +359,9 @@ public:
             fixtureDef.restitution = 0.0f;
             theObstacle->CreateFixture(&fixtureDef);
         }
-        
-        
-        //theObstacle->SetTransform(b2Vec2(theObstacle->GetPosition().x + OBSTACLE_DISTANCE, obstacle.posY), theObstacle->GetAngle());
+    } else {
+        float pixelPos = theObstacle->GetPosition().x - (theGround->GetPosition().x - SCREEN_BOUNDS_X/2);
+        chunk.obs.posX = [chunk toDec:pixelPos :SCREEN_BOUNDS_X + SCREEN_OFFSET];
     }
     
     if (world)
@@ -261,19 +377,37 @@ public:
             world->Step(elapsedTime, NUM_VEL_ITERATIONS, NUM_POS_ITERATIONS);
         }
     }
-    step -= GAME_SPEED;
+    
+    //Gravity and the viewport translate speed is slowed
+    step -= GAME_SPEED * slowFactor;
+    gravity->y = GRAVITY * slowFactor;
+    world->SetGravity(*gravity);
 }
 
--(void)RegisterHit
+//Check the name of the object when the player collides with that object
+-(void)RegisterHit:(NSString *) objectName
 {
-    // Set some flag here for processing later...
-    ballHitLeftWall = true;
+    if([objectName  isEqual: @"Obstacle"]){
+        [player checkCollision:theObstacle->GetPosition().x :theObstacle->GetPosition().y :chunk.obs.width :chunk.obs.height];
+        ballHitObstacle = true;
+    }
+    if([objectName  isEqual: @"LeftWall"]){
+        ballHitLeftWall = true;
+    }
+    if([objectName isEqual:@"Hazard"]){
+        ballHitLeftWall = true;
+    }
+    if([objectName  isEqual: @"Ground"]){
+//        player->state = grounded;
+//        player.jumpCount = 0;
+        ballHitLeftWall = true;
+    }
 }
 
 -(void) SetTargetVector:(float)posX :(float)posY
 {
     // Curate ball Pos value to be scaled to screen space.
-    b2Vec2 currentBallPos = theBall->GetPosition();
+    b2Vec2 currentBallPos = thePlayer->GetPosition();
     currentBallPos.x = ((currentBallPos.x + step)/ SCREEN_BOUNDS_X);
     
     currentBallPos.y = -((currentBallPos.y / SCREEN_BOUNDS_Y) - 1);
@@ -287,12 +421,12 @@ public:
 // Halt current velocity, set initial target position
 -(void)InitiateNewJump:(float)posX :(float)posY
 {
-    theBall->SetLinearVelocity(b2Vec2(0, 150));
+    thePlayer->SetLinearVelocity(b2Vec2(0, 0));
     
 //    [SetTargetVector:posX :posY];
     
     // Curate ball Pos value to be scaled to screen space.
-    b2Vec2 currentBallPos = theBall->GetPosition();
+    b2Vec2 currentBallPos = thePlayer->GetPosition();
     currentBallPos.x = ((currentBallPos.x + step) / SCREEN_BOUNDS_X);
     
     currentBallPos.y = -((currentBallPos.y / SCREEN_BOUNDS_Y) - 1);
@@ -314,7 +448,7 @@ public:
 {
     
     // Curate ball Pos value to be scaled to screen space.
-    b2Vec2 currentBallPos = theBall->GetPosition();
+    b2Vec2 currentBallPos = thePlayer->GetPosition();
     currentBallPos.x = ((currentBallPos.x + step)/ SCREEN_BOUNDS_X);
     
     currentBallPos.y = -((currentBallPos.y / SCREEN_BOUNDS_Y) - 1);
@@ -342,8 +476,8 @@ public:
 -(void *)GetObjectPositions
 {
     auto *objPosList = new std::map<const char *,b2Vec2>;
-    if (theBall)
-        (*objPosList)["ball"] = theBall->GetPosition();
+    if (thePlayer)
+        (*objPosList)["ball"] = thePlayer->GetPosition();
     if (theLeftWall)
         (*objPosList)["leftwall"] = theLeftWall->GetPosition();
     if (theObstacle)
