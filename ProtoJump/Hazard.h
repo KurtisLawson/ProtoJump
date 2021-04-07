@@ -9,15 +9,18 @@
 #define Hazard_h
 
 #import <Foundation/Foundation.h>
-#define HAZARD_MIN_SIZE    10.0f
+
+#define HAZ_MIN_V_SIZE  0.02f
+#define HAZ_MIN_H_SIZE  0.03f
 
 @interface Hazard : NSObject {}
 
 @property float R, G, B;
 @property float width, height;
-@property bool isVertical;
+@property float posX, posY;
 
--(void)randomize:(float)maxSize;
+-(void)vRandomize:(float)minSize :(float)maxSize;
+-(void)hRandomize:(float)minSize :(float)maxSize;
 -(void)dealloc;
 
 @end

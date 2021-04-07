@@ -10,25 +10,27 @@
 @implementation Obstacle
 
 @synthesize R, G, B;
-@synthesize width, height, posY;
+@synthesize width, height;
+@synthesize posX, posY;
 
--(instancetype)init {
+-(instancetype)init{
     self = [super init];
     if(self){
-        B = 1;
-        R = G = 0;
-
-        self.width = arc4random_uniform(OBSTACLE_MAX_WIDTH - OBSTACLE_MIN_WIDTH + 1) + OBSTACLE_MIN_WIDTH;
-        self.height = arc4random_uniform(OBSTACLE_MAX_HEIGHT - OBSTACLE_MIN_HEIGHT + 1) + OBSTACLE_MIN_HEIGHT;
-        self.posY = arc4random_uniform(OBSTACLE_MAX_POS_Y - OBSTACLE_MIN_POS_Y + 1) + OBSTACLE_MIN_POS_Y;
+        B = 1.0f;
+        R = G = 0.0f;
+        
+        [self randomize];
     }
     return self;
 }
 
--(void)randomize {
-    self.width = arc4random_uniform(OBSTACLE_MAX_WIDTH - OBSTACLE_MIN_WIDTH + 1) + OBSTACLE_MIN_WIDTH;
-    self.height = arc4random_uniform(OBSTACLE_MAX_HEIGHT - OBSTACLE_MIN_HEIGHT + 1) + OBSTACLE_MIN_HEIGHT;
-    self.posY = arc4random_uniform(OBSTACLE_MAX_POS_Y - OBSTACLE_MIN_POS_Y + 1) + OBSTACLE_MIN_POS_Y;
+
+
+-(void)randomize{
+    height = (float)arc4random() / UINT32_MAX * (OBSTACLE_MAX_HEIGHT - OBSTACLE_MIN_HEIGHT) + OBSTACLE_MIN_HEIGHT;
+    width = (float)arc4random() / UINT32_MAX * (OBSTACLE_MAX_WIDTH - OBSTACLE_MIN_WIDTH) + OBSTACLE_MIN_WIDTH;
+    posY = (float)arc4random() / UINT32_MAX * (OBSTACLE_MAX_POS_Y - OBSTACLE_MIN_POS_Y) + OBSTACLE_MIN_POS_Y;
+    posX = OBSTACLE_POS_X;
 }
 
 -(void)dealloc {
