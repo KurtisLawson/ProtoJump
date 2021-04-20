@@ -1,0 +1,13 @@
+# Blender MTL File: 'baseBody.blend'
+# Material Count: 1
+
+newmtl Material
+Ns 79.855151
+Ka 0.558511 0.558511 0.558511
+Kd 0.000000 0.000000 0.000000
+Ks 0.159574 0.159574 0.159574
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 3
+map_Kd C:\\Users\\kurti\\Desktop\\UnityStuff\\Models\\Protocol\\ProtoTexture.png
