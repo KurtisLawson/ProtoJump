@@ -391,8 +391,6 @@
 		974B070225DEF8AE00C8679A /* ProtoJump */ = {
 			isa = PBXGroup;
 			children = (
-				97C08C92262F969A00C3CACF /* Models */,
-				97C08C91262F8F9300C3CACF /* RWTModels */,
 				977896DC261D33CB00DE0817 /* Animator */,
 				784B66B325EB0FA600001842 /* Box2D */,
 				784B674B25EB158600001842 /* CBox2D.h */,
@@ -435,20 +433,6 @@
 				977896E0261D33CB00DE0817 /* Joint.m */,
 			);
 			path = Animator;
-			sourceTree = "<group>";
-		};
-		97C08C91262F8F9300C3CACF /* RWTModels */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = RWTModels;
-			sourceTree = "<group>";
-		};
-		97C08C92262F969A00C3CACF /* Models */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Models;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
