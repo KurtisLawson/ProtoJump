@@ -48,10 +48,10 @@
             count++;
         } else [hazards addObject:[NSNull null]];
         
-//        if([hazards objectAtIndex:i] != NSNull.null){
-//            Hazard* tmp = [hazards objectAtIndex:i];
-//            NSLog(@"Hazard #%d exists. Height: %f Width: %f", i, tmp.height, tmp.width);
-//        }
+        if([hazards objectAtIndex:i] != NSNull.null){
+            Hazard* tmp = [hazards objectAtIndex:i];
+            NSLog(@"Hazard #%d exists. Height: %f Width: %f", i, tmp.height, tmp.width);
+        }
         
         hazExists = [self rollForTrue:HAZ_CHANCE];
     }
