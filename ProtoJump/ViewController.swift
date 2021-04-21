@@ -83,7 +83,7 @@ class ViewController: GLKViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupGL()
-        //playBGM()
+        playBGM()
         //disable the endscreen on load
         //EndButton.addTarget(self, action: Selector("EndButtonPressed"), for: .touchUpInside);
 //        let tapGesture = UITapGestureRecognizer(target: self, action: #"retry"));
@@ -181,6 +181,7 @@ class ViewController: GLKViewController {
                 SFXplayer = try AVAudioPlayer(contentsOf: url)
                 //makes it continously loop
                 SFXplayer?.numberOfLoops = 0;
+                SFXplayer?.volume = 0.5;
                 SFXplayer?.play()
             } catch {
                 NSLog("Error");
@@ -194,10 +195,13 @@ class ViewController: GLKViewController {
                 SFXplayer = try AVAudioPlayer(contentsOf: url)
                 //makes it continously loop
                 SFXplayer?.numberOfLoops = 0;
+                SFXplayer?.volume = 0.5;
                 SFXplayer?.play()
             } catch {
                 NSLog("Error");
-            }        }
+            }
+            
+        }
         
     }
 
