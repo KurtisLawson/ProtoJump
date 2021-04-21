@@ -205,7 +205,7 @@ public:
         if(chunk){
             if (theObstacle)
             {
-                float width = [chunk toPixel:chunk.obs.width :SCREEN_BOUNDS_X + SCREEN_OFFSET];
+                float width = [chunk toPixel:chunk.obs.width :SCREEN_BOUNDS_X];
                 float height = [chunk toPixel:chunk.obs.height :SCREEN_BOUNDS_Y];
                 theObstacle->SetUserData((void *)obstacleData);
                 theObstacle->SetAwake(false);
@@ -232,7 +232,7 @@ public:
             lHazardData = new UserData(self, @"Hazard");
             
             if (theLHazard){
-                float width = [chunk toPixel:hz.width :SCREEN_BOUNDS_X + SCREEN_OFFSET];
+                float width = [chunk toPixel:hz.width :SCREEN_BOUNDS_X];
                 float height = [chunk toPixel:hz.height :SCREEN_BOUNDS_Y];
                 theLHazard->SetUserData((void *) lHazardData);
                 theLHazard->SetAwake(false);
@@ -349,7 +349,6 @@ public:
     //  and if so, use ApplyLinearImpulse() and SetActive(true)
     if (ballLaunched)
     {
-        printf("JumpCount %f \n",player.jumpCount);
         if(player->state == grounded || player->state == leftCollision || player->state == rightCollision){
             player->state = airborne;
             player.jumpCount++;
@@ -426,13 +425,13 @@ public:
     if(theLeftWall){
         theLeftWall->SetTransform(b2Vec2(0 + step/SCREEN_BOUNDS_X - step,SCREEN_BOUNDS_Y/2), theLeftWall->GetAngle());
     }
-    
+
     // Updating Obstacle
     if((int)theGround->GetPosition().x - SCREEN_BOUNDS_X/2 >= theObstacle->GetPosition().x) {
         [chunk randomize];
         
         float posY = [chunk toPixel:chunk.obs.posY :SCREEN_BOUNDS_Y];
-        float posX = theGround->GetPosition().x + SCREEN_BOUNDS_X/2;
+        float posX = theGround->GetPosition().x + SCREEN_BOUNDS_X/2 + SCREEN_OFFSET;
         b2BodyDef obstacleBodyDef;
         obstacleBodyDef.type = b2_staticBody;
         obstacleBodyDef.position.Set(posX, posY);
@@ -457,8 +456,9 @@ public:
         if(![[chunk.hazards objectAtIndex:0]  isEqual:[NSNull null]]){
             Hazard* hz = [chunk.hazards objectAtIndex:0];
             posY = [chunk toPixel:hz.posY :SCREEN_BOUNDS_Y];
-            posX = theGround->GetPosition().x + SCREEN_BOUNDS_X/2;
-            
+            //posX = theGround->GetPosition().x + SCREEN_BOUNDS_X/2;
+            posX = [chunk toPixel:hz.posX :SCREEN_BOUNDS_X] + theGround->GetPosition().x - SCREEN_BOUNDS_X/2 + SCREEN_OFFSET;
+            printf("posX: %f \n",[chunk toPixel:hz.posX :SCREEN_BOUNDS_X]);
             b2BodyDef hazardBodyDef;
             hazardBodyDef.type = b2_staticBody;
             hazardBodyDef.position.Set(posX, posY);

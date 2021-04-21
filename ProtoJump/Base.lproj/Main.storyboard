@@ -51,6 +51,13 @@
                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Highscore: " textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="6rX-9n-tGp" userLabel="Highscore Label">
+                                <rect key="frame" x="301" y="31" width="212" height="53"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="30"/>
+                                <color key="textColor" systemColor="systemGray2Color"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -68,6 +75,7 @@
                         <outlet property="EndButton" destination="Wl9-la-yG2" id="AFB-YK-Xc2"/>
                         <outlet property="EndLabel" destination="WJK-Zc-v9L" id="Woz-qc-KVl"/>
                         <outlet property="EndScoreLabel" destination="agE-XV-Qzd" id="WHa-EW-n1M"/>
+                        <outlet property="HighscoreLabel" destination="6rX-9n-tGp" id="fxQ-YB-qQy"/>
                         <outlet property="JumpCounter" destination="mvy-9R-Dt9" id="ynh-hU-1tl"/>
                         <outlet property="ScoreLabel" destination="GBM-CK-N2D" id="Uy3-2f-GgE"/>
                     </connections>

@@ -19,6 +19,16 @@ extension ViewController: GLKViewControllerDelegate {
                 } else{
                     //put the score into the final score label
                     EndScoreLabel.text = String(format: "Final Score: %0.2f", glesRenderer.totalElapsedTime)
+                    
+                    //Do update highscore when the score higher than highscore, and update UserDefaults.
+                    if(glesRenderer.totalElapsedTime > Highscore){
+                        Highscore = glesRenderer.totalElapsedTime;
+                        HighscoreLabel.text = String(format: "Highscore: %0.2f", Highscore)
+                        let HighscoreDefault = UserDefaults.standard;
+                        HighscoreDefault.setValue(Highscore, forKey: "Highscore")
+                        HighscoreDefault.synchronize()
+                    }
+                    
                       //if the player is dead then null glesRenderer, need to call dealloc on glesRenderer somehow
                     glesRenderer = nil;
                     EndScoreLabel.isHidden = false;
@@ -39,8 +49,10 @@ class ViewController: GLKViewController {
     
     var BGMplayer:AVAudioPlayer?
     var SFXplayer:AVAudioPlayer?
+    var Highscore : Float = 0.0
 
     @IBOutlet weak var ScoreLabel: UILabel!
+    @IBOutlet weak var HighscoreLabel: UILabel!
     @IBOutlet weak var JumpCounter: UILabel!
     @IBOutlet weak var EndLabel: UILabel!
     @IBOutlet weak var EndButton: UIButton!
@@ -97,6 +109,13 @@ class ViewController: GLKViewController {
 //        let singleTap = UITapGestureRecognizer(target: self, action: #selector(self.doSingleTap(_:)))
 //        singleTap.numberOfTapsRequired = 1
 //        view.addGestureRecognizer(singleTap)
+        
+        //Set Highscore from UserDefaults
+        let HighscoreDefault = UserDefaults.standard;
+        if (HighscoreDefault.float(forKey: "Highscore") != nil){
+            Highscore = HighscoreDefault.float(forKey: "Highscore");
+            HighscoreLabel.text = String(format: "Highscore: %0.2f", Highscore);
+        }
     }
     
     @IBAction func TapAndHold(_ sender: UILongPressGestureRecognizer) {
