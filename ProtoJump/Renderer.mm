@@ -165,59 +165,6 @@ enum
     glBindVertexArray(0);
 }
 
-//-(void)loadRenderObject:(RenderObject) obj {
-//    // setup vao
-//    glGenVertexArrays(1, &obj.vao);
-//    glGenBuffers(1, &obj.ibo);
-//
-//    // get crate data
-//    obj.numIndices = glesRenderer.GenCube(1.0f, &obj.vertices, &obj.normals, &obj.texCoords, &obj.indices);
-//
-//    // set up VBOs (one per attribute)
-//    glBindVertexArray(obj.vao);
-//    GLuint vbo[4];
-//    glGenBuffers(4, vbo);
-//
-//    // pass on position data
-//    glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
-//    glBufferData(GL_ARRAY_BUFFER, 3*24*sizeof(GLfloat), obj.vertices, GL_STATIC_DRAW);
-//    glEnableVertexAttribArray(ATTRIB_POSITION);
-//    glVertexAttribPointer(ATTRIB_POSITION, 3, GL_FLOAT, GL_FALSE, 3*sizeof(GLfloat), BUFFER_OFFSET(0));
-//
-//    // pass on color data
-//    glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
-//    GLfloat vertCol[24*3];
-//    for (int k = 0; k<24*3; k+=3)
-//    {
-//        vertCol[k] = 1.0f;
-//        vertCol[k+1] = 1.0f;
-//        vertCol[k+2] = 1.0f;
-//    }
-//
-//    glBufferData(GL_ARRAY_BUFFER, sizeof(vertCol), vertCol, GL_STATIC_DRAW);    // Send vertex data to VBO
-//    glEnableVertexAttribArray(ATTRIB_COL);
-//    glVertexAttribPointer(ATTRIB_COL, 3, GL_FLOAT, GL_FALSE, 3*sizeof(GLfloat), BUFFER_OFFSET(0));
-//
-//    // pass on normals
-//    glBindBuffer(GL_ARRAY_BUFFER, vbo[2]);
-//    glBufferData(GL_ARRAY_BUFFER, 3*24*sizeof(GLfloat), obj.normals, GL_STATIC_DRAW);
-//    glEnableVertexAttribArray(ATTRIB_NORMAL);
-//    glVertexAttribPointer(ATTRIB_NORMAL, 3, GL_FLOAT, GL_FALSE, 3*sizeof(GLfloat), BUFFER_OFFSET(0));
-//
-//    // pass on texture coordinates
-//    glBindBuffer(GL_ARRAY_BUFFER, vbo[3]);
-//    glBufferData(GL_ARRAY_BUFFER, 2*24*sizeof(GLfloat), obj.texCoords, GL_STATIC_DRAW);
-//    glEnableVertexAttribArray(ATTRIB_TEXTURE);
-//    glVertexAttribPointer(ATTRIB_TEXTURE, 3, GL_FLOAT, GL_FALSE, 2*sizeof(GLfloat), BUFFER_OFFSET(0));
-//
-//    // bind the ibo's
-//    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, obj.ibo);
-//    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(obj.indices[0]) * obj.numIndices, obj.indices, GL_STATIC_DRAW);
-//
-//    // deselect the VAOs just to be clean
-//    glBindVertexArray(0);
-//}
-
 - (void)loadModels
 {
     NSLog(@"Loading Models");
@@ -336,7 +283,6 @@ enum
         totalElapsedTime += (elapsedTime/1000.0f) * box2d.slowFactor;
     }
     
-    
     //>>>>>>-------
 
      //Projection Matrices
@@ -354,10 +300,7 @@ enum
     // Get the ball and brick objects from Box2D
     auto objPosList = static_cast<std::map<const char *, b2Vec2> *>([box2d GetObjectPositions]);
     b2Vec2 *theBall = (((*objPosList).find("ball") == (*objPosList).end()) ? nullptr : &(*objPosList)["ball"]);
-    b2Vec2 *theLeftWall = (((*objPosList).find("leftwall") == (*objPosList).end()) ? nullptr : &(*objPosList)["leftwall"]);
     b2Vec2 *theObstacle = (((*objPosList).find("obstacle") == (*objPosList).end()) ? nullptr : &(*objPosList)["obstacle"]);
-    b2Vec2 *theGround = (((*objPosList).find("ground") == (*objPosList).end()) ? nullptr : &(*objPosList)["ground"]);
-    b2Vec2 *theRoof = (((*objPosList).find("roof") == (*objPosList).end()) ? nullptr : &(*objPosList)["roof"]);
     
     // ******************************************************************
     // initialize MVP matrix for both objects to set the "camera"
@@ -374,8 +317,6 @@ enum
 //        float overflow = floorOffset;
         obstacleOffset = 0;
     }
-    
-    NSLog(@"Floor offset is %f", screenOffset);
     
     // ******** GROUND 1 **********
     // apply transformations to the ground
@@ -426,66 +367,67 @@ enum
         staticObjects[5].mvp = GLKMatrix4Multiply(perspectiveMatrix, staticObjects[5].mvp);
           //    NSLog(@"Object MVP ");
     }
-//
-//    if (theObstacle)
-//    {
-//        Obstacle* obs = box2d.chunk.obs;
-//
-//        // Set up VAO/VBO for obstacle
-//        glGenVertexArrays(1, &obstacleVertexArray);
-//        glBindVertexArray(obstacleVertexArray);
-//        GLuint vertexBuffers[2];
-//        glGenBuffers(2, vertexBuffers);
-//
-//
-//        // VBO for vertex positions
-//        glBindBuffer(GL_ARRAY_BUFFER, vertexBuffers[0]);
-//        GLfloat vertPos[18];    // 2 triangles x 3 vertices/triangle x 3 coords (x,y,z) per vertex
-//        int k = 0;
-//        numObstacleVerts = 0;
-//        vertPos[k++] = theObstacle->x - (obs.width * SCREEN_BOUNDS_X)/2;
-//        vertPos[k++] = theObstacle->y + (obs.height * SCREEN_BOUNDS_Y)/2;
-//        vertPos[k++] = 10;  // z-value is always set to same value since 2D
-//        numObstacleVerts++;
-//        vertPos[k++] = theObstacle->x + (obs.width * SCREEN_BOUNDS_X)/2;
-//        vertPos[k++] = theObstacle->y + (obs.height * SCREEN_BOUNDS_Y)/2;
-//        vertPos[k++] = 10;
-//        numObstacleVerts++;
-//        vertPos[k++] = theObstacle->x + (obs.width * SCREEN_BOUNDS_X)/2;
-//        vertPos[k++] = theObstacle->y - (obs.height * SCREEN_BOUNDS_Y)/2;
-//        vertPos[k++] = 10;
-//        numObstacleVerts++;
-//        vertPos[k++] = theObstacle->x - (obs.width * SCREEN_BOUNDS_X)/2;
-//        vertPos[k++] = theObstacle->y + (obs.height * SCREEN_BOUNDS_Y)/2;
-//        vertPos[k++] = 10;
-//        numObstacleVerts++;
-//        vertPos[k++] = theObstacle->x + (obs.width * SCREEN_BOUNDS_X)/2;
-//        vertPos[k++] = theObstacle->y - (obs.height * SCREEN_BOUNDS_Y)/2;
-//        vertPos[k++] = 10;
-//        numObstacleVerts++;
-//        vertPos[k++] = theObstacle->x - (obs.width * SCREEN_BOUNDS_X)/2;
-//        vertPos[k++] = theObstacle->y - (obs.height * SCREEN_BOUNDS_Y)/2;
-//        vertPos[k++] = 10;
-//        numObstacleVerts++;
-//        glBufferData(GL_ARRAY_BUFFER, sizeof(vertPos), vertPos, GL_STATIC_DRAW);    // Send vertex data to VBO
-//        glEnableVertexAttribArray(ATTRIB_POSITION);
-//        glVertexAttribPointer(ATTRIB_POSITION, 3, GL_FLOAT, GL_FALSE, 3*sizeof(GLfloat), BUFFER_OFFSET(0));
-//
-//        // VBO for vertex colours
-//        GLfloat vertCol[numObstacleVerts*3];
-//        for (k=0; k<numObstacleVerts*3; k+=3)
-//        {
-//            vertCol[k] = obs.R;
-//            vertCol[k+1] = obs.G;
-//            vertCol[k+2] = obs.B;
-//        }
-//        glBindBuffer(GL_ARRAY_BUFFER, vertexBuffers[1]);
-//        glBufferData(GL_ARRAY_BUFFER, sizeof(vertCol), vertCol, GL_STATIC_DRAW);    // Send vertex data to VBO
-//        glEnableVertexAttribArray(ATTRIB_COL);
-//        glVertexAttribPointer(ATTRIB_COL, 3, GL_FLOAT, GL_FALSE, 3*sizeof(GLfloat), BUFFER_OFFSET(0));
-//
-//        glBindVertexArray(0);
-//    }
+    
+    // ******** HAZARDS **********
+    if (![ [box2d.chunk.hazards objectAtIndex:haz_left]  isEqual:[NSNull null] ]) {
+        // initialize MVP matrix for both objects to set the "camera"
+        staticObjects[9].mvp = GLKMatrix4Translate(GLKMatrix4Identity, 0.0, 0.0, -5.9);
+
+        Hazard *hz1 = [box2d.chunk.hazards objectAtIndex:haz_left];
+        // apply transformations to the ground
+        staticObjects[9].mvm = staticObjects[9].mvp = GLKMatrix4Translate(staticObjects[9].mvp, (hz1.posX-0.5) * 10 + 0.5, (hz1.posY-0.5) * 6, 0.0);
+        staticObjects[9].mvm = staticObjects[9].mvp = GLKMatrix4Rotate(staticObjects[9].mvp, 0.0, 1.0, 0.0, 1.0 );
+        staticObjects[9].mvm = staticObjects[9].mvp = GLKMatrix4Scale(staticObjects[9].mvp, hz1.width*10, hz1.height*5, 10 );
+
+        staticObjects[9].normalMatrix = GLKMatrix3InvertAndTranspose(GLKMatrix4GetMatrix3(staticObjects[9].mvp), NULL);
+        staticObjects[9].mvp = GLKMatrix4Multiply(perspectiveMatrix, staticObjects[9].mvp);
+          //    NSLog(@"Object MVP ");
+    }
+
+    if (![ [box2d.chunk.hazards objectAtIndex:haz_top]  isEqual:[NSNull null] ]) {
+        // initialize MVP matrix for both objects to set the "camera"
+        staticObjects[8].mvp = GLKMatrix4Translate(GLKMatrix4Identity, 0.0, 0.0, -5.9);
+
+        Hazard *hz1 = [box2d.chunk.hazards objectAtIndex:haz_top];
+        // apply transformations to the ground
+        staticObjects[8].mvm = staticObjects[8].mvp = GLKMatrix4Translate(staticObjects[8].mvp, (hz1.posX-0.5) * 10 + 0.5, (hz1.posY-0.5) * 6, 0.0);
+        staticObjects[8].mvm = staticObjects[8].mvp = GLKMatrix4Rotate(staticObjects[8].mvp, 0.0, 1.0, 0.0, 1.0 );
+        staticObjects[8].mvm = staticObjects[8].mvp = GLKMatrix4Scale(staticObjects[8].mvp, hz1.width*10, hz1.height*5, 10 );
+
+        staticObjects[8].normalMatrix = GLKMatrix3InvertAndTranspose(GLKMatrix4GetMatrix3(staticObjects[8].mvp), NULL);
+        staticObjects[8].mvp = GLKMatrix4Multiply(perspectiveMatrix, staticObjects[8].mvp);
+          //    NSLog(@"Object MVP ");
+    }
+
+    if (![ [box2d.chunk.hazards objectAtIndex:haz_right]  isEqual:[NSNull null] ]) {
+        // initialize MVP matrix for both objects to set the "camera"
+        staticObjects[7].mvp = GLKMatrix4Translate(GLKMatrix4Identity, 0.0, 0.0, -5.9);
+
+        Hazard *hz1 = [box2d.chunk.hazards objectAtIndex:haz_right];
+        // apply transformations to the ground
+        staticObjects[7].mvm = staticObjects[7].mvp = GLKMatrix4Translate(staticObjects[7].mvp, (hz1.posX-0.5) * 10 + 0.5, (hz1.posY-0.5) * 6, 0.0);
+        staticObjects[7].mvm = staticObjects[7].mvp = GLKMatrix4Rotate(staticObjects[7].mvp, 0.0, 1.0, 0.0, 1.0 );
+        staticObjects[7].mvm = staticObjects[7].mvp = GLKMatrix4Scale(staticObjects[7].mvp, hz1.width*10, hz1.height*5, 10 );
+
+        staticObjects[7].normalMatrix = GLKMatrix3InvertAndTranspose(GLKMatrix4GetMatrix3(staticObjects[7].mvp), NULL);
+        staticObjects[7].mvp = GLKMatrix4Multiply(perspectiveMatrix, staticObjects[7].mvp);
+          //    NSLog(@"Object MVP ");
+    }
+
+    if (![ [box2d.chunk.hazards objectAtIndex:haz_bottom]  isEqual:[NSNull null] ]) {
+        // initialize MVP matrix for both objects to set the "camera"
+        staticObjects[6].mvp = GLKMatrix4Translate(GLKMatrix4Identity, 0.0, 0.0, -5.9);
+
+        Hazard *hz1 = [box2d.chunk.hazards objectAtIndex:haz_bottom];
+        // apply transformations to the ground
+        staticObjects[6].mvm = staticObjects[6].mvp = GLKMatrix4Translate(staticObjects[6].mvp, (hz1.posX-0.5) * 10 + 0.5, (hz1.posY-0.5) * 6, 0.0);
+        staticObjects[6].mvm = staticObjects[6].mvp = GLKMatrix4Rotate(staticObjects[6].mvp, 0.0, 1.0, 0.0, 1.0 );
+        staticObjects[6].mvm = staticObjects[6].mvp = GLKMatrix4Scale(staticObjects[6].mvp, hz1.width*10, hz1.height*5, 10 );
+
+        staticObjects[6].normalMatrix = GLKMatrix3InvertAndTranspose(GLKMatrix4GetMatrix3(staticObjects[6].mvp), NULL);
+        staticObjects[6].mvp = GLKMatrix4Multiply(perspectiveMatrix, staticObjects[6].mvp);
+          //    NSLog(@"Object MVP ");
+    }
     
     // ******** PLAYER **********
     player.mvp = GLKMatrix4Translate(GLKMatrix4Identity, 0.0, 0.0, -5.0);
@@ -577,6 +519,23 @@ enum
         [self drawRenderObject:staticObjects[i]];
     }
     
+    //  -- hazards
+    if (![ [box2d.chunk.hazards objectAtIndex:haz_left]  isEqual:[NSNull null] ]) {
+        [self drawRenderObject:staticObjects[9]];
+    }
+
+    if (![ [box2d.chunk.hazards objectAtIndex:haz_top]  isEqual:[NSNull null] ]) {
+        [self drawRenderObject:staticObjects[8]];
+    }
+
+    if (![ [box2d.chunk.hazards objectAtIndex:haz_right]  isEqual:[NSNull null] ]) {
+        [self drawRenderObject:staticObjects[7]];
+    }
+
+    if (![ [box2d.chunk.hazards objectAtIndex:haz_bottom]  isEqual:[NSNull null] ]) {
+        [self drawRenderObject:staticObjects[6]];
+    }
+    
     // *************** DRAW STEEL OBJECTS *****************
     
     glActiveTexture(GL_TEXTURE0);
@@ -590,10 +549,7 @@ enum
     // Retrieve brick and ball positions from Box2D
     auto objPosList = static_cast<std::map<const char *, b2Vec2> *>([box2d GetObjectPositions]);
     b2Vec2 *theBall = (((*objPosList).find("ball") == (*objPosList).end()) ? nullptr : &(*objPosList)["ball"]);
-    b2Vec2 *theLeftWall = (((*objPosList).find("leftwall") == (*objPosList).end()) ? nullptr : &(*objPosList)["leftwall"]);
     b2Vec2 *theObstacle = (((*objPosList).find("obstacle") == (*objPosList).end()) ? nullptr : &(*objPosList)["obstacle"]);
-    b2Vec2 *theGround = (((*objPosList).find("ground") == (*objPosList).end()) ? nullptr : &(*objPosList)["ground"]);
-    b2Vec2 *theRoof = (((*objPosList).find("roof") == (*objPosList).end()) ? nullptr : &(*objPosList)["roof"]);
 #ifdef LOG_TO_CONSOLE
     if (theBall)
         printf("Ball: (%5.3f,%5.3f)\t", theBall->x, theBall->y);
