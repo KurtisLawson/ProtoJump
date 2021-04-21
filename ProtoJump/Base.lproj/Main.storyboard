@@ -31,7 +31,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Game Over" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WJK-Zc-v9L">
-                                <rect key="frame" x="272" y="183" width="193" height="48"/>
+                                <rect key="frame" x="271.66666666666669" y="183" width="193" height="48"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="40"/>
                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
@@ -44,6 +44,13 @@
                                     <color key="titleColor" systemColor="systemRedColor"/>
                                 </state>
                             </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Jump Counter:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mvy-9R-Dt9">
+                                <rect key="frame" x="54" y="86" width="212" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -61,6 +68,7 @@
                         <outlet property="EndButton" destination="Wl9-la-yG2" id="AFB-YK-Xc2"/>
                         <outlet property="EndLabel" destination="WJK-Zc-v9L" id="Woz-qc-KVl"/>
                         <outlet property="EndScoreLabel" destination="agE-XV-Qzd" id="WHa-EW-n1M"/>
+                        <outlet property="JumpCounter" destination="mvy-9R-Dt9" id="ynh-hU-1tl"/>
                         <outlet property="ScoreLabel" destination="GBM-CK-N2D" id="Uy3-2f-GgE"/>
                     </connections>
                 </viewController>

@@ -14,6 +14,8 @@ extension ViewController: GLKViewControllerDelegate {
                       glesRenderer.update()
                       let c: String = String (format: "Score : %0.2f", glesRenderer.totalElapsedTime)
                       ScoreLabel.text = c;
+                    let d: String = String(format: "Jumps Left: %0.0f", 3 - glesRenderer.box2d.player.jumpCount)
+                    JumpCounter.text = d;
                 } else{
                     //put the score into the final score label
                     EndScoreLabel.text = String(format: "Final Score: %0.2f", glesRenderer.totalElapsedTime)
@@ -24,6 +26,7 @@ extension ViewController: GLKViewControllerDelegate {
                     EndButton.isHidden = false;
                     //set to one to prevent gesturerecognizer from catching all tap events such as buttons
                     tapHold.minimumPressDuration = 1;
+                    playSfx(soundName: "Death");
                 }
         }
     }
@@ -34,10 +37,11 @@ class ViewController: GLKViewController {
     private var context: EAGLContext?
     private var glesRenderer: Renderer!
     
-    var player:AVAudioPlayer?
-    
+    var BGMplayer:AVAudioPlayer?
+    var SFXplayer:AVAudioPlayer?
+
     @IBOutlet weak var ScoreLabel: UILabel!
-    
+    @IBOutlet weak var JumpCounter: UILabel!
     @IBOutlet weak var EndLabel: UILabel!
     @IBOutlet weak var EndButton: UIButton!
     @IBOutlet weak var EndScoreLabel: UILabel!
@@ -67,6 +71,7 @@ class ViewController: GLKViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupGL()
+        //playBGM()
         //disable the endscreen on load
         //EndButton.addTarget(self, action: Selector("EndButtonPressed"), for: .touchUpInside);
 //        let tapGesture = UITapGestureRecognizer(target: self, action: #"retry"));
@@ -121,6 +126,7 @@ class ViewController: GLKViewController {
         //            NSLog("User has released the button - OnStateExit")
                     glesRenderer.box2d.slowFactor = 1;
                     glesRenderer.box2d.launchJump();
+                    playSfx(soundName: "Jump");
 
                 }
                     
@@ -135,7 +141,44 @@ class ViewController: GLKViewController {
     }
     
     //sound section
-    func playSound(){
+    func playBGM(){
+        let pathToSound = Bundle.main.path(forResource: "BGM-Speed", ofType: "mp3")!
+        let url = URL(fileURLWithPath: pathToSound)
+        do{
+            BGMplayer = try AVAudioPlayer(contentsOf: url)
+            //makes it continously loop
+            BGMplayer?.numberOfLoops = -1;
+            BGMplayer?.play()
+        } catch {
+            NSLog("Error");
+        }
+    }
+    
+    func playSfx(soundName: String){
+        if(soundName == "Jump"){
+            let pathToSound = Bundle.main.path(forResource: "SFX-Jump", ofType: "mp3")!
+            let url = URL(fileURLWithPath: pathToSound)
+            do{
+                SFXplayer = try AVAudioPlayer(contentsOf: url)
+                //makes it continously loop
+                SFXplayer?.numberOfLoops = 0;
+                SFXplayer?.play()
+            } catch {
+                NSLog("Error");
+            }
+        }
+        
+        if(soundName == "Death"){
+            let pathToSound = Bundle.main.path(forResource: "SFX-Death", ofType: "mp3")!
+            let url = URL(fileURLWithPath: pathToSound)
+            do{
+                SFXplayer = try AVAudioPlayer(contentsOf: url)
+                //makes it continously loop
+                SFXplayer?.numberOfLoops = 0;
+                SFXplayer?.play()
+            } catch {
+                NSLog("Error");
+            }        }
         
     }
 
