@@ -138,7 +138,6 @@ enum
 {
     NSLog(@"Loading Models");
     
-    
     [self loadPlayerModel];
     
     // Wall and ceilings:
