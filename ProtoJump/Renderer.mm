@@ -569,15 +569,15 @@ enum
         glDrawArrays(GL_TRIANGLES, 0, numObstacleVerts);
     
     // *************** PLAYER *****************
-    glUniform4fv(uniforms[UNIFORM_LIGHT_DIFFUSE_POSITION], 1, player.diffuseLightPosition.v);
-    glUniform4fv(uniforms[UNIFORM_LIGHT_DIFFUSE_COMPONENT], 1, player.diffuseComponent.v);
-    glUniformMatrix4fv(uniforms[UNIFORM_MODELVIEWPROJECTION_MATRIX], 1, FALSE, (const float *)player.mvp.m);
-    glUniformMatrix4fv(uniforms[UNIFORM_MODELVIEW_MATRIX], 1, FALSE, (const float *)player.mvm.m);
-    glUniformMatrix3fv(uniforms[UNIFORM_NORMAL_MATRIX], 1, 0, player.normalMatrix.m);
-    
-    glBindVertexArray(player.vao);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, player.ibo);
-    glDrawElements(GL_TRIANGLES, (GLsizei)player.numIndices, GL_UNSIGNED_INT, 0);
+//    glUniform4fv(uniforms[UNIFORM_LIGHT_DIFFUSE_POSITION], 1, player.diffuseLightPosition.v);
+//    glUniform4fv(uniforms[UNIFORM_LIGHT_DIFFUSE_COMPONENT], 1, player.diffuseComponent.v);
+//    glUniformMatrix4fv(uniforms[UNIFORM_MODELVIEWPROJECTION_MATRIX], 1, FALSE, (const float *)player.mvp.m);
+//    glUniformMatrix4fv(uniforms[UNIFORM_MODELVIEW_MATRIX], 1, FALSE, (const float *)player.mvm.m);
+//    glUniformMatrix3fv(uniforms[UNIFORM_NORMAL_MATRIX], 1, 0, player.normalMatrix.m);
+//
+//    glBindVertexArray(player.vao);
+//    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, player.ibo);
+//    glDrawElements(GL_TRIANGLES, (GLsizei)player.numIndices, GL_UNSIGNED_INT, 0);
     
 }
 
