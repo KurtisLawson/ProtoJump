@@ -17,6 +17,7 @@
 #define BALL_VELOCITY          100000.0f
 #define BALL_SPHERE_SEGS       128
 
+//Enum for checking the player state
 typedef enum {
     grounded,
     leftCollision,
@@ -31,7 +32,11 @@ typedef enum {
 @property (nonatomic, readwrite) float posX, posY, jumpTimer, jumpCount, maxJump;
 @property (nonatomic, readwrite)bool dead, initialJump;
 
+//Keep updating the position when the player is still alive
 -(void)updatePos:(float)positionX:(float)positionY;
+
+//Check for which location the player hits and update the state for animations etc.
+//The parameters are the position and size of the obstacles
 -(void) checkCollision:(float)positionX:(float)positionY:(float)width:(float)height;
 -(void)dealloc;
 @end

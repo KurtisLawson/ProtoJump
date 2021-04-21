@@ -27,10 +27,6 @@
     posY = positionY;
 }
 
--(void) dealloc{
-    
-}
-
 //Check for which location the player hits and update the state for animations etc.
 //The parameters are the position and size of the obstacles
 -(void) checkCollision:(float)positionX:(float)positionY:(float)width:(float)height{
@@ -61,6 +57,10 @@
             jumpCount = 0;
         }
     }
+}
+
+-(void) dealloc{
+    
 }
 
 @end
