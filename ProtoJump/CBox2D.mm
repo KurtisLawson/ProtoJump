@@ -54,13 +54,13 @@ public:
                 if([bodyData->objectName isEqualToString:@"LeftWall"]){
                     [parentObj RegisterHit:@"LeftWall"];    // call registerhit to signal that left wall was hit
                 }
-                if([bodyData->objectName isEqualToString:@"Hazard"]){
-                    [parentObj RegisterHit:@"Hazard"];
-                }
                 if([bodyData->objectName isEqualToString:@"Ground"]){
                     [parentObj RegisterHit:@"Ground"];    // call registerhit to signal that left wall was hit
                 }
-                
+                if([bodyData->objectName isEqualToString:@"HazardLeft"]){
+                    [parentObj RegisterHit:@"Hazard"];
+                    // call registerhit to signal that hazard was hit
+                }
             }
         }
     }
@@ -202,13 +202,18 @@ public:
         theObstacle = world->CreateBody(&obstacleBodyDef);
         obstacleData = new UserData(self, @"Obstacle");
         
-        //Hazard definition
-//        Hazard* hz = [chunk.hazards objectAtIndex:0];
-//        b2BodyDef hazardBodyDef;
-//        hazardBodyDef.type = b2_staticBody;
-//        hazardBodyDef.position.Set(CHUNK_POS_X-(obs.width/2), obs.posY);
-//        theHazardLeft = world->CreateBody(&hazardBodyDef);
-//        hazardLeftData = new UserData(self, @"HazardLeft");
+        //Left Hazard definition
+        Hazard* hz;
+        if([chunk.hazards objectAtIndex:0] != NSNull.null){
+            hz = [chunk.hazards objectAtIndex:0];
+            b2BodyDef hazardBodyDef;
+            hazardBodyDef.type = b2_staticBody;
+            float posX = [chunk toPixel:hz.posX :SCREEN_BOUNDS_X + SCREEN_OFFSET];
+            float posY = [chunk toPixel:hz.posY :SCREEN_BOUNDS_Y];
+            hazardBodyDef.position.Set(posX, posY);
+            theHazardLeft = world->CreateBody(&hazardBodyDef);
+            hazardLeftData = new UserData(self, @"HazardLeft");
+        }
         
         if(chunk){
             if (theObstacle)
@@ -226,7 +231,21 @@ public:
                 fixtureDef.restitution = 0.0f;
                 theObstacle->CreateFixture(&fixtureDef);
             }
-            
+            if (theHazardLeft && [chunk.hazards objectAtIndex:0] != NSNull.null){
+                hz = [chunk.hazards objectAtIndex:0];
+                float width = [chunk toPixel:hz.width :SCREEN_BOUNDS_X + SCREEN_OFFSET];
+                float height = [chunk toPixel:hz.height :SCREEN_BOUNDS_Y];
+                theHazardLeft->SetUserData((void *) hazardLeftData);
+                theHazardLeft->SetAwake(false);
+                b2PolygonShape staticBox;
+                staticBox.SetAsBox(width/2, height/2);
+                b2FixtureDef fixtureDef;
+                fixtureDef.shape = &staticBox;
+                fixtureDef.density = 1.0f;
+                fixtureDef.friction = 0.3f;
+                fixtureDef.restitution = 0.0f;
+                theHazardLeft->CreateFixture(&fixtureDef);
+            }
         }
         
         totalElapsedTime = 0;
@@ -341,9 +360,10 @@ public:
         obstacleBodyDef.position.Set(theGround->GetPosition().x + SCREEN_BOUNDS_X/2, posY);
         theObstacle = world->CreateBody(&obstacleBodyDef);
         
-        UserData* obstacleData = new UserData(self,@"Obstacle");
+//        UserData* obstacleData = new UserData(self,@"Obstacle");
 //        obstacleData->box2D = self;
 //        obstacleData->objectName = @"Obstacle";
+        
         if (theObstacle)
         {
             theObstacle->SetUserData((void*) obstacleData);
@@ -359,9 +379,44 @@ public:
             fixtureDef.restitution = 0.0f;
             theObstacle->CreateFixture(&fixtureDef);
         }
+        
+        Hazard* hz;
+        if([chunk.hazards objectAtIndex:0] != NSNull.null){
+            hz = [chunk.hazards objectAtIndex:0];
+            b2BodyDef hazardBodyDef;
+            hazardBodyDef.type = b2_staticBody;
+            float posX = [chunk toPixel:hz.posX :SCREEN_BOUNDS_X + SCREEN_OFFSET];
+            posY = [chunk toPixel:hz.posY :SCREEN_BOUNDS_Y];
+            hazardBodyDef.position.Set(posX, posY);
+            theHazardLeft = world->CreateBody(&hazardBodyDef);
+            hazardLeftData = new UserData(self, @"HazardLeft");
+            
+            if (theHazardLeft){
+                theHazardLeft->SetUserData((void *) hazardLeftData);
+                theHazardLeft->SetAwake(false);
+                hz = [chunk.hazards objectAtIndex:0];
+                float width = [chunk toPixel:hz.width :SCREEN_BOUNDS_X +    SCREEN_OFFSET];
+                float height = [chunk toPixel:hz.height :SCREEN_BOUNDS_Y];
+                b2PolygonShape staticBox;
+                staticBox.SetAsBox(width/2, height/2);
+                b2FixtureDef fixtureDef;
+                fixtureDef.shape = &staticBox;
+                fixtureDef.density = 1.0f;
+                fixtureDef.friction = 0.3f;
+                fixtureDef.restitution = 0.0f;
+                theHazardLeft->CreateFixture(&fixtureDef);
+            }
+        }
+        
     } else {
         float pixelPos = theObstacle->GetPosition().x - (theGround->GetPosition().x - SCREEN_BOUNDS_X/2);
         chunk.obs.posX = [chunk toDec:pixelPos :SCREEN_BOUNDS_X + SCREEN_OFFSET];
+        
+        if([chunk.hazards objectAtIndex:0] != NSNull.null) {
+            Hazard* hz = [chunk.hazards objectAtIndex:0];
+            pixelPos = theLeftWall->GetPosition().x -(theGround->GetPosition().x - SCREEN_BOUNDS_X/2);
+            hz.posX = [chunk toDec:pixelPos :SCREEN_BOUNDS_X + SCREEN_OFFSET];
+        }
     }
     
     if (world)
@@ -394,12 +449,13 @@ public:
     if([objectName  isEqual: @"LeftWall"]){
         ballHitLeftWall = true;
     }
-    if([objectName isEqual:@"Hazard"]){
-        ballHitLeftWall = true;
-    }
     if([objectName  isEqual: @"Ground"]){
 //        player->state = grounded;
 //        player.jumpCount = 0;
+        ballHitLeftWall = true;
+    }
+    if([objectName isEqual: @"Hazard"])
+    {
         ballHitLeftWall = true;
     }
 }
@@ -486,6 +542,8 @@ public:
         (*objPosList)["ground"] = theGround->GetPosition();
     if (theRoof)
         (*objPosList)["roof"] = theRoof->GetPosition();
+    if (theHazardLeft)
+        (*objPosList)["HazardLeft"] = theHazardLeft->GetPosition();
     return reinterpret_cast<void *>(objPosList);
 }
 

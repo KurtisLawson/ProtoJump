@@ -56,12 +56,12 @@
 @property float yDir;
 @property bool dead;
 @property float slowFactor;
-@property (nonatomic) Chunk * chunk;
-@property (nonatomic) Player * player;
+@property Chunk * chunk;
+@property Player * player;
 
 // @property b2Vec2 _targetVector;
 
--(void) SetTargetVector:(float)posX:(float)posY;
+-(void) SetTargetVector:(float)posX :(float)posY;
 
 //-(void) GenerateObstacle;
 
