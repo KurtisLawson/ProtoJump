@@ -17,6 +17,10 @@
     if(self){
         obs = [[Obstacle alloc]init];
         hazards = [[NSMutableArray alloc]init];
+        [hazards addObject:[NSNull null]];
+        [hazards addObject:[NSNull null]];
+        [hazards addObject:[NSNull null]];
+        [hazards addObject:[NSNull null]];
         [self randomizeHaz];
     }
     return self;
@@ -44,9 +48,9 @@
                               :obs.width / MIN_HAZ_RATIO];
             }
             
-            [hazards addObject:hz];
+            [hazards replaceObjectAtIndex:i withObject:hz];
             count++;
-        } else [hazards addObject:[NSNull null]];
+        } else [hazards replaceObjectAtIndex:i withObject:[NSNull null]];
         
         if([hazards objectAtIndex:i] != NSNull.null){
             Hazard* tmp = [hazards objectAtIndex:i];
@@ -91,11 +95,15 @@
 }
 
 -(bool)rollForTrue:(int)percentage{
-    return arc4random_uniform(100) < percentage;
+    int randy = arc4random_uniform(100);
+    NSLog(@"Randy is a h o o  %d", randy);
+    return randy < percentage;
 }
 
 -(float)randomDec:(float)min :(float)max {
-    return (float)arc4random() / UINT32_MAX * (max - min) + min;
+    float rand = (float) arc4random() / UINT32_MAX * (max - min) + min;
+    NSLog(@"Random Dec is %f",rand);
+    return rand;
 }
 
 -(void)dealloc {}
