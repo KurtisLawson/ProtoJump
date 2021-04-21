@@ -42,24 +42,20 @@
         posX <= positionX + width/2){
 
         if(posY > positionY + height/2){
-            printf("Top \n");
             state = grounded;
             jumpCount = 0;
         }
         else if(posY < positionY - height/2){
                     //change the enum for which side its colliding with to the enum
                     //also there will be an enum that states wether the player is grounded or not being set here
-            printf("Bottom \n");
             state = bottomCollision;
         }
     }
     else {
         if(posX < positionX + width/2){
-            printf("Left \n");
             state = leftCollision;
             jumpCount = 0;
         } else if(posX > positionX - width/2){
-            printf("Right \n");
             state = rightCollision;
             jumpCount = 0;
         }
