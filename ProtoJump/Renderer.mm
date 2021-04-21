@@ -7,9 +7,12 @@
 #import <GLKit/GLKit.h>
 #include <chrono>
 #include "GLESRenderer.hpp"
-#include "Animator/AnimatedModel.h"
 #include <Box2D/Box2D.h>
 #include <map>
+
+// Include player objs
+//#include "RWTBaseEffect.h"
+//#include "RWT_LeapUp.h"
 
 // Debug flag to dump ball/brick updated coordinates to console
 //#define LOG_TO_CONSOLE
@@ -89,7 +92,12 @@ enum
 
     GLKMatrix4 modelViewProjectionMatrix;   // model-view-projection matrix
     
-//    AnimatedModel *playerModel;
+    // Player setup
+//    RWTBaseEffect *_shader;
+//    RWT_LeapUp *obj_LeapUp;
+    
+    
+    // Environment setup
     RenderObject player;
     RenderObject staticObjects[10];
     
@@ -114,115 +122,18 @@ enum
 }
 
 - (void) loadPlayerModel {
-    glGenVertexArrays(1, &player.vao);
-    glGenBuffers(1, &player.ibo);
-
-    // get crate data
-    player.numIndices = glesRenderer.GenCube(1.0, &player.vertices, &player.normals, &player.texCoords, &player.indices);
     
-    // set up VBOs (one per attribute)
-    glBindVertexArray(player.vao);
-    GLuint vbo[4];
-    glGenBuffers(4, vbo);
-
-    // pass on position data
-    glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
-    glBufferData(GL_ARRAY_BUFFER, 3*24*sizeof(GLfloat), player.vertices, GL_STATIC_DRAW);
-    glEnableVertexAttribArray(ATTRIB_POSITION);
-    glVertexAttribPointer(ATTRIB_POSITION, 3, GL_FLOAT, GL_FALSE, 3*sizeof(GLfloat), BUFFER_OFFSET(0));
-    
-    // pass on color data
-    glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
-    GLfloat vertCol[24*3];
-    for (int k = 0; k<24*3; k+=3)
-    {
-        vertCol[k] = 1.0f;
-        vertCol[k+1] = 1.0f;
-        vertCol[k+2] = 1.0f;
-    }
-    
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertCol), vertCol, GL_STATIC_DRAW);    // Send vertex data to VBO
-    glEnableVertexAttribArray(ATTRIB_COL);
-    glVertexAttribPointer(ATTRIB_COL, 3, GL_FLOAT, GL_FALSE, 3*sizeof(GLfloat), BUFFER_OFFSET(0));
-
-    // pass on normals
-    glBindBuffer(GL_ARRAY_BUFFER, vbo[2]);
-    glBufferData(GL_ARRAY_BUFFER, 3*24*sizeof(GLfloat), player.normals, GL_STATIC_DRAW);
-    glEnableVertexAttribArray(ATTRIB_NORMAL);
-    glVertexAttribPointer(ATTRIB_NORMAL, 3, GL_FLOAT, GL_FALSE, 3*sizeof(GLfloat), BUFFER_OFFSET(0));
-
-    // pass on texture coordinates
-    glBindBuffer(GL_ARRAY_BUFFER, vbo[3]);
-    glBufferData(GL_ARRAY_BUFFER, 2*24*sizeof(GLfloat), player.texCoords, GL_STATIC_DRAW);
-    glEnableVertexAttribArray(ATTRIB_TEXTURE);
-    glVertexAttribPointer(ATTRIB_TEXTURE, 3, GL_FLOAT, GL_FALSE, 2*sizeof(GLfloat), BUFFER_OFFSET(0));
-    
-    // bind the ibo's
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, player.ibo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(player.indices[0]) * player.numIndices, player.indices, GL_STATIC_DRAW);
-
-    // deselect the VAOs just to be clean
-    glBindVertexArray(0);
+//    float aspect = (float)theView.drawableWidth / (float)theView.drawableHeight;
+//    
+//    // Setup player models
+//    _shader = [[RWTBaseEffect alloc] initWithVertexShader:@"RWTSimpleVertex.glsl" fragmentShader:@"RWTSimpleFragment.glsl"];
+//    obj_LeapUp = [[RWT_LeapUp alloc] initWithShader:_shader];
+//    _shader.projectionMatrix = GLKMatrix4MakePerspective(50.0f * M_PI / 180.0f, aspect, 1.0f, 20.0f);
 }
-
-//-(void)loadRenderObject:(RenderObject) obj {
-//    // setup vao
-//    glGenVertexArrays(1, &obj.vao);
-//    glGenBuffers(1, &obj.ibo);
-//
-//    // get crate data
-//    obj.numIndices = glesRenderer.GenCube(1.0f, &obj.vertices, &obj.normals, &obj.texCoords, &obj.indices);
-//
-//    // set up VBOs (one per attribute)
-//    glBindVertexArray(obj.vao);
-//    GLuint vbo[4];
-//    glGenBuffers(4, vbo);
-//
-//    // pass on position data
-//    glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
-//    glBufferData(GL_ARRAY_BUFFER, 3*24*sizeof(GLfloat), obj.vertices, GL_STATIC_DRAW);
-//    glEnableVertexAttribArray(ATTRIB_POSITION);
-//    glVertexAttribPointer(ATTRIB_POSITION, 3, GL_FLOAT, GL_FALSE, 3*sizeof(GLfloat), BUFFER_OFFSET(0));
-//
-//    // pass on color data
-//    glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
-//    GLfloat vertCol[24*3];
-//    for (int k = 0; k<24*3; k+=3)
-//    {
-//        vertCol[k] = 1.0f;
-//        vertCol[k+1] = 1.0f;
-//        vertCol[k+2] = 1.0f;
-//    }
-//
-//    glBufferData(GL_ARRAY_BUFFER, sizeof(vertCol), vertCol, GL_STATIC_DRAW);    // Send vertex data to VBO
-//    glEnableVertexAttribArray(ATTRIB_COL);
-//    glVertexAttribPointer(ATTRIB_COL, 3, GL_FLOAT, GL_FALSE, 3*sizeof(GLfloat), BUFFER_OFFSET(0));
-//
-//    // pass on normals
-//    glBindBuffer(GL_ARRAY_BUFFER, vbo[2]);
-//    glBufferData(GL_ARRAY_BUFFER, 3*24*sizeof(GLfloat), obj.normals, GL_STATIC_DRAW);
-//    glEnableVertexAttribArray(ATTRIB_NORMAL);
-//    glVertexAttribPointer(ATTRIB_NORMAL, 3, GL_FLOAT, GL_FALSE, 3*sizeof(GLfloat), BUFFER_OFFSET(0));
-//
-//    // pass on texture coordinates
-//    glBindBuffer(GL_ARRAY_BUFFER, vbo[3]);
-//    glBufferData(GL_ARRAY_BUFFER, 2*24*sizeof(GLfloat), obj.texCoords, GL_STATIC_DRAW);
-//    glEnableVertexAttribArray(ATTRIB_TEXTURE);
-//    glVertexAttribPointer(ATTRIB_TEXTURE, 3, GL_FLOAT, GL_FALSE, 2*sizeof(GLfloat), BUFFER_OFFSET(0));
-//
-//    // bind the ibo's
-//    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, obj.ibo);
-//    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(obj.indices[0]) * obj.numIndices, obj.indices, GL_STATIC_DRAW);
-//
-//    // deselect the VAOs just to be clean
-//    glBindVertexArray(0);
-//}
 
 - (void)loadModels
 {
     NSLog(@"Loading Models");
-//    playerModel = [[AnimatedModel alloc] init];
-//    [playerModel setupVAO];
     
     [self loadPlayerModel];
     
