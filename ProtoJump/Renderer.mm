@@ -11,8 +11,8 @@
 #include <map>
 
 // Include player objs
-//#include "RWTBaseEffect.h"
-//#include "RWT_LeapUp.h"
+#include "RWTBaseEffect.h"
+#include "RWT_LeapUp.h"
 
 // Debug flag to dump ball/brick updated coordinates to console
 //#define LOG_TO_CONSOLE
@@ -83,6 +83,7 @@ enum
     GLuint floorTexture;
     GLuint energyTexture;
     GLuint obstacleTexture;
+    GLuint characterTexture;
     
     // global lighting parameters
     GLKVector4 specularLightPosition;
@@ -93,8 +94,8 @@ enum
     GLKMatrix4 modelViewProjectionMatrix;   // model-view-projection matrix
     
     // Player setup
-//    RWTBaseEffect *_shader;
-//    RWT_LeapUp *obj_LeapUp;
+    RWTBaseEffect *_shader;
+    RWT_LeapUp *obj_LeapUp;
     
     
     // Environment setup
@@ -123,17 +124,20 @@ enum
 
 - (void) loadPlayerModel {
     
-//    float aspect = (float)theView.drawableWidth / (float)theView.drawableHeight;
-//    
-//    // Setup player models
+    float aspect = (float)theView.drawableWidth / (float)theView.drawableHeight;
+    
+    // Setup player models
+    _shader = [[RWTBaseEffect alloc] initWithProgramHandle:programObject];
 //    _shader = [[RWTBaseEffect alloc] initWithVertexShader:@"RWTSimpleVertex.glsl" fragmentShader:@"RWTSimpleFragment.glsl"];
-//    obj_LeapUp = [[RWT_LeapUp alloc] initWithShader:_shader];
-//    _shader.projectionMatrix = GLKMatrix4MakePerspective(50.0f * M_PI / 180.0f, aspect, 1.0f, 20.0f);
+    obj_LeapUp = [[RWT_LeapUp alloc] initWithShader:_shader];
+    _shader.projectionMatrix = GLKMatrix4MakePerspective(50.0f * M_PI / 180.0f, aspect, 1.0f, 20.0f);
+    
 }
 
 - (void)loadModels
 {
     NSLog(@"Loading Models");
+    
     
     [self loadPlayerModel];
     
@@ -212,6 +216,7 @@ enum
     floorTexture = [self setupTexture:@"steelTemp.jpg"];
     obstacleTexture = [self setupTexture:@"steelAlt.jpg"];
     energyTexture = [self setupTexture:@"blueEnergy.jpg"];
+    characterTexture = [self setupTexture:@"ProtoTexture.png"];
     
     // set up lighting values
     specularComponent = GLKVector4Make(0.5f, 0.5f, 0.5f, 1.0f);
@@ -247,7 +252,6 @@ enum
         totalElapsedTime += (elapsedTime/1000.0f) * box2d.slowFactor;
     }
     
-    
     //>>>>>>-------
 
      //Projection Matrices
@@ -265,10 +269,7 @@ enum
     // Get the ball and brick objects from Box2D
     auto objPosList = static_cast<std::map<const char *, b2Vec2> *>([box2d GetObjectPositions]);
     b2Vec2 *theBall = (((*objPosList).find("ball") == (*objPosList).end()) ? nullptr : &(*objPosList)["ball"]);
-    b2Vec2 *theLeftWall = (((*objPosList).find("leftwall") == (*objPosList).end()) ? nullptr : &(*objPosList)["leftwall"]);
     b2Vec2 *theObstacle = (((*objPosList).find("obstacle") == (*objPosList).end()) ? nullptr : &(*objPosList)["obstacle"]);
-    b2Vec2 *theGround = (((*objPosList).find("ground") == (*objPosList).end()) ? nullptr : &(*objPosList)["ground"]);
-    b2Vec2 *theRoof = (((*objPosList).find("roof") == (*objPosList).end()) ? nullptr : &(*objPosList)["roof"]);
     
     // ******************************************************************
     // initialize MVP matrix for both objects to set the "camera"
@@ -286,7 +287,7 @@ enum
         obstacleOffset = 0;
     }
     
-    NSLog(@"Floor offset is %f", screenOffset);
+//    NSLog(@"Floor offset is %f", screenOffset);
     
     // ******** GROUND 1 **********
     // apply transformations to the ground
@@ -398,16 +399,15 @@ enum
 //        glBindVertexArray(0);
 //    }
     
+//    viewMatrix = GLKMatrix4Rotate(viewMatrix, GLKMathDegreesToRadians(20), 1, 0, 0);
+    
     // ******** PLAYER **********
     player.mvp = GLKMatrix4Translate(GLKMatrix4Identity, 0.0, 0.0, -5.0);
-
-    // apply transformations to the ground
-    player.mvm = player.mvp = GLKMatrix4Translate(player.mvp, 0,0, -1.0);
-    player.mvm = player.mvp = GLKMatrix4Rotate(player.mvp, 0.0, 1.0, 0.0, 1.0 );
-    player.mvm = player.mvp = GLKMatrix4Scale(player.mvp, 1, 1, 1 );
               
-    player.normalMatrix = GLKMatrix3InvertAndTranspose(GLKMatrix4GetMatrix3(player.mvp), NULL);
-    player.mvp = GLKMatrix4Multiply(perspectiveMatrix, player.mvp);
+//    player.normalMatrix = GLKMatrix3InvertAndTranspose(GLKMatrix4GetMatrix3(player.mvp), NULL);
+//    player.mvp = GLKMatrix4Multiply(perspectiveMatrix, player.mvp);
+    
+    
     
     if (theBall)
     {
@@ -501,10 +501,7 @@ enum
     // Retrieve brick and ball positions from Box2D
     auto objPosList = static_cast<std::map<const char *, b2Vec2> *>([box2d GetObjectPositions]);
     b2Vec2 *theBall = (((*objPosList).find("ball") == (*objPosList).end()) ? nullptr : &(*objPosList)["ball"]);
-    b2Vec2 *theLeftWall = (((*objPosList).find("leftwall") == (*objPosList).end()) ? nullptr : &(*objPosList)["leftwall"]);
     b2Vec2 *theObstacle = (((*objPosList).find("obstacle") == (*objPosList).end()) ? nullptr : &(*objPosList)["obstacle"]);
-    b2Vec2 *theGround = (((*objPosList).find("ground") == (*objPosList).end()) ? nullptr : &(*objPosList)["ground"]);
-    b2Vec2 *theRoof = (((*objPosList).find("roof") == (*objPosList).end()) ? nullptr : &(*objPosList)["roof"]);
 #ifdef LOG_TO_CONSOLE
     if (theBall)
         printf("Ball: (%5.3f,%5.3f)\t", theBall->x, theBall->y);
@@ -524,6 +521,7 @@ enum
         glDrawArrays(GL_TRIANGLES, 0, numObstacleVerts);
     
     // *************** PLAYER *****************
+    
     glUniform4fv(uniforms[UNIFORM_LIGHT_DIFFUSE_POSITION], 1, player.diffuseLightPosition.v);
     glUniform4fv(uniforms[UNIFORM_LIGHT_DIFFUSE_COMPONENT], 1, player.diffuseComponent.v);
     glUniformMatrix4fv(uniforms[UNIFORM_MODELVIEWPROJECTION_MATRIX], 1, FALSE, (const float *)player.mvp.m);
@@ -533,6 +531,10 @@ enum
     glBindVertexArray(player.vao);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, player.ibo);
     glDrawElements(GL_TRIANGLES, (GLsizei)player.numIndices, GL_UNSIGNED_INT, 0);
+    
+    [obj_LeapUp renderWithParentModelViewMatrix:player.mvp];
+    
+//    NSLog
     
 }
 

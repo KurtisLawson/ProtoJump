@@ -16,6 +16,7 @@
 @property (nonatomic, assign) GLKMatrix4 projectionMatrix;
 @property (assign) GLuint texture;
 
+- (id)initWithProgramHandle:(GLuint) program;
 - (id)initWithVertexShader:(NSString *)vertexShader
             fragmentShader:(NSString *)fragmentShader;
 - (void)prepareToDraw;

@@ -6,7 +6,6 @@
 //
 
 #import "RWTModel.h"
-#import "model_LeapUp.h" // Vertices from .obj
 
 NS_ASSUME_NONNULL_BEGIN
 
