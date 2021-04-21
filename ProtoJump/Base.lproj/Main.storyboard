@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
-    <device id="retina3_5" orientation="portrait" appearance="light"/>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17506" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+    <device id="retina5_5" orientation="landscape" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17505"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -14,13 +14,47 @@
             <objects>
                 <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="ProtoJump" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC" customClass="GLKView">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
+                        <rect key="frame" x="0.0" y="0.0" width="736" height="414"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Score: " textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="GBM-CK-N2D">
                                 <rect key="frame" x="54" y="31" width="212" height="53"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="30"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                <color key="textColor" systemColor="systemGray2Color"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Final Score: " textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="agE-XV-Qzd">
+                                <rect key="frame" x="322" y="239" width="93" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Game Over" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WJK-Zc-v9L">
+                                <rect key="frame" x="271.66666666666669" y="183" width="193" height="48"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="40"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" pointerInteraction="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Wl9-la-yG2">
+                                <rect key="frame" x="341" y="268" width="55" height="41"/>
+                                <gestureRecognizers/>
+                                <fontDescription key="fontDescription" type="system" pointSize="24"/>
+                                <state key="normal" title="Retry">
+                                    <color key="titleColor" systemColor="systemRedColor"/>
+                                </state>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Jump Counter:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mvy-9R-Dt9">
+                                <rect key="frame" x="54" y="86" width="212" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Highscore: " textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="6rX-9n-tGp" userLabel="Highscore Label">
+                                <rect key="frame" x="274" y="31" width="265" height="53"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                 <color key="textColor" systemColor="systemGray2Color"/>
                                 <nil key="highlightedColor"/>
                             </label>
@@ -28,22 +62,27 @@
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <gestureRecognizers/>
-                        <connections>
-                            <outletCollection property="gestureRecognizers" destination="75f-lF-irF" appends="YES" id="C84-Kg-O41"/>
-                        </connections>
+                        <constraints>
+                            <constraint firstItem="Wl9-la-yG2" firstAttribute="top" secondItem="agE-XV-Qzd" secondAttribute="bottom" constant="14" id="AdA-Yj-lcV"/>
+                            <constraint firstItem="Wl9-la-yG2" firstAttribute="centerX" secondItem="agE-XV-Qzd" secondAttribute="centerX" id="F8U-kx-PuU"/>
+                            <constraint firstItem="WJK-Zc-v9L" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="FbA-Si-Bey"/>
+                            <constraint firstItem="WJK-Zc-v9L" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="UUM-0O-N6y"/>
+                            <constraint firstItem="agE-XV-Qzd" firstAttribute="top" secondItem="WJK-Zc-v9L" secondAttribute="bottom" constant="14" id="YB3-Qo-8L8"/>
+                            <constraint firstItem="agE-XV-Qzd" firstAttribute="centerX" secondItem="WJK-Zc-v9L" secondAttribute="centerX" id="eOz-da-p0x"/>
+                        </constraints>
                     </view>
                     <connections>
+                        <outlet property="EndButton" destination="Wl9-la-yG2" id="AFB-YK-Xc2"/>
+                        <outlet property="EndLabel" destination="WJK-Zc-v9L" id="Woz-qc-KVl"/>
+                        <outlet property="EndScoreLabel" destination="agE-XV-Qzd" id="WHa-EW-n1M"/>
+                        <outlet property="HighscoreLabel" destination="6rX-9n-tGp" id="fxQ-YB-qQy"/>
+                        <outlet property="JumpCounter" destination="mvy-9R-Dt9" id="ynh-hU-1tl"/>
                         <outlet property="ScoreLabel" destination="GBM-CK-N2D" id="Uy3-2f-GgE"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
-                <pongPressGestureRecognizer allowableMovement="10" minimumPressDuration="0.0" id="75f-lF-irF">
-                    <connections>
-                        <action selector="TapAndHold:" destination="BYZ-38-t0r" id="PhJ-d5-f6g"/>
-                    </connections>
-                </pongPressGestureRecognizer>
             </objects>
-            <point key="canvasLocation" x="136.875" y="136.25"/>
+            <point key="canvasLocation" x="136.14130434782609" y="136.23188405797103"/>
         </scene>
     </scenes>
     <resources>
@@ -52,6 +91,9 @@
         </systemColor>
         <systemColor name="systemGray2Color">
             <color red="0.68235294117647061" green="0.68235294117647061" blue="0.69803921568627447" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+        <systemColor name="systemRedColor">
+            <color red="1" green="0.23137254901960785" blue="0.18823529411764706" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>

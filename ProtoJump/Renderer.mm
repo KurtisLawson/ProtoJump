@@ -11,9 +11,6 @@
 #include <Box2D/Box2D.h>
 #include <map>
 
-// Debug flag to dump ball/brick updated coordinates to console
-//#define LOG_TO_CONSOLE
-
 // small struct to hold object-specific information
 struct RenderObject
 {
@@ -113,122 +110,56 @@ enum
     glDeleteProgram(programObject);
 }
 
-- (void) loadPlayerModel {
-    glGenVertexArrays(1, &player.vao);
-    glGenBuffers(1, &player.ibo);
-
-    // get crate data
-    player.numIndices = glesRenderer.GenCube(1.0, &player.vertices, &player.normals, &player.texCoords, &player.indices);
-    
-    // set up VBOs (one per attribute)
-    glBindVertexArray(player.vao);
-    GLuint vbo[4];
-    glGenBuffers(4, vbo);
-
-    // pass on position data
-    glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
-    glBufferData(GL_ARRAY_BUFFER, 3*24*sizeof(GLfloat), player.vertices, GL_STATIC_DRAW);
-    glEnableVertexAttribArray(ATTRIB_POSITION);
-    glVertexAttribPointer(ATTRIB_POSITION, 3, GL_FLOAT, GL_FALSE, 3*sizeof(GLfloat), BUFFER_OFFSET(0));
-    
-    // pass on color data
-    glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
-    GLfloat vertCol[24*3];
-    for (int k = 0; k<24*3; k+=3)
-    {
-        vertCol[k] = 1.0f;
-        vertCol[k+1] = 1.0f;
-        vertCol[k+2] = 1.0f;
+- (void)setup:(GLKView *)view
+{
+    // Set up OpenGL ES
+    view.context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES3];
+    if (!view.context) {
+        NSLog(@"Failed to create ES context");
     }
+    view.drawableDepthFormat = GLKViewDrawableDepthFormat24;
+    theView = view;
+    [EAGLContext setCurrentContext:view.context];
     
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertCol), vertCol, GL_STATIC_DRAW);    // Send vertex data to VBO
-    glEnableVertexAttribArray(ATTRIB_COL);
-    glVertexAttribPointer(ATTRIB_COL, 3, GL_FLOAT, GL_FALSE, 3*sizeof(GLfloat), BUFFER_OFFSET(0));
-
-    // pass on normals
-    glBindBuffer(GL_ARRAY_BUFFER, vbo[2]);
-    glBufferData(GL_ARRAY_BUFFER, 3*24*sizeof(GLfloat), player.normals, GL_STATIC_DRAW);
-    glEnableVertexAttribArray(ATTRIB_NORMAL);
-    glVertexAttribPointer(ATTRIB_NORMAL, 3, GL_FLOAT, GL_FALSE, 3*sizeof(GLfloat), BUFFER_OFFSET(0));
-
-    // pass on texture coordinates
-    glBindBuffer(GL_ARRAY_BUFFER, vbo[3]);
-    glBufferData(GL_ARRAY_BUFFER, 2*24*sizeof(GLfloat), player.texCoords, GL_STATIC_DRAW);
-    glEnableVertexAttribArray(ATTRIB_TEXTURE);
-    glVertexAttribPointer(ATTRIB_TEXTURE, 3, GL_FLOAT, GL_FALSE, 2*sizeof(GLfloat), BUFFER_OFFSET(0));
+    // Load shaders
+    if (![self setupShaders])
+        return;
     
-    // bind the ibo's
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, player.ibo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(player.indices[0]) * player.numIndices, player.indices, GL_STATIC_DRAW);
+    // Bind Crate texture
+    floorTexture = [self setupTexture:@"steelTemp.jpg"];
+    obstacleTexture = [self setupTexture:@"steelAlt.jpg"];
+    energyTexture = [self setupTexture:@"blueEnergy.jpg"];
+    
+    // set up lighting values
+    specularComponent = GLKVector4Make(0.5f, 0.5f, 0.5f, 1.0f);
+    specularLightPosition = GLKVector4Make(0.0f, 0.0f, 1.0f, 1.0f);
+    shininess = 1000.0f;
+    ambientComponent = GLKVector4Make(0.2f, 0.2f, 0.2f, 1.0f);
+    
+    staticObjects[0].diffuseLightPosition = GLKVector4Make(0.0f, 1.0f, 0.0f, 1.0f);
+    staticObjects[0].diffuseComponent = GLKVector4Make(1.0f, 1.0f, 1.0f, 1.0f);
 
-    // deselect the VAOs just to be clean
-    glBindVertexArray(0);
+    // Initialize timer
+    glEnable(GL_DEPTH_TEST);
+    lastTime = std::chrono::steady_clock::now();
+    // Initialize Box2D
+    box2d = [[CBox2D alloc] init];
+    
+    // Init scrolling parameters
+    screenOffset = 0;
+    scrollRate = 0.06;
+    
+    obstacleOffset = 0;
+    obstacleScrollRate = 0.05;
 }
 
-//-(void)loadRenderObject:(RenderObject) obj {
-//    // setup vao
-//    glGenVertexArrays(1, &obj.vao);
-//    glGenBuffers(1, &obj.ibo);
-//
-//    // get crate data
-//    obj.numIndices = glesRenderer.GenCube(1.0f, &obj.vertices, &obj.normals, &obj.texCoords, &obj.indices);
-//
-//    // set up VBOs (one per attribute)
-//    glBindVertexArray(obj.vao);
-//    GLuint vbo[4];
-//    glGenBuffers(4, vbo);
-//
-//    // pass on position data
-//    glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
-//    glBufferData(GL_ARRAY_BUFFER, 3*24*sizeof(GLfloat), obj.vertices, GL_STATIC_DRAW);
-//    glEnableVertexAttribArray(ATTRIB_POSITION);
-//    glVertexAttribPointer(ATTRIB_POSITION, 3, GL_FLOAT, GL_FALSE, 3*sizeof(GLfloat), BUFFER_OFFSET(0));
-//
-//    // pass on color data
-//    glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
-//    GLfloat vertCol[24*3];
-//    for (int k = 0; k<24*3; k+=3)
-//    {
-//        vertCol[k] = 1.0f;
-//        vertCol[k+1] = 1.0f;
-//        vertCol[k+2] = 1.0f;
-//    }
-//
-//    glBufferData(GL_ARRAY_BUFFER, sizeof(vertCol), vertCol, GL_STATIC_DRAW);    // Send vertex data to VBO
-//    glEnableVertexAttribArray(ATTRIB_COL);
-//    glVertexAttribPointer(ATTRIB_COL, 3, GL_FLOAT, GL_FALSE, 3*sizeof(GLfloat), BUFFER_OFFSET(0));
-//
-//    // pass on normals
-//    glBindBuffer(GL_ARRAY_BUFFER, vbo[2]);
-//    glBufferData(GL_ARRAY_BUFFER, 3*24*sizeof(GLfloat), obj.normals, GL_STATIC_DRAW);
-//    glEnableVertexAttribArray(ATTRIB_NORMAL);
-//    glVertexAttribPointer(ATTRIB_NORMAL, 3, GL_FLOAT, GL_FALSE, 3*sizeof(GLfloat), BUFFER_OFFSET(0));
-//
-//    // pass on texture coordinates
-//    glBindBuffer(GL_ARRAY_BUFFER, vbo[3]);
-//    glBufferData(GL_ARRAY_BUFFER, 2*24*sizeof(GLfloat), obj.texCoords, GL_STATIC_DRAW);
-//    glEnableVertexAttribArray(ATTRIB_TEXTURE);
-//    glVertexAttribPointer(ATTRIB_TEXTURE, 3, GL_FLOAT, GL_FALSE, 2*sizeof(GLfloat), BUFFER_OFFSET(0));
-//
-//    // bind the ibo's
-//    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, obj.ibo);
-//    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(obj.indices[0]) * obj.numIndices, obj.indices, GL_STATIC_DRAW);
-//
-//    // deselect the VAOs just to be clean
-//    glBindVertexArray(0);
-//}
-
+// Iterate through RenderObject array and generate VAO representations
 - (void)loadModels
 {
     NSLog(@"Loading Models");
-//    playerModel = [[AnimatedModel alloc] init];
-//    [playerModel setupVAO];
-    
-    [self loadPlayerModel];
     
     // Wall and ceilings:
     for (int i = 0; i < 10; ++i) {
-//        [self loadRenderObject:staticObjects[i]];
         // Object vao
         glGenVertexArrays(1, &staticObjects[i].vao);
         glGenBuffers(1, &staticObjects[i].ibo);
@@ -282,49 +213,6 @@ enum
     }
 }
 
-- (void)setup:(GLKView *)view
-{
-    // Set up OpenGL ES
-    view.context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES3];
-    if (!view.context) {
-        NSLog(@"Failed to create ES context");
-    }
-    view.drawableDepthFormat = GLKViewDrawableDepthFormat24;
-    theView = view;
-    [EAGLContext setCurrentContext:view.context];
-    
-    // Load shaders
-    if (![self setupShaders])
-        return;
-    
-    // Bind Crate texture
-    floorTexture = [self setupTexture:@"steelTemp.jpg"];
-    obstacleTexture = [self setupTexture:@"steelAlt.jpg"];
-    energyTexture = [self setupTexture:@"blueEnergy.jpg"];
-    
-    // set up lighting values
-    specularComponent = GLKVector4Make(0.5f, 0.5f, 0.5f, 1.0f);
-    specularLightPosition = GLKVector4Make(0.0f, 0.0f, 1.0f, 1.0f);
-    shininess = 1000.0f;
-    ambientComponent = GLKVector4Make(0.2f, 0.2f, 0.2f, 1.0f);
-    
-    staticObjects[0].diffuseLightPosition = GLKVector4Make(0.0f, 1.0f, 0.0f, 1.0f);
-    staticObjects[0].diffuseComponent = GLKVector4Make(1.0f, 1.0f, 1.0f, 1.0f);
-
-    // Initialize timer
-    glEnable(GL_DEPTH_TEST);
-    lastTime = std::chrono::steady_clock::now();
-    // Initialize Box2D
-    box2d = [[CBox2D alloc] init];
-    
-    // Init scrolling parameters
-    screenOffset = 0;
-    scrollRate = 0.06;
-    
-    obstacleOffset = 0;
-    obstacleScrollRate = 0.05;
-}
-
 - (void)update
 {
     // Calculate elapsed time and update Box2D
@@ -336,7 +224,6 @@ enum
         totalElapsedTime += (elapsedTime/1000.0f) * box2d.slowFactor;
     }
     
-    
     //>>>>>>-------
 
      //Projection Matrices
@@ -345,19 +232,15 @@ enum
         GLKMatrix4 projectionMatrix = GLKMatrix4MakeOrtho(0, 800, 0, 600, -10, 100);    // note bounding box matches Box2D world
     //>>>>>>-------
 
-        // Create lighting components
-        glClearColor ( 35.0f/255, 37.0f/255, 40.0f/255, 0.0f );
-        specularComponent = GLKVector4Make(0.2f, 0.2f, 0.2f, 1.0f);
-        ambientComponent = GLKVector4Make(0.4, 0.4, 0.4, 1.0);
-//        specularLightPosition = GLKVector4Make(-5, 0.0f, -3, 1.0f);   // make specular light move with camera
+    // Create lighting components
+    glClearColor ( 35.0f/255, 37.0f/255, 40.0f/255, 0.0f );
+    specularComponent = GLKVector4Make(0.2f, 0.2f, 0.2f, 1.0f);
+    ambientComponent = GLKVector4Make(0.4, 0.4, 0.4, 1.0);
     
-    // Get the ball and brick objects from Box2D
+    // Verify colliders are present for active B2Bodies
     auto objPosList = static_cast<std::map<const char *, b2Vec2> *>([box2d GetObjectPositions]);
     b2Vec2 *theBall = (((*objPosList).find("ball") == (*objPosList).end()) ? nullptr : &(*objPosList)["ball"]);
-    b2Vec2 *theLeftWall = (((*objPosList).find("leftwall") == (*objPosList).end()) ? nullptr : &(*objPosList)["leftwall"]);
     b2Vec2 *theObstacle = (((*objPosList).find("obstacle") == (*objPosList).end()) ? nullptr : &(*objPosList)["obstacle"]);
-    b2Vec2 *theGround = (((*objPosList).find("ground") == (*objPosList).end()) ? nullptr : &(*objPosList)["ground"]);
-    b2Vec2 *theRoof = (((*objPosList).find("roof") == (*objPosList).end()) ? nullptr : &(*objPosList)["roof"]);
     
     // ******************************************************************
     // initialize MVP matrix for both objects to set the "camera"
@@ -374,8 +257,6 @@ enum
 //        float overflow = floorOffset;
         obstacleOffset = 0;
     }
-    
-    NSLog(@"Floor offset is %f", screenOffset);
     
     // ******** GROUND 1 **********
     // apply transformations to the ground
@@ -424,68 +305,68 @@ enum
                   
         staticObjects[5].normalMatrix = GLKMatrix3InvertAndTranspose(GLKMatrix4GetMatrix3(staticObjects[5].mvp), NULL);
         staticObjects[5].mvp = GLKMatrix4Multiply(perspectiveMatrix, staticObjects[5].mvp);
+    }
+    
+    // ******** HAZARDS **********
+    if (![ [box2d.chunk.hazards objectAtIndex:haz_left]  isEqual:[NSNull null] ]) {
+        // initialize MVP matrix for both objects to set the "camera"
+        staticObjects[9].mvp = GLKMatrix4Translate(GLKMatrix4Identity, 0.0, 0.0, -5.9);
+
+        Hazard *hz1 = [box2d.chunk.hazards objectAtIndex:haz_left];
+        // apply transformations to the ground
+        staticObjects[9].mvm = staticObjects[9].mvp = GLKMatrix4Translate(staticObjects[9].mvp, (hz1.posX-0.5) * 10 + 0.5, (hz1.posY-0.5) * 6, 0.0);
+        staticObjects[9].mvm = staticObjects[9].mvp = GLKMatrix4Rotate(staticObjects[9].mvp, 0.0, 1.0, 0.0, 1.0 );
+        staticObjects[9].mvm = staticObjects[9].mvp = GLKMatrix4Scale(staticObjects[9].mvp, hz1.width*10, hz1.height*5, 10 );
+
+        staticObjects[9].normalMatrix = GLKMatrix3InvertAndTranspose(GLKMatrix4GetMatrix3(staticObjects[9].mvp), NULL);
+        staticObjects[9].mvp = GLKMatrix4Multiply(perspectiveMatrix, staticObjects[9].mvp);
           //    NSLog(@"Object MVP ");
     }
-//
-//    if (theObstacle)
-//    {
-//        Obstacle* obs = box2d.chunk.obs;
-//
-//        // Set up VAO/VBO for obstacle
-//        glGenVertexArrays(1, &obstacleVertexArray);
-//        glBindVertexArray(obstacleVertexArray);
-//        GLuint vertexBuffers[2];
-//        glGenBuffers(2, vertexBuffers);
-//
-//
-//        // VBO for vertex positions
-//        glBindBuffer(GL_ARRAY_BUFFER, vertexBuffers[0]);
-//        GLfloat vertPos[18];    // 2 triangles x 3 vertices/triangle x 3 coords (x,y,z) per vertex
-//        int k = 0;
-//        numObstacleVerts = 0;
-//        vertPos[k++] = theObstacle->x - (obs.width * SCREEN_BOUNDS_X)/2;
-//        vertPos[k++] = theObstacle->y + (obs.height * SCREEN_BOUNDS_Y)/2;
-//        vertPos[k++] = 10;  // z-value is always set to same value since 2D
-//        numObstacleVerts++;
-//        vertPos[k++] = theObstacle->x + (obs.width * SCREEN_BOUNDS_X)/2;
-//        vertPos[k++] = theObstacle->y + (obs.height * SCREEN_BOUNDS_Y)/2;
-//        vertPos[k++] = 10;
-//        numObstacleVerts++;
-//        vertPos[k++] = theObstacle->x + (obs.width * SCREEN_BOUNDS_X)/2;
-//        vertPos[k++] = theObstacle->y - (obs.height * SCREEN_BOUNDS_Y)/2;
-//        vertPos[k++] = 10;
-//        numObstacleVerts++;
-//        vertPos[k++] = theObstacle->x - (obs.width * SCREEN_BOUNDS_X)/2;
-//        vertPos[k++] = theObstacle->y + (obs.height * SCREEN_BOUNDS_Y)/2;
-//        vertPos[k++] = 10;
-//        numObstacleVerts++;
-//        vertPos[k++] = theObstacle->x + (obs.width * SCREEN_BOUNDS_X)/2;
-//        vertPos[k++] = theObstacle->y - (obs.height * SCREEN_BOUNDS_Y)/2;
-//        vertPos[k++] = 10;
-//        numObstacleVerts++;
-//        vertPos[k++] = theObstacle->x - (obs.width * SCREEN_BOUNDS_X)/2;
-//        vertPos[k++] = theObstacle->y - (obs.height * SCREEN_BOUNDS_Y)/2;
-//        vertPos[k++] = 10;
-//        numObstacleVerts++;
-//        glBufferData(GL_ARRAY_BUFFER, sizeof(vertPos), vertPos, GL_STATIC_DRAW);    // Send vertex data to VBO
-//        glEnableVertexAttribArray(ATTRIB_POSITION);
-//        glVertexAttribPointer(ATTRIB_POSITION, 3, GL_FLOAT, GL_FALSE, 3*sizeof(GLfloat), BUFFER_OFFSET(0));
-//
-//        // VBO for vertex colours
-//        GLfloat vertCol[numObstacleVerts*3];
-//        for (k=0; k<numObstacleVerts*3; k+=3)
-//        {
-//            vertCol[k] = obs.R;
-//            vertCol[k+1] = obs.G;
-//            vertCol[k+2] = obs.B;
-//        }
-//        glBindBuffer(GL_ARRAY_BUFFER, vertexBuffers[1]);
-//        glBufferData(GL_ARRAY_BUFFER, sizeof(vertCol), vertCol, GL_STATIC_DRAW);    // Send vertex data to VBO
-//        glEnableVertexAttribArray(ATTRIB_COL);
-//        glVertexAttribPointer(ATTRIB_COL, 3, GL_FLOAT, GL_FALSE, 3*sizeof(GLfloat), BUFFER_OFFSET(0));
-//
-//        glBindVertexArray(0);
-//    }
+
+    if (![ [box2d.chunk.hazards objectAtIndex:haz_top]  isEqual:[NSNull null] ]) {
+        // initialize MVP matrix for both objects to set the "camera"
+        staticObjects[8].mvp = GLKMatrix4Translate(GLKMatrix4Identity, 0.0, 0.0, -5.9);
+
+        Hazard *hz1 = [box2d.chunk.hazards objectAtIndex:haz_top];
+        // apply transformations to the ground
+        staticObjects[8].mvm = staticObjects[8].mvp = GLKMatrix4Translate(staticObjects[8].mvp, (hz1.posX-0.5) * 10 + 0.5, (hz1.posY-0.5) * 6, 0.0);
+        staticObjects[8].mvm = staticObjects[8].mvp = GLKMatrix4Rotate(staticObjects[8].mvp, 0.0, 1.0, 0.0, 1.0 );
+        staticObjects[8].mvm = staticObjects[8].mvp = GLKMatrix4Scale(staticObjects[8].mvp, hz1.width*10, hz1.height*5, 10 );
+
+        staticObjects[8].normalMatrix = GLKMatrix3InvertAndTranspose(GLKMatrix4GetMatrix3(staticObjects[8].mvp), NULL);
+        staticObjects[8].mvp = GLKMatrix4Multiply(perspectiveMatrix, staticObjects[8].mvp);
+          //    NSLog(@"Object MVP ");
+    }
+
+    if (![ [box2d.chunk.hazards objectAtIndex:haz_right]  isEqual:[NSNull null] ]) {
+        // initialize MVP matrix for both objects to set the "camera"
+        staticObjects[7].mvp = GLKMatrix4Translate(GLKMatrix4Identity, 0.0, 0.0, -5.9);
+
+        Hazard *hz1 = [box2d.chunk.hazards objectAtIndex:haz_right];
+        // apply transformations to the ground
+        staticObjects[7].mvm = staticObjects[7].mvp = GLKMatrix4Translate(staticObjects[7].mvp, (hz1.posX-0.5) * 10 + 0.5, (hz1.posY-0.5) * 6, 0.0);
+        staticObjects[7].mvm = staticObjects[7].mvp = GLKMatrix4Rotate(staticObjects[7].mvp, 0.0, 1.0, 0.0, 1.0 );
+        staticObjects[7].mvm = staticObjects[7].mvp = GLKMatrix4Scale(staticObjects[7].mvp, hz1.width*10, hz1.height*5, 10 );
+
+        staticObjects[7].normalMatrix = GLKMatrix3InvertAndTranspose(GLKMatrix4GetMatrix3(staticObjects[7].mvp), NULL);
+        staticObjects[7].mvp = GLKMatrix4Multiply(perspectiveMatrix, staticObjects[7].mvp);
+          //    NSLog(@"Object MVP ");
+    }
+
+    if (![ [box2d.chunk.hazards objectAtIndex:haz_bottom]  isEqual:[NSNull null] ]) {
+        // initialize MVP matrix for both objects to set the "camera"
+        staticObjects[6].mvp = GLKMatrix4Translate(GLKMatrix4Identity, 0.0, 0.0, -5.9);
+
+        Hazard *hz1 = [box2d.chunk.hazards objectAtIndex:haz_bottom];
+        // apply transformations to the ground
+        staticObjects[6].mvm = staticObjects[6].mvp = GLKMatrix4Translate(staticObjects[6].mvp, (hz1.posX-0.5) * 10 + 0.5, (hz1.posY-0.5) * 6, 0.0);
+        staticObjects[6].mvm = staticObjects[6].mvp = GLKMatrix4Rotate(staticObjects[6].mvp, 0.0, 1.0, 0.0, 1.0 );
+        staticObjects[6].mvm = staticObjects[6].mvp = GLKMatrix4Scale(staticObjects[6].mvp, hz1.width*10, hz1.height*5, 10 );
+
+        staticObjects[6].normalMatrix = GLKMatrix3InvertAndTranspose(GLKMatrix4GetMatrix3(staticObjects[6].mvp), NULL);
+        staticObjects[6].mvp = GLKMatrix4Multiply(perspectiveMatrix, staticObjects[6].mvp);
+          //    NSLog(@"Object MVP ");
+    }
     
     // ******** PLAYER **********
     player.mvp = GLKMatrix4Translate(GLKMatrix4Identity, 0.0, 0.0, -5.0);
@@ -549,7 +430,6 @@ enum
     modelViewMatrix = GLKMatrix4Translate(modelViewMatrix, steps, 0, 0);
     modelViewProjectionMatrix = GLKMatrix4Multiply(projectionMatrix, modelViewMatrix);
     
-    
     steps -= GAME_SPEED * box2d.slowFactor;
 }
 
@@ -577,6 +457,23 @@ enum
         [self drawRenderObject:staticObjects[i]];
     }
     
+    //  -- hazards
+    if (![ [box2d.chunk.hazards objectAtIndex:haz_left]  isEqual:[NSNull null] ]) {
+        [self drawRenderObject:staticObjects[9]];
+    }
+
+    if (![ [box2d.chunk.hazards objectAtIndex:haz_top]  isEqual:[NSNull null] ]) {
+        [self drawRenderObject:staticObjects[8]];
+    }
+
+    if (![ [box2d.chunk.hazards objectAtIndex:haz_right]  isEqual:[NSNull null] ]) {
+        [self drawRenderObject:staticObjects[7]];
+    }
+
+    if (![ [box2d.chunk.hazards objectAtIndex:haz_bottom]  isEqual:[NSNull null] ]) {
+        [self drawRenderObject:staticObjects[6]];
+    }
+    
     // *************** DRAW STEEL OBJECTS *****************
     
     glActiveTexture(GL_TEXTURE0);
@@ -590,10 +487,7 @@ enum
     // Retrieve brick and ball positions from Box2D
     auto objPosList = static_cast<std::map<const char *, b2Vec2> *>([box2d GetObjectPositions]);
     b2Vec2 *theBall = (((*objPosList).find("ball") == (*objPosList).end()) ? nullptr : &(*objPosList)["ball"]);
-    b2Vec2 *theLeftWall = (((*objPosList).find("leftwall") == (*objPosList).end()) ? nullptr : &(*objPosList)["leftwall"]);
     b2Vec2 *theObstacle = (((*objPosList).find("obstacle") == (*objPosList).end()) ? nullptr : &(*objPosList)["obstacle"]);
-    b2Vec2 *theGround = (((*objPosList).find("ground") == (*objPosList).end()) ? nullptr : &(*objPosList)["ground"]);
-    b2Vec2 *theRoof = (((*objPosList).find("roof") == (*objPosList).end()) ? nullptr : &(*objPosList)["roof"]);
 #ifdef LOG_TO_CONSOLE
     if (theBall)
         printf("Ball: (%5.3f,%5.3f)\t", theBall->x, theBall->y);
@@ -612,19 +506,9 @@ enum
     if(theObstacle && numObstacleVerts > 0)
         glDrawArrays(GL_TRIANGLES, 0, numObstacleVerts);
     
-    // *************** PLAYER *****************
-    glUniform4fv(uniforms[UNIFORM_LIGHT_DIFFUSE_POSITION], 1, player.diffuseLightPosition.v);
-    glUniform4fv(uniforms[UNIFORM_LIGHT_DIFFUSE_COMPONENT], 1, player.diffuseComponent.v);
-    glUniformMatrix4fv(uniforms[UNIFORM_MODELVIEWPROJECTION_MATRIX], 1, FALSE, (const float *)player.mvp.m);
-    glUniformMatrix4fv(uniforms[UNIFORM_MODELVIEW_MATRIX], 1, FALSE, (const float *)player.mvm.m);
-    glUniformMatrix3fv(uniforms[UNIFORM_NORMAL_MATRIX], 1, 0, player.normalMatrix.m);
-    
-    glBindVertexArray(player.vao);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, player.ibo);
-    glDrawElements(GL_TRIANGLES, (GLsizei)player.numIndices, GL_UNSIGNED_INT, 0);
-    
 }
 
+// Display a render object 
 -(void)drawRenderObject:(RenderObject) obj {
     glUniform1i(uniforms[UNIFORM_USE_TEXTURE], 1);
     glUniform4fv(uniforms[UNIFORM_LIGHT_DIFFUSE_POSITION], 1, obj.diffuseLightPosition.v);
@@ -638,7 +522,7 @@ enum
     glDrawElements(GL_TRIANGLES, (GLsizei)obj.numIndices, GL_UNSIGNED_INT, 0);
 }
 
-
+// Setup vertex and fragment shader in an OpenGL program object
 - (bool)setupShaders
 {
     // Load shaders

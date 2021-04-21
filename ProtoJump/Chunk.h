@@ -17,7 +17,7 @@
 
 #define TOTAL_HAZ_SLOTS 4
 #define MAX_HAZ         3
-#define HAZ_CHANCE      25
+#define HAZ_CHANCE      50
 #define MIN_HAZ_RATIO   5.0
 #define MAX_HAZ_RATIO   2.0
 

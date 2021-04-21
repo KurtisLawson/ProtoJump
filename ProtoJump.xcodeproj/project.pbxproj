@@ -70,6 +70,9 @@
 		977896D8261D332200DE0817 /* steelTemp.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 977896D5261D332200DE0817 /* steelTemp.jpg */; };
 		977896E1261D33CB00DE0817 /* AnimatedModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 977896DD261D33CB00DE0817 /* AnimatedModel.m */; };
 		977896E2261D33CB00DE0817 /* Joint.m in Sources */ = {isa = PBXBuildFile; fileRef = 977896E0261D33CB00DE0817 /* Joint.m */; };
+		C6FEB5AC263001FB0052D809 /* BGM-Speed.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = C6FEB5A9263001FB0052D809 /* BGM-Speed.mp3 */; };
+		C6FEB5AD263001FB0052D809 /* SFX-Death.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = C6FEB5AA263001FB0052D809 /* SFX-Death.mp3 */; };
+		C6FEB5AE263001FB0052D809 /* SFX-Jump.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = C6FEB5AB263001FB0052D809 /* SFX-Jump.mp3 */; };
 		FAA2C3D725EF4F1500209DBD /* Obstacle.mm in Sources */ = {isa = PBXBuildFile; fileRef = FAA2C3D625EF4F1500209DBD /* Obstacle.mm */; };
 		FABBD9FC261BF94400AB56DE /* Hazard.mm in Sources */ = {isa = PBXBuildFile; fileRef = FABBD9FB261BF94400AB56DE /* Hazard.mm */; };
 		FAE809D2261CCB11000F0230 /* Chunk.mm in Sources */ = {isa = PBXBuildFile; fileRef = FAE809D1261CCB11000F0230 /* Chunk.mm */; };
@@ -196,6 +199,9 @@
 		977896DE261D33CB00DE0817 /* Joint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Joint.h; sourceTree = "<group>"; };
 		977896DF261D33CB00DE0817 /* AnimatedModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnimatedModel.h; sourceTree = "<group>"; };
 		977896E0261D33CB00DE0817 /* Joint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Joint.m; sourceTree = "<group>"; };
+		C6FEB5A9263001FB0052D809 /* BGM-Speed.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "BGM-Speed.mp3"; sourceTree = "<group>"; };
+		C6FEB5AA263001FB0052D809 /* SFX-Death.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "SFX-Death.mp3"; sourceTree = "<group>"; };
+		C6FEB5AB263001FB0052D809 /* SFX-Jump.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "SFX-Jump.mp3"; sourceTree = "<group>"; };
 		FAA2C3D625EF4F1500209DBD /* Obstacle.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = Obstacle.mm; sourceTree = "<group>"; };
 		FAA2C3DB25EF506800209DBD /* Obstacle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Obstacle.h; sourceTree = "<group>"; };
 		FABBD9FA261BF90300AB56DE /* Hazard.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Hazard.h; sourceTree = "<group>"; };
@@ -391,6 +397,7 @@
 		974B070225DEF8AE00C8679A /* ProtoJump */ = {
 			isa = PBXGroup;
 			children = (
+				C6FEB5A8263001FB0052D809 /* Sounds */,
 				977896DC261D33CB00DE0817 /* Animator */,
 				784B66B325EB0FA600001842 /* Box2D */,
 				784B674B25EB158600001842 /* CBox2D.h */,
@@ -434,6 +441,17 @@
 			);
 			path = Animator;
 			sourceTree = "<group>";
+		};
+		C6FEB5A8263001FB0052D809 /* Sounds */ = {
+			isa = PBXGroup;
+			children = (
+				C6FEB5A9263001FB0052D809 /* BGM-Speed.mp3 */,
+				C6FEB5AA263001FB0052D809 /* SFX-Death.mp3 */,
+				C6FEB5AB263001FB0052D809 /* SFX-Jump.mp3 */,
+			);
+			name = Sounds;
+			path = ProtoJump/Sounds;
+			sourceTree = SOURCE_ROOT;
 		};
 /* End PBXGroup section */
 
@@ -496,7 +514,10 @@
 				784B675625EB158600001842 /* Shader.vsh in Resources */,
 				974B071025DEF8AF00C8679A /* LaunchScreen.storyboard in Resources */,
 				977896D7261D332200DE0817 /* blueEnergy.jpg in Resources */,
+				C6FEB5AD263001FB0052D809 /* SFX-Death.mp3 in Resources */,
+				C6FEB5AE263001FB0052D809 /* SFX-Jump.mp3 in Resources */,
 				974B070D25DEF8AF00C8679A /* Assets.xcassets in Resources */,
+				C6FEB5AC263001FB0052D809 /* BGM-Speed.mp3 in Resources */,
 				974B070B25DEF8AE00C8679A /* Main.storyboard in Resources */,
 				784B675725EB158600001842 /* Shader.fsh in Resources */,
 				977896D6261D332200DE0817 /* steelAlt.jpg in Resources */,
