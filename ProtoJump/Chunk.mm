@@ -15,6 +15,7 @@
 -(instancetype)init{
     self = [super init];
     if(self){
+        // Initialize the obstacle and 4 hazards in array
         obs = [[Obstacle alloc]init];
         hazards = [[NSMutableArray alloc]init];
         [hazards addObject:[NSNull null]];
@@ -27,19 +28,22 @@
 }
 
 -(void)randomize{
-    [obs randomize];
-    [self randomizeHaz];
+    [obs randomize]; // Randomize Obstacle
+    [self randomizeHaz]; // Randomize Hazards relative to obstacle
 }
 
 -(void)randomizeHaz {
-    //Create Hazards and scale them
-    int count = 0;
-    bool hazExists = [self rollForTrue:HAZ_CHANCE];
+    // Create Hazards and scale them based on obstacle
+    int count = 0; // How many hazards have been created
+    bool hazExists = [self rollForTrue:HAZ_CHANCE]; // Chance for hazard creation
     
+    // For each slot, randomize hazard creation
     for (int i = 0; i < TOTAL_HAZ_SLOTS; i++) {
+        // If under max hazards allowed, and hazard chance is true
         if(count < MAX_HAZ && hazExists){
             Hazard* hz = [[Hazard alloc]init];
             
+            // Orient the hazard horizontally or vertically based on location on obstacle
             if(i%2 == 0){
                 [hz vRandomize:obs.height / MIN_HAZ_RATIO
                               :obs.height / MAX_HAZ_RATIO];
@@ -48,15 +52,12 @@
                               :obs.width / MIN_HAZ_RATIO];
             }
             
+            // Add new obstacle to array
             [hazards replaceObjectAtIndex:i withObject:hz];
             count++;
         } else [hazards replaceObjectAtIndex:i withObject:[NSNull null]];
         
-        if([hazards objectAtIndex:i] != NSNull.null){
-            Hazard* tmp = [hazards objectAtIndex:i];
-            NSLog(@"Hazard #%d exists. Height: %f Width: %f", i, tmp.height, tmp.width);
-        }
-        
+        // reroll chance
         hazExists = [self rollForTrue:HAZ_CHANCE];
     }
     
@@ -96,13 +97,11 @@
 
 -(bool)rollForTrue:(int)percentage{
     int randy = arc4random_uniform(100);
-    NSLog(@"Randy is a h o o  %d", randy);
     return randy < percentage;
 }
 
 -(float)randomDec:(float)min :(float)max {
-    float rand = (float) arc4random() / UINT32_MAX * (max - min) + min;
-    NSLog(@"Random Dec is %f",rand);
+    float rand = (float) arc4random() / FLT_MAX * (max - min) + min;
     return rand;
 }
 

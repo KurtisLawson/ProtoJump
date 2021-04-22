@@ -52,10 +52,10 @@ public:
                     [parentObj RegisterHit:@"Obstacle"];    // assumes RegisterHit is a callback function to register collision
                 }
                 if([bodyData->objectName isEqualToString:@"LeftWall"]){
-                    [parentObj RegisterHit:@"LeftWall"];    // call registerhit to signal that left wall was hit
+                    [parentObj RegisterHit:@"Hazard"];    // call registerhit to signal that left wall was hit
                 }
                 if([bodyData->objectName isEqualToString:@"Ground"]){
-                    [parentObj RegisterHit:@"Ground"];    // call registerhit to signal that left wall was hit
+                    [parentObj RegisterHit:@"Hazard"];    // call registerhit to signal that left wall was hit
                 }
                 if([bodyData->objectName isEqualToString:@"Hazard"]){
                     [parentObj RegisterHit:@"Hazard"];
@@ -74,15 +74,10 @@ public:
     // Box2D-specific objects
     b2Vec2 *gravity;
     b2World *world;
-    //Obstacle *obstacle;
-
-    //b2BodyDef *groundBodyDef;
-    //b2Body *groundBody;
-    //b2PolygonShape *groundBox;
 
     b2Body *theLeftWall, *theGround, *thePlayer, *theRoof, *theObstacle, *theLHazard, *theTHazard, *theRHazard, *theBHazard;
     
-    UserData *playerData, *wallData, *obstacleData, *groundData, *lHazardData, *tHazardData, *rHazardData, *bHazardData;
+    UserData *playerData, *wallData, *obstacleData, *groundData, *hazardData;
     
     CContactListener *contactListener;
     CGFloat width, height;
@@ -139,7 +134,8 @@ public:
         contactListener = new CContactListener();
         world->SetContactListener(contactListener);
         
-        // Set up the brick and ball objects for Box2D
+        // Set up the objects for Box2D
+        // Left wall definition
         b2BodyDef leftwallBodyDef;
         leftwallBodyDef.type = b2_kinematicBody;
         leftwallBodyDef.position.Set(Left_Wall_POS_X, Left_Wall_POS_Y);
@@ -196,8 +192,8 @@ public:
         //Obstacle definition
         b2BodyDef obstacleBodyDef;
         obstacleBodyDef.type = b2_staticBody;
-        float posX = [chunk toPixel:chunk.obs.posX :SCREEN_BOUNDS_X + SCREEN_OFFSET];
-        float posY = [chunk toPixel:chunk.obs.posY :SCREEN_BOUNDS_Y];
+        float posX = [chunk toPixel:chunk.obs.posX :SCREEN_BOUNDS_X + SCREEN_OFFSET]; // Create to the right of the screen
+        float posY = [chunk toPixel:chunk.obs.posY :SCREEN_BOUNDS_Y]; // Create based on random position
         obstacleBodyDef.position.Set(posX, posY);
         theObstacle = world->CreateBody(&obstacleBodyDef);
         obstacleData = new UserData(self, @"Obstacle");
@@ -220,21 +216,22 @@ public:
             }
         }
         
-        //Left Hazard definition
-        if(![[chunk.hazards objectAtIndex:0]  isEqual:[NSNull null]]){
-            Hazard* hz = [chunk.hazards objectAtIndex:0];
+        // Hazard Definitions
+        // Left Hazard definition
+        if(![[chunk.hazards objectAtIndex:haz_left]  isEqual:[NSNull null]]){
+            Hazard* hz = [chunk.hazards objectAtIndex:haz_left];
             b2BodyDef hazardBodyDef;
             hazardBodyDef.type = b2_staticBody;
             float posX = [chunk toPixel:hz.posX :SCREEN_BOUNDS_X + SCREEN_OFFSET];
             float posY = [chunk toPixel:hz.posY :SCREEN_BOUNDS_Y];
             hazardBodyDef.position.Set(posX, posY);
             theLHazard = world->CreateBody(&hazardBodyDef);
-            lHazardData = new UserData(self, @"Hazard");
+            hazardData = new UserData(self, @"Hazard");
             
             if (theLHazard){
                 float width = [chunk toPixel:hz.width :SCREEN_BOUNDS_X];
                 float height = [chunk toPixel:hz.height :SCREEN_BOUNDS_Y];
-                theLHazard->SetUserData((void *) lHazardData);
+                theLHazard->SetUserData((void *) hazardData);
                 theLHazard->SetAwake(false);
                 b2PolygonShape staticBox;
                 staticBox.SetAsBox(width/2, height/2);
@@ -248,20 +245,19 @@ public:
         }
         
         //Top Hazard definition
-        if(![[chunk.hazards objectAtIndex:1]  isEqual:[NSNull null]]){
-            Hazard* hz = [chunk.hazards objectAtIndex:1];
+        if(![[chunk.hazards objectAtIndex:haz_top]  isEqual:[NSNull null]]){
+            Hazard* hz = [chunk.hazards objectAtIndex:haz_top];
             b2BodyDef hazardBodyDef;
             hazardBodyDef.type = b2_staticBody;
             float posX = [chunk toPixel:hz.posX :SCREEN_BOUNDS_X + SCREEN_OFFSET];
             float posY = [chunk toPixel:hz.posY :SCREEN_BOUNDS_Y];
             hazardBodyDef.position.Set(posX, posY);
             theTHazard = world->CreateBody(&hazardBodyDef);
-            tHazardData = new UserData(self, @"Hazard");
             
             if (theTHazard){
                 float width = [chunk toPixel:hz.width :SCREEN_BOUNDS_X + SCREEN_OFFSET];
                 float height = [chunk toPixel:hz.height :SCREEN_BOUNDS_Y];
-                theTHazard->SetUserData((void *) tHazardData);
+                theTHazard->SetUserData((void *) hazardData);
                 theTHazard->SetAwake(false);
                 b2PolygonShape staticBox;
                 staticBox.SetAsBox(width/2, height/2);
@@ -275,20 +271,19 @@ public:
         }
         
         //Right Hazard definition
-        if(![[chunk.hazards objectAtIndex:2]  isEqual:[NSNull null]]){
-            Hazard* hz = [chunk.hazards objectAtIndex:2];
+        if(![[chunk.hazards objectAtIndex:haz_right]  isEqual:[NSNull null]]){
+            Hazard* hz = [chunk.hazards objectAtIndex:haz_right];
             b2BodyDef hazardBodyDef;
             hazardBodyDef.type = b2_staticBody;
             float posX = [chunk toPixel:hz.posX :SCREEN_BOUNDS_X + SCREEN_OFFSET];
             float posY = [chunk toPixel:hz.posY :SCREEN_BOUNDS_Y];
             hazardBodyDef.position.Set(posX, posY);
             theRHazard = world->CreateBody(&hazardBodyDef);
-            rHazardData = new UserData(self, @"Hazard");
             
             if (theRHazard){
                 float width = [chunk toPixel:hz.width :SCREEN_BOUNDS_X + SCREEN_OFFSET];
                 float height = [chunk toPixel:hz.height :SCREEN_BOUNDS_Y];
-                theRHazard->SetUserData((void *) rHazardData);
+                theRHazard->SetUserData((void *) hazardData);
                 theRHazard->SetAwake(false);
                 b2PolygonShape staticBox;
                 staticBox.SetAsBox(width/2, height/2);
@@ -302,20 +297,19 @@ public:
         }
         
         //Bottom Hazard definition
-        if(![[chunk.hazards objectAtIndex:3]  isEqual:[NSNull null]]){
-            Hazard* hz = [chunk.hazards objectAtIndex:3];
+        if(![[chunk.hazards objectAtIndex:haz_bottom]  isEqual:[NSNull null]]){
+            Hazard* hz = [chunk.hazards objectAtIndex:haz_bottom];
             b2BodyDef hazardBodyDef;
             hazardBodyDef.type = b2_staticBody;
             float posX = [chunk toPixel:hz.posX :SCREEN_BOUNDS_X + SCREEN_OFFSET];
             float posY = [chunk toPixel:hz.posY :SCREEN_BOUNDS_Y];
             hazardBodyDef.position.Set(posX, posY);
             theBHazard = world->CreateBody(&hazardBodyDef);
-            bHazardData = new UserData(self, @"Hazard");
             
             if (theBHazard){
                 float width = [chunk toPixel:hz.width :SCREEN_BOUNDS_X + SCREEN_OFFSET];
                 float height = [chunk toPixel:hz.height :SCREEN_BOUNDS_Y];
-                theBHazard->SetUserData((void *) bHazardData);
+                theBHazard->SetUserData((void *) hazardData);
                 theBHazard->SetAwake(false);
                 b2PolygonShape staticBox;
                 staticBox.SetAsBox(width/2, height/2);
@@ -360,8 +354,6 @@ public:
             if(player.jumpCount > player.maxJump){
                 //if player touches a non hazardous obstacle,reset jump
                 if(player->state == grounded || player->state == leftCollision || player->state == rightCollision){
-                    printf("jump reset");
-                    //player.jumpTimer = 0;
                     player.jumpCount = 0;
                 }
             }
@@ -387,11 +379,9 @@ public:
             thePlayer->SetGravityScale(1);
         }
     }
-    // Check if it is time yet to drop the brick, and if so
-    //  call SetAwake()
+
+    
     totalElapsedTime += elapsedTime;
-    if (theLeftWall)
-        theLeftWall->SetAwake(true);
     
     if(ballHitLeftWall){
         world->DestroyBody(thePlayer);
@@ -400,39 +390,35 @@ public:
         dead = true;
     }
     
-    // If the last collision test was positive,
-    //  stop the ball and destroy the brick
     if (ballHitObstacle)
     {
         ballHitObstacle = false;
     }
-    
-    if(theObstacle)
-        theObstacle->SetAwake(true);
 
 
     //Makes the ground and roof in sync of viewport
     if (theGround){
         theGround->SetTransform(b2Vec2(400 + step/SCREEN_BOUNDS_X - step,0), theGround->GetAngle());
-        theGround->SetAwake(true);
     }
     
     if (theRoof){
         theRoof->SetTransform(b2Vec2(400 + step/SCREEN_BOUNDS_X - step,SCREEN_BOUNDS_Y), theGround->GetAngle());
-        theRoof->SetAwake(true);
     }
     
     if(theLeftWall){
         theLeftWall->SetTransform(b2Vec2(0 + step/SCREEN_BOUNDS_X - step,SCREEN_BOUNDS_Y/2), theLeftWall->GetAngle());
     }
 
-    // Updating Obstacle
+    // Updating Chunk
+    // If chunk has reached the end of the screen create new one
     if((int)theGround->GetPosition().x - SCREEN_BOUNDS_X/2 >= theObstacle->GetPosition().x) {
+        // Randomize for new chunk
         [chunk randomize];
         
+        // Obstacle update
+        // Place to the right of the screen
         float posY = [chunk toPixel:chunk.obs.posY :SCREEN_BOUNDS_Y];
         float posX = theGround->GetPosition().x + SCREEN_BOUNDS_X/2 + SCREEN_OFFSET;
-        printf("Obstacle posX: %f posY: %f \n", posX, posY);
         b2BodyDef obstacleBodyDef;
         obstacleBodyDef.type = b2_staticBody;
         obstacleBodyDef.position.Set(posX, posY);
@@ -445,7 +431,6 @@ public:
             b2PolygonShape staticBox;
             float width = [chunk toPixel:chunk.obs.width :SCREEN_BOUNDS_X];
             float height = [chunk toPixel:chunk.obs.height :SCREEN_BOUNDS_Y];
-            printf("Obstacle width: %f height: %f \n", width, height);
             staticBox.SetAsBox(width/2, height/2);
             b2FixtureDef fixtureDef;
             fixtureDef.shape = &staticBox;
@@ -455,9 +440,11 @@ public:
             theObstacle->CreateFixture(&fixtureDef);
         }
         
-        //Hazards
-        if(![[chunk.hazards objectAtIndex:0]  isEqual:[NSNull null]]){
-            Hazard* hz = [chunk.hazards objectAtIndex:0];
+        // Hazards Update
+        // If a Hazard exists on the side being checked, create a body for it.
+        // Left Hazard Definition
+        if(![[chunk.hazards objectAtIndex:haz_left]  isEqual:[NSNull null]]){
+            Hazard* hz = [chunk.hazards objectAtIndex:haz_left];
             posY = [chunk toPixel:hz.posY :SCREEN_BOUNDS_Y];
             posX = [chunk toPixel:hz.posX :SCREEN_BOUNDS_X] + theGround->GetPosition().x - SCREEN_BOUNDS_X/2 + SCREEN_OFFSET;
             b2BodyDef hazardBodyDef;
@@ -466,7 +453,7 @@ public:
             theLHazard = world->CreateBody(&hazardBodyDef);
             
             if(theLHazard){
-                theLHazard->SetUserData((void*) lHazardData);
+                theLHazard->SetUserData((void*) hazardData);
                 theLHazard->SetAwake(false);
                 b2PolygonShape staticBox;
                 float width = [chunk toPixel:hz.width :SCREEN_BOUNDS_X];
@@ -480,23 +467,22 @@ public:
                 theLHazard->CreateFixture(&fixtureDef);
             }
         }
-        if(![[chunk.hazards objectAtIndex:1]  isEqual:[NSNull null]]){
-            Hazard* hz = [chunk.hazards objectAtIndex:1];
+        // Top Hazard Definition
+        if(![[chunk.hazards objectAtIndex:haz_top]  isEqual:[NSNull null]]){
+            Hazard* hz = [chunk.hazards objectAtIndex:haz_top];
             posY = [chunk toPixel:hz.posY :SCREEN_BOUNDS_Y];
             posX = [chunk toPixel:hz.posX :SCREEN_BOUNDS_X] + theGround->GetPosition().x - SCREEN_BOUNDS_X/2 + SCREEN_OFFSET;
-            //printf("Hazard posX: %f posY: %f \n", posX, posY);
             b2BodyDef hazardBodyDef;
             hazardBodyDef.type = b2_staticBody;
             hazardBodyDef.position.Set(posX, posY);
             theTHazard = world->CreateBody(&hazardBodyDef);
             
             if(theTHazard){
-                theTHazard->SetUserData((void*) tHazardData);
+                theTHazard->SetUserData((void*) hazardData);
                 theTHazard->SetAwake(false);
                 b2PolygonShape staticBox;
                 float width = [chunk toPixel:hz.width :SCREEN_BOUNDS_X];
                 float height = [chunk toPixel:hz.height :SCREEN_BOUNDS_Y];
-                //printf("Hazard width: %f height: %f \n", width, height);
                 staticBox.SetAsBox(width/2, height/2);
                 b2FixtureDef fixtureDef;
                 fixtureDef.shape = &staticBox;
@@ -506,23 +492,22 @@ public:
                 theTHazard->CreateFixture(&fixtureDef);
             }
         }
-        if(![[chunk.hazards objectAtIndex:2]  isEqual:[NSNull null]]){
-            Hazard* hz = [chunk.hazards objectAtIndex:2];
+        // Right Hazard Defitnition
+        if(![[chunk.hazards objectAtIndex:haz_right]  isEqual:[NSNull null]]){
+            Hazard* hz = [chunk.hazards objectAtIndex:haz_right];
             posY = [chunk toPixel:hz.posY :SCREEN_BOUNDS_Y];
             posX = [chunk toPixel:hz.posX :SCREEN_BOUNDS_X] + theGround->GetPosition().x - SCREEN_BOUNDS_X/2 + SCREEN_OFFSET;
-            //printf("Hazard posX: %f posY: %f \n", posX, posY);
             b2BodyDef hazardBodyDef;
             hazardBodyDef.type = b2_staticBody;
             hazardBodyDef.position.Set(posX, posY);
             theRHazard = world->CreateBody(&hazardBodyDef);
             
             if(theRHazard){
-                theRHazard->SetUserData((void*) rHazardData);
+                theRHazard->SetUserData((void*) hazardData);
                 theRHazard->SetAwake(false);
                 b2PolygonShape staticBox;
                 float width = [chunk toPixel:hz.width :SCREEN_BOUNDS_X];
                 float height = [chunk toPixel:hz.height :SCREEN_BOUNDS_Y];
-                //printf("Hazard width: %f height: %f \n", width, height);
                 staticBox.SetAsBox(width/2, height/2);
                 b2FixtureDef fixtureDef;
                 fixtureDef.shape = &staticBox;
@@ -532,23 +517,22 @@ public:
                 theRHazard->CreateFixture(&fixtureDef);
             }
         }
-        if(![[chunk.hazards objectAtIndex:3]  isEqual:[NSNull null]]){
-            Hazard* hz = [chunk.hazards objectAtIndex:3];
+        // Bottom Hazard Definition
+        if(![[chunk.hazards objectAtIndex:haz_bottom]  isEqual:[NSNull null]]){
+            Hazard* hz = [chunk.hazards objectAtIndex:haz_bottom];
             posY = [chunk toPixel:hz.posY :SCREEN_BOUNDS_Y];
             posX = [chunk toPixel:hz.posX :SCREEN_BOUNDS_X] + theGround->GetPosition().x - SCREEN_BOUNDS_X/2 + SCREEN_OFFSET;
-            //printf("Hazard posX: %f posY: %f \n", posX, posY);
             b2BodyDef hazardBodyDef;
             hazardBodyDef.type = b2_staticBody;
             hazardBodyDef.position.Set(posX, posY);
             theBHazard = world->CreateBody(&hazardBodyDef);
             
             if(theBHazard){
-                theBHazard->SetUserData((void*) bHazardData);
+                theBHazard->SetUserData((void*) hazardData);
                 theBHazard->SetAwake(false);
                 b2PolygonShape staticBox;
                 float width = [chunk toPixel:hz.width :SCREEN_BOUNDS_X];
                 float height = [chunk toPixel:hz.height :SCREEN_BOUNDS_Y];
-                //printf("Hazard width: %f height: %f \n", width, height);
                 staticBox.SetAsBox(width/2, height/2);
                 b2FixtureDef fixtureDef;
                 fixtureDef.shape = &staticBox;
@@ -560,26 +544,28 @@ public:
         }
         
     } else {
+        // Update the position in obstacle for Renderer.
         float pixelPos = theObstacle->GetPosition().x - (theGround->GetPosition().x - SCREEN_BOUNDS_X/2);
         chunk.obs.posX = [chunk toDec:pixelPos :SCREEN_BOUNDS_X + SCREEN_OFFSET];
         
-        if(![[chunk.hazards objectAtIndex:0]  isEqual:[NSNull null]]) {
-            Hazard* hz = [chunk.hazards objectAtIndex:0];
+        // Update position for each hazard if it exists for Renderer.
+        if(![[chunk.hazards objectAtIndex:haz_left]  isEqual:[NSNull null]]) {
+            Hazard* hz = [chunk.hazards objectAtIndex:haz_left];
             pixelPos = theLHazard->GetPosition().x -(theGround->GetPosition().x - SCREEN_BOUNDS_X/2);
             hz.posX = [chunk toDec:pixelPos :SCREEN_BOUNDS_X + SCREEN_OFFSET];
         }
-        if(![[chunk.hazards objectAtIndex:1]  isEqual:[NSNull null]]) {
-            Hazard* hz = [chunk.hazards objectAtIndex:1];
+        if(![[chunk.hazards objectAtIndex:haz_top]  isEqual:[NSNull null]]) {
+            Hazard* hz = [chunk.hazards objectAtIndex:haz_top];
             pixelPos = theTHazard->GetPosition().x -(theGround->GetPosition().x - SCREEN_BOUNDS_X/2);
             hz.posX = [chunk toDec:pixelPos :SCREEN_BOUNDS_X + SCREEN_OFFSET];
         }
-        if(![[chunk.hazards objectAtIndex:2]  isEqual:[NSNull null]]) {
-            Hazard* hz = [chunk.hazards objectAtIndex:2];
+        if(![[chunk.hazards objectAtIndex:haz_right]  isEqual:[NSNull null]]) {
+            Hazard* hz = [chunk.hazards objectAtIndex:haz_right];
             pixelPos = theRHazard->GetPosition().x -(theGround->GetPosition().x - SCREEN_BOUNDS_X/2);
             hz.posX = [chunk toDec:pixelPos :SCREEN_BOUNDS_X + SCREEN_OFFSET];
         }
-        if(![[chunk.hazards objectAtIndex:3]  isEqual:[NSNull null]]) {
-            Hazard* hz = [chunk.hazards objectAtIndex:3];
+        if(![[chunk.hazards objectAtIndex:haz_bottom]  isEqual:[NSNull null]]) {
+            Hazard* hz = [chunk.hazards objectAtIndex:haz_bottom];
             pixelPos = theBHazard->GetPosition().x -(theGround->GetPosition().x - SCREEN_BOUNDS_X/2);
             hz.posX = [chunk toDec:pixelPos :SCREEN_BOUNDS_X + SCREEN_OFFSET];
         }
@@ -608,18 +594,14 @@ public:
 //Check the name of the object when the player collides with that object
 -(void)RegisterHit:(NSString *) objectName
 {
+    // Set player collision state based on face collided with.
+    // Reset jump counter.
     if([objectName  isEqual: @"Obstacle"]){
         [player checkCollision:theObstacle->GetPosition().x :theObstacle->GetPosition().y :chunk.obs.width :chunk.obs.height];
         ballHitObstacle = true;
     }
-    if([objectName  isEqual: @"LeftWall"]){
-        ballHitLeftWall = true;
-    }
-    if([objectName  isEqual: @"Ground"]){
-//        player->state = grounded;
-//        player.jumpCount = 0;
-        ballHitLeftWall = true;
-    }
+    
+    // Player death on contact with Left Wall, Ground, or Hazards
     if([objectName isEqual:@"Hazard"])
     {
         ballHitLeftWall = true;
@@ -645,8 +627,6 @@ public:
 {
     thePlayer->SetLinearVelocity(b2Vec2(0, 0));
     
-//    [SetTargetVector:posX :posY];
-    
     // Curate ball Pos value to be scaled to screen space.
     b2Vec2 currentBallPos = thePlayer->GetPosition();
     currentBallPos.x = ((currentBallPos.x + step) / SCREEN_BOUNDS_X);
@@ -661,8 +641,6 @@ public:
     float vectorMagnitude = sqrt((pow(xDir, 2) + pow(yDir, 2)));
     xDir = xDir / vectorMagnitude;
     yDir = yDir / vectorMagnitude;
-    
-    //printf("New tap, velocity targer %4.2f, %4.2f...\n", xDir, yDir);
 }
 
 // Update current position vector
@@ -676,7 +654,6 @@ public:
     currentBallPos.y = -((currentBallPos.y / SCREEN_BOUNDS_Y) - 1);
     
     // Direction will be the vector between the two curated points.
-    
     xDir = posX - currentBallPos.x;
     yDir = currentBallPos.y - posY;
     
@@ -684,8 +661,6 @@ public:
     float vectorMagnitude = sqrt((pow(xDir, 2) + pow(yDir, 2)));
     xDir = xDir / vectorMagnitude;
     yDir = yDir / vectorMagnitude;
-    
-    //printf("Updating Velocity Target to %4.2f, %4.2f..\n", xDir, yDir);
 }
 
 //
@@ -695,6 +670,7 @@ public:
     ballLaunched = true;
 }
 
+// Update object position list
 -(void *)GetObjectPositions
 {
     auto *objPosList = new std::map<const char *,b2Vec2>;

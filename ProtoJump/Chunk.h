@@ -14,13 +14,14 @@
 #include "Obstacle.h"
 #include "Hazard.h"
 
-
+// Chunk parameters
 #define TOTAL_HAZ_SLOTS 4
 #define MAX_HAZ         3
 #define HAZ_CHANCE      50
 #define MIN_HAZ_RATIO   5.0
 #define MAX_HAZ_RATIO   2.0
 
+// Correspodning Hazard index for hazards array
 typedef enum {
     haz_left = 0,
     haz_top,
@@ -30,11 +31,16 @@ typedef enum {
 
 @interface Chunk : NSObject {}
 
+// Reference to obstacle in this chunk
 @property Obstacle* obs;
+// Array of hazards in this chunk
 @property NSMutableArray* hazards;
 
+// Randomize the chunk
 -(void)randomize;
+// Convert relative value to pixel value
 -(float)toPixel:(float)dec :(float)pix;
+// Convert pixel value to relative value
 -(float)toDec:(float)curr :(float)pix;
 -(void)dealloc;
 
