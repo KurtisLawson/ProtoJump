@@ -8,12 +8,17 @@ import AVFoundation
 extension ViewController: GLKViewControllerDelegate {
     func glkViewControllerUpdate(_ controller: GLKViewController) {
         
+        //to ensure that when the glesrenderer is null, it doesnt check box2d variables which is also null
         if(glesRenderer != nil){
+            
                 //if the player isn't dead, update call renderer update and update score
                 if(!glesRenderer.box2d.dead){
                       glesRenderer.update()
+                    //updates the score
                       let c: String = String (format: "Score : %0.2f", glesRenderer.totalElapsedTime)
                       ScoreLabel.text = c;
+                    
+                    //updates the current jump count
                     let d: String = String(format: "Jumps Left: %0.0f", 3 - glesRenderer.box2d.player.jumpCount)
                     JumpCounter.text = d;
                 } else{
@@ -29,8 +34,9 @@ extension ViewController: GLKViewControllerDelegate {
                         HighscoreDefault.synchronize()
                     }
                     
-                      //if the player is dead then null glesRenderer, need to call dealloc on glesRenderer somehow
+                    //if the player is dead then null glesRenderer
                     glesRenderer = nil;
+                    //when the player is dead reveal the endscreen components
                     EndScoreLabel.isHidden = false;
                     EndLabel.isHidden = false;
                     EndButton.isHidden = false;
@@ -47,10 +53,13 @@ class ViewController: GLKViewController {
     private var context: EAGLContext?
     private var glesRenderer: Renderer!
     
+    //Designated Audioplayer for Background Music
     var BGMplayer:AVAudioPlayer?
+    //Designated Audioplayer for Sound Effects
     var SFXplayer:AVAudioPlayer?
     var Highscore : Float = 0.0
-
+    
+    //UI Elements from story board
     @IBOutlet weak var ScoreLabel: UILabel!
     @IBOutlet weak var HighscoreLabel: UILabel!
     @IBOutlet weak var JumpCounter: UILabel!
@@ -59,8 +68,9 @@ class ViewController: GLKViewController {
     @IBOutlet weak var EndScoreLabel: UILabel!
     internal var tapHold: UILongPressGestureRecognizer!
     
+    //when the retry button is pressed, the glesrenderer is re-initialized, labels are hidden and the
+    //longpressgesture is returned to 0
     @IBAction func onClickReset(_ sender: Any) {
-        NSLog("Retry button pressed 1");
         setupGL();
         EndLabel.isHidden = true;
         EndButton.isHidden = true;
@@ -68,6 +78,7 @@ class ViewController: GLKViewController {
         tapHold.minimumPressDuration = 0;
         
     }
+    
     private func setupGL() {
         context = EAGLContext(api: .openGLES3)
         EAGLContext.setCurrent(context)
@@ -82,33 +93,22 @@ class ViewController: GLKViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupGL()
-        playBGM()
-        //disable the endscreen on load
-        //EndButton.addTarget(self, action: Selector("EndButtonPressed"), for: .touchUpInside);
-//        let tapGesture = UITapGestureRecognizer(target: self, action: #"retry"));
-//        tapGesture.numberOfTapsRequired = 1;
-//        EndButton.addGestureRecognizer(tapGesture);
-        //self.view.bringSubviewToFront(EndButton);
+        setupGL();
+        playBGM();
+        
+       //hides the end screen UI components on startup
         EndButton.isHidden = true;
         EndLabel.isHidden = true;
         EndScoreLabel.isHidden = true;
-        //EndButton.isUserInteractionEnabled = false;
         
-        let buttonTap = UITapGestureRecognizer(target:self, action: #selector(self.onClickReset(_:)))
-        buttonTap.numberOfTouchesRequired = 1;
-        //EndButton.addGestureRecognizer(buttonTap);
+        //retry button onclick set
         EndButton.addTarget(self, action: #selector(self.onClickReset(_:)), for: .touchUpInside);
-        
         self.view.addSubview(EndButton);
         
+        //adds longpressgesturerecognizer to view
         tapHold = UILongPressGestureRecognizer(target: self, action: #selector(self.TapAndHold(_:)));
         tapHold.minimumPressDuration = 0;
-        
         self.view.addGestureRecognizer(tapHold)
-//        let singleTap = UITapGestureRecognizer(target: self, action: #selector(self.doSingleTap(_:)))
-//        singleTap.numberOfTapsRequired = 1
-//        view.addGestureRecognizer(singleTap)
         
         //Set Highscore from UserDefaults
         let HighscoreDefault = UserDefaults.standard;
@@ -119,8 +119,8 @@ class ViewController: GLKViewController {
     }
     
     @IBAction func TapAndHold(_ sender: UILongPressGestureRecognizer) {
-        // Disable input if the GameDirector
         if(glesRenderer != nil){
+            //when the player isn't dead grab inputs
             if (!glesRenderer.box2d.dead) {
         //        float xPos;
                 let tapLocation = sender.location(in: sender.view)
@@ -143,10 +143,11 @@ class ViewController: GLKViewController {
                     
                 } else if sender.state == .ended {
         //            NSLog("User has released the button - OnStateExit")
+                    if(glesRenderer.box2d.player.jumpCount < glesRenderer.box2d.player.maxJump){
+                        playSfx(soundName: "Jump");
+                    }
                     glesRenderer.box2d.slowFactor = 1;
                     glesRenderer.box2d.launchJump();
-                    playSfx(soundName: "Jump");
-
                 }
                     
             }
@@ -161,6 +162,7 @@ class ViewController: GLKViewController {
     
     //sound section
     func playBGM(){
+        //gets path to sound file
         let pathToSound = Bundle.main.path(forResource: "BGM-Speed", ofType: "mp3")!
         let url = URL(fileURLWithPath: pathToSound)
         do{
@@ -174,6 +176,7 @@ class ViewController: GLKViewController {
     }
     
     func playSfx(soundName: String){
+        //gets path to sound file
         if(soundName == "Jump"){
             let pathToSound = Bundle.main.path(forResource: "SFX-Jump", ofType: "mp3")!
             let url = URL(fileURLWithPath: pathToSound)
@@ -189,6 +192,7 @@ class ViewController: GLKViewController {
         }
         
         if(soundName == "Death"){
+            //gets path to sound file
             let pathToSound = Bundle.main.path(forResource: "SFX-Death", ofType: "mp3")!
             let url = URL(fileURLWithPath: pathToSound)
             do{
