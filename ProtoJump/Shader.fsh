@@ -2,17 +2,6 @@
 //  Copyright © Borna Noureddin. All rights reserved.
 //
 
-//#version 300 es
-//
-//precision highp float;
-//in vec4 v_color;
-//out vec4 o_fragColor;
-//
-//void main()
-//{
-//    o_fragColor = v_color;
-//}
-
 #version 300 es
 
 precision highp float;
@@ -38,12 +27,6 @@ uniform vec4 ambientComponent;
 uniform bool useFog;
 uniform bool useTexture;
 uniform bool lit;
-
-
-// Spotlight parameters.
-//uniform vec4 cameraPos;
-//uniform vec4 cameraDirection;
-//uniform float cutoff;
 
 void main()
 {
