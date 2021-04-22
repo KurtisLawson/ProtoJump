@@ -68,8 +68,17 @@
 		977896D6261D332200DE0817 /* steelAlt.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 977896D3261D332200DE0817 /* steelAlt.jpg */; };
 		977896D7261D332200DE0817 /* blueEnergy.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 977896D4261D332200DE0817 /* blueEnergy.jpg */; };
 		977896D8261D332200DE0817 /* steelTemp.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 977896D5261D332200DE0817 /* steelTemp.jpg */; };
-		977896E1261D33CB00DE0817 /* AnimatedModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 977896DD261D33CB00DE0817 /* AnimatedModel.m */; };
-		977896E2261D33CB00DE0817 /* Joint.m in Sources */ = {isa = PBXBuildFile; fileRef = 977896E0261D33CB00DE0817 /* Joint.m */; };
+		97E720202630E82C0030C211 /* RWTModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 97E720192630E82C0030C211 /* RWTModel.m */; };
+		97E720212630E82C0030C211 /* RWTBaseEffect.m in Sources */ = {isa = PBXBuildFile; fileRef = 97E7201A2630E82C0030C211 /* RWTBaseEffect.m */; };
+		97E720222630E82C0030C211 /* RWTSimpleVertex.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 97E7201C2630E82C0030C211 /* RWTSimpleVertex.glsl */; };
+		97E720232630E82C0030C211 /* RWTSimpleFragment.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 97E7201F2630E82C0030C211 /* RWTSimpleFragment.glsl */; };
+		97E720602630EA1F0030C211 /* ProtoTexture.png in Resources */ = {isa = PBXBuildFile; fileRef = 97E720592630EA1F0030C211 /* ProtoTexture.png */; };
+		97E720612630EA1F0030C211 /* model_LeapUp.m in Sources */ = {isa = PBXBuildFile; fileRef = 97E7205A2630EA1F0030C211 /* model_LeapUp.m */; };
+		97E720622630EA1F0030C211 /* RWT_LeapUp.m in Sources */ = {isa = PBXBuildFile; fileRef = 97E7205B2630EA1F0030C211 /* RWT_LeapUp.m */; };
+		97E720632630EA1F0030C211 /* model_LeapUp.mtl in Resources */ = {isa = PBXBuildFile; fileRef = 97E7205C2630EA1F0030C211 /* model_LeapUp.mtl */; };
+		97E7206C2630EA670030C211 /* AnimatedModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 97E720682630EA670030C211 /* AnimatedModel.m */; };
+		97E7206D2630EA670030C211 /* Joint.m in Sources */ = {isa = PBXBuildFile; fileRef = 97E7206B2630EA670030C211 /* Joint.m */; };
+		97E720732630F1B50030C211 /* model_LeapUp.obj in Resources */ = {isa = PBXBuildFile; fileRef = 97E720722630F1B50030C211 /* model_LeapUp.obj */; };
 		C6FEB5AC263001FB0052D809 /* BGM-Speed.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = C6FEB5A9263001FB0052D809 /* BGM-Speed.mp3 */; };
 		C6FEB5AD263001FB0052D809 /* SFX-Death.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = C6FEB5AA263001FB0052D809 /* SFX-Death.mp3 */; };
 		C6FEB5AE263001FB0052D809 /* SFX-Jump.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = C6FEB5AB263001FB0052D809 /* SFX-Jump.mp3 */; };
@@ -195,10 +204,24 @@
 		977896D3261D332200DE0817 /* steelAlt.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = steelAlt.jpg; sourceTree = "<group>"; };
 		977896D4261D332200DE0817 /* blueEnergy.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = blueEnergy.jpg; sourceTree = "<group>"; };
 		977896D5261D332200DE0817 /* steelTemp.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = steelTemp.jpg; sourceTree = "<group>"; };
-		977896DD261D33CB00DE0817 /* AnimatedModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AnimatedModel.m; sourceTree = "<group>"; };
-		977896DE261D33CB00DE0817 /* Joint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Joint.h; sourceTree = "<group>"; };
-		977896DF261D33CB00DE0817 /* AnimatedModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnimatedModel.h; sourceTree = "<group>"; };
-		977896E0261D33CB00DE0817 /* Joint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Joint.m; sourceTree = "<group>"; };
+		97E720192630E82C0030C211 /* RWTModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RWTModel.m; sourceTree = "<group>"; };
+		97E7201A2630E82C0030C211 /* RWTBaseEffect.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RWTBaseEffect.m; sourceTree = "<group>"; };
+		97E7201B2630E82C0030C211 /* RWTVertex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RWTVertex.h; sourceTree = "<group>"; };
+		97E7201C2630E82C0030C211 /* RWTSimpleVertex.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RWTSimpleVertex.glsl; sourceTree = "<group>"; };
+		97E7201D2630E82C0030C211 /* RWTBaseEffect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RWTBaseEffect.h; sourceTree = "<group>"; };
+		97E7201E2630E82C0030C211 /* RWTModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RWTModel.h; sourceTree = "<group>"; };
+		97E7201F2630E82C0030C211 /* RWTSimpleFragment.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RWTSimpleFragment.glsl; sourceTree = "<group>"; };
+		97E720592630EA1F0030C211 /* ProtoTexture.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ProtoTexture.png; sourceTree = "<group>"; };
+		97E7205A2630EA1F0030C211 /* model_LeapUp.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = model_LeapUp.m; sourceTree = "<group>"; };
+		97E7205B2630EA1F0030C211 /* RWT_LeapUp.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RWT_LeapUp.m; sourceTree = "<group>"; };
+		97E7205C2630EA1F0030C211 /* model_LeapUp.mtl */ = {isa = PBXFileReference; lastKnownFileType = file; path = model_LeapUp.mtl; sourceTree = "<group>"; };
+		97E7205E2630EA1F0030C211 /* RWT_LeapUp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RWT_LeapUp.h; sourceTree = "<group>"; };
+		97E7205F2630EA1F0030C211 /* model_LeapUp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = model_LeapUp.h; sourceTree = "<group>"; };
+		97E720682630EA670030C211 /* AnimatedModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AnimatedModel.m; sourceTree = "<group>"; };
+		97E720692630EA670030C211 /* Joint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Joint.h; sourceTree = "<group>"; };
+		97E7206A2630EA670030C211 /* AnimatedModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnimatedModel.h; sourceTree = "<group>"; };
+		97E7206B2630EA670030C211 /* Joint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Joint.m; sourceTree = "<group>"; };
+		97E720722630F1B50030C211 /* model_LeapUp.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = model_LeapUp.obj; sourceTree = "<group>"; };
 		C6FEB5A9263001FB0052D809 /* BGM-Speed.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "BGM-Speed.mp3"; sourceTree = "<group>"; };
 		C6FEB5AA263001FB0052D809 /* SFX-Death.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "SFX-Death.mp3"; sourceTree = "<group>"; };
 		C6FEB5AB263001FB0052D809 /* SFX-Jump.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "SFX-Jump.mp3"; sourceTree = "<group>"; };
@@ -397,8 +420,10 @@
 		974B070225DEF8AE00C8679A /* ProtoJump */ = {
 			isa = PBXGroup;
 			children = (
+				97E720582630EA1F0030C211 /* Models */,
+				97E720182630E82C0030C211 /* RWTModels */,
+				97E720672630EA670030C211 /* Animator */,
 				C6FEB5A8263001FB0052D809 /* Sounds */,
-				977896DC261D33CB00DE0817 /* Animator */,
 				784B66B325EB0FA600001842 /* Box2D */,
 				784B674B25EB158600001842 /* CBox2D.h */,
 				784B674F25EB158600001842 /* CBox2D.mm */,
@@ -431,13 +456,41 @@
 			path = ProtoJump;
 			sourceTree = "<group>";
 		};
-		977896DC261D33CB00DE0817 /* Animator */ = {
+		97E720182630E82C0030C211 /* RWTModels */ = {
 			isa = PBXGroup;
 			children = (
-				977896DD261D33CB00DE0817 /* AnimatedModel.m */,
-				977896DE261D33CB00DE0817 /* Joint.h */,
-				977896DF261D33CB00DE0817 /* AnimatedModel.h */,
-				977896E0261D33CB00DE0817 /* Joint.m */,
+				97E7201E2630E82C0030C211 /* RWTModel.h */,
+				97E720192630E82C0030C211 /* RWTModel.m */,
+				97E7201A2630E82C0030C211 /* RWTBaseEffect.m */,
+				97E7201B2630E82C0030C211 /* RWTVertex.h */,
+				97E7201D2630E82C0030C211 /* RWTBaseEffect.h */,
+				97E7201C2630E82C0030C211 /* RWTSimpleVertex.glsl */,
+				97E7201F2630E82C0030C211 /* RWTSimpleFragment.glsl */,
+			);
+			path = RWTModels;
+			sourceTree = "<group>";
+		};
+		97E720582630EA1F0030C211 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				97E720722630F1B50030C211 /* model_LeapUp.obj */,
+				97E720592630EA1F0030C211 /* ProtoTexture.png */,
+				97E7205A2630EA1F0030C211 /* model_LeapUp.m */,
+				97E7205B2630EA1F0030C211 /* RWT_LeapUp.m */,
+				97E7205C2630EA1F0030C211 /* model_LeapUp.mtl */,
+				97E7205E2630EA1F0030C211 /* RWT_LeapUp.h */,
+				97E7205F2630EA1F0030C211 /* model_LeapUp.h */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		97E720672630EA670030C211 /* Animator */ = {
+			isa = PBXGroup;
+			children = (
+				97E720682630EA670030C211 /* AnimatedModel.m */,
+				97E720692630EA670030C211 /* Joint.h */,
+				97E7206A2630EA670030C211 /* AnimatedModel.h */,
+				97E7206B2630EA670030C211 /* Joint.m */,
 			);
 			path = Animator;
 			sourceTree = "<group>";
@@ -511,7 +564,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				97E720732630F1B50030C211 /* model_LeapUp.obj in Resources */,
+				97E720602630EA1F0030C211 /* ProtoTexture.png in Resources */,
 				784B675625EB158600001842 /* Shader.vsh in Resources */,
+				97E720222630E82C0030C211 /* RWTSimpleVertex.glsl in Resources */,
+				97E720632630EA1F0030C211 /* model_LeapUp.mtl in Resources */,
 				974B071025DEF8AF00C8679A /* LaunchScreen.storyboard in Resources */,
 				977896D7261D332200DE0817 /* blueEnergy.jpg in Resources */,
 				C6FEB5AD263001FB0052D809 /* SFX-Death.mp3 in Resources */,
@@ -522,6 +579,7 @@
 				784B675725EB158600001842 /* Shader.fsh in Resources */,
 				977896D6261D332200DE0817 /* steelAlt.jpg in Resources */,
 				977896D8261D332200DE0817 /* steelTemp.jpg in Resources */,
+				97E720232630E82C0030C211 /* RWTSimpleFragment.glsl in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -542,10 +600,14 @@
 				784B672325EB0FA700001842 /* b2EdgeAndCircleContact.cpp in Sources */,
 				784B672F25EB0FA700001842 /* b2PrismaticJoint.cpp in Sources */,
 				784B673B25EB0FA700001842 /* b2Distance.cpp in Sources */,
+				97E720202630E82C0030C211 /* RWTModel.m in Sources */,
 				FAA2C3D725EF4F1500209DBD /* Obstacle.mm in Sources */,
 				784B672625EB0FA700001842 /* b2WeldJoint.cpp in Sources */,
 				7850F14F26193A08004A0AC3 /* Player.mm in Sources */,
+				97E720622630EA1F0030C211 /* RWT_LeapUp.m in Sources */,
 				974B070425DEF8AE00C8679A /* AppDelegate.swift in Sources */,
+				97E7206D2630EA670030C211 /* Joint.m in Sources */,
+				97E720212630E82C0030C211 /* RWTBaseEffect.m in Sources */,
 				784B674025EB0FA700001842 /* b2EdgeShape.cpp in Sources */,
 				784B673625EB0FA700001842 /* b2BlockAllocator.cpp in Sources */,
 				784B674525EB0FA700001842 /* b2CollideEdge.cpp in Sources */,
@@ -553,9 +615,7 @@
 				784B673F25EB0FA700001842 /* b2ChainShape.cpp in Sources */,
 				784B671D25EB0FA700001842 /* b2EdgeAndPolygonContact.cpp in Sources */,
 				784B671C25EB0FA700001842 /* b2ChainAndPolygonContact.cpp in Sources */,
-				977896E2261D33CB00DE0817 /* Joint.m in Sources */,
 				784B672925EB0FA700001842 /* b2DistanceJoint.cpp in Sources */,
-				977896E1261D33CB00DE0817 /* AnimatedModel.m in Sources */,
 				784B673E25EB0FA700001842 /* b2DynamicTree.cpp in Sources */,
 				784B673225EB0FA700001842 /* b2Island.cpp in Sources */,
 				784B673825EB0FA700001842 /* b2Timer.cpp in Sources */,
@@ -579,6 +639,7 @@
 				784B673C25EB0FA700001842 /* b2CollideCircle.cpp in Sources */,
 				784B671925EB0FA700001842 /* b2Body.cpp in Sources */,
 				784B674125EB0FA700001842 /* b2CircleShape.cpp in Sources */,
+				97E7206C2630EA670030C211 /* AnimatedModel.m in Sources */,
 				784B674325EB0FA700001842 /* b2TimeOfImpact.cpp in Sources */,
 				784B671E25EB0FA700001842 /* b2ChainAndCircleContact.cpp in Sources */,
 				784B672B25EB0FA700001842 /* b2MotorJoint.cpp in Sources */,
@@ -588,6 +649,7 @@
 				FAE809D2261CCB11000F0230 /* Chunk.mm in Sources */,
 				974B070625DEF8AE00C8679A /* SceneDelegate.swift in Sources */,
 				784B671F25EB0FA700001842 /* b2PolygonAndCircleContact.cpp in Sources */,
+				97E720612630EA1F0030C211 /* model_LeapUp.m in Sources */,
 				784B672425EB0FA700001842 /* b2Contact.cpp in Sources */,
 				784B671B25EB0FA700001842 /* b2Fixture.cpp in Sources */,
 			);
@@ -654,7 +716,7 @@
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_NO_COMMON_BLOCKS = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -716,7 +778,7 @@
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_NO_COMMON_BLOCKS = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = GLES_SILENCE_DEPRECATION;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;

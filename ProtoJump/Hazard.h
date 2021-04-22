@@ -10,12 +10,12 @@
 
 #import <Foundation/Foundation.h>
 
+// Hazard constraints
 #define HAZ_MIN_V_SIZE  0.02f
 #define HAZ_MIN_H_SIZE  0.03f
 
 @interface Hazard : NSObject {}
 
-@property float R, G, B;
 @property float width, height;
 @property float posX, posY;
 

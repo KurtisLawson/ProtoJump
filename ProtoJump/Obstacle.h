@@ -11,6 +11,7 @@
 #include <time.h>
 #include <stdlib.h>
 
+// Obstcale Constraints
 #define OBSTACLE_MAX_POS_Y     0.72f
 #define OBSTACLE_MIN_POS_Y     0.28f
 #define OBSTACLE_POS_X         1.0f
@@ -21,7 +22,6 @@
 
 @interface Obstacle : NSObject {}
 
-@property (nonatomic, readwrite) float R, G, B;
 @property (nonatomic, readwrite) float width, height;
 @property (nonatomic, readwrite) float posX, posY;
 
